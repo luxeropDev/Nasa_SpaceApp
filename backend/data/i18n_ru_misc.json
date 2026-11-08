@@ -1,0 +1,36 @@
+{
+ "hardware": {
+  "Microgravity Science Glovebox (MSG)": "Перчаточный бокс для микрогравитационных исследований (MSG)",
+  "Saffire flow duct experiment module aboard Cygnus": "Экспериментальный модуль с проточным каналом Saffire на борту Cygnus",
+  "Combustion Integrated Rack (CIR)": "Интегрированная стойка для исследований горения (CIR)"
+ },
+ "gravity": {
+  "microgravity (ISS)": "микрогравитация (МКС)",
+  "microgravity (free-flying Cygnus vehicle, uncrewed)": "микрогравитация (свободнолетящий беспилотный аппарат Cygnus)"
+ },
+ "research_domain": {
+  "Solid combustion": "Горение твёрдых материалов",
+  "Spacecraft-scale fire": "Пожар в масштабе космического аппарата",
+  "Liquid fuel droplets": "Капли жидкого топлива",
+  "Smoke and aerosol detection": "Дым и аэрозоли",
+  "Gaseous combustion": "Горение газов"
+ },
+ "measure": {
+  "flame spread": "распространение пламени", "extinction limits": "пределы погасания", "flame imaging": "съёмка пламени",
+  "extinction": "погасание", "temperature": "температура", "video": "видео", "droplet burning rate": "скорость горения капли",
+  "flame extinction": "погасание пламени", "radiation": "излучение", "smoke particle size distribution": "распределение частиц дыма по размеру",
+  "aerosol measurement": "измерение аэрозоля", "flame structure": "структура пламени", "soot": "сажа", "cool flame": "холодное пламя",
+  "smoke point": "точка дымообразования", "flame liftoff": "отрыв пламени", "flame shape": "форма пламени", "electric-field response": "отклик на электрическое поле"
+ },
+ "sources": {
+  "SRC_PSI": {"title": "Информатика физических наук NASA (PSI)", "type": "Портал NASA PSI", "note": "Официальный портал PSI. Записи исследований и наборы данных доступны здесь; адреса отдельных наборов в этой стартовой базе не собирались."},
+  "SRC_NTRS_SAFFIRE": {"title": "Технический сервер отчётов NASA — поиск по Saffire", "type": "Технический сервер отчётов NASA (ссылка на поиск)", "note": "Ссылка на поиск в NTRS. Конкретные статьи должен выбрать и проверить исследователь."},
+  "SRC_NTRS_BASS": {"title": "Технический сервер отчётов NASA — поиск по BASS (горючесть твёрдых материалов)", "type": "Технический сервер отчётов NASA (ссылка на поиск)", "note": "Ссылка на поиск в NTRS."},
+  "SRC_NTRS_FLEX": {"title": "Технический сервер отчётов NASA — поиск по FLEX (горение капель)", "type": "Технический сервер отчётов NASA (ссылка на поиск)", "note": "Ссылка на поиск в NTRS."},
+  "SRC_NTRS_SAME": {"title": "Технический сервер отчётов NASA — поиск по SAME (измерение дыма)", "type": "Технический сервер отчётов NASA (ссылка на поиск)", "note": "Ссылка на поиск в NTRS."},
+  "SRC_NTRS_ACME": {"title": "Технический сервер отчётов NASA — поиск по ACME", "type": "Технический сервер отчётов NASA (ссылка на поиск)", "note": "Ссылка на поиск в NTRS."},
+  "SRC_NTRS_CFI": {"title": "Технический сервер отчётов NASA — поиск по исследованию холодных пламён", "type": "Технический сервер отчётов NASA (ссылка на поиск)", "note": "Ссылка на поиск в NTRS."},
+  "SRC_NTRS_SOOT": {"title": "Технический сервер отчётов NASA — поиск по SPICE (точка дымообразования)", "type": "Технический сервер отчётов NASA (ссылка на поиск)", "note": "Ссылка на поиск в NTRS."},
+  "SRC_NASA": {"title": "Главный портал NASA — наука о горении и исследования на МКС", "type": "Официальный сайт NASA", "note": "Официальный портал NASA; используется для программного контекста."}
+ }
+}

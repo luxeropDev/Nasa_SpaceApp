@@ -20,7 +20,7 @@ const Reports = lazy(() => import("./views/Reports"));
 const Sources = lazy(() => import("./views/Sources"));
 
 function Fallback() {
-  return <div className="mx-auto max-w-[1320px] px-4 pt-9 sm:px-6 lg:px-8"><PageSkeleton /></div>;
+  return <div className="mx-auto max-w-[1440px] px-4 pt-9 sm:px-6 lg:px-8"><PageSkeleton /></div>;
 }
 
 export default function App() {

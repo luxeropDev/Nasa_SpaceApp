@@ -184,9 +184,6 @@ html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *
 .hero-dust { animation: drift 30s linear infinite alternate; }
 .hero-vignette { background: linear-gradient(90deg, rgb(8 11 18 / .92) 0%, rgb(8 11 18 / .55) 48%, rgb(8 11 18 / .1) 100%), linear-gradient(0deg, rgb(8 11 18 / .9), transparent 35%); }
 
-/* sidebar width comes from a data attribute so the first paint is already correct */
-:root { --sb: 248px; }
-:root[data-sidebar="collapsed"] { --sb: 68px; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; animation-delay: 0ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }

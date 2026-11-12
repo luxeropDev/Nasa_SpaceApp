@@ -17,7 +17,6 @@
           document.documentElement.style.colorScheme = t;
           var l = localStorage.getItem("flamewise.lang");
           if (l === "en" || l === "ru") document.documentElement.lang = l;
-          if (localStorage.getItem("flamewise.sidebar") === "collapsed") document.documentElement.dataset.sidebar = "collapsed";
         } catch (e) {}
       })();
     </script>

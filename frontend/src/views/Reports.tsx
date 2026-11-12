@@ -58,8 +58,8 @@ export default function Reports({ params }: { params: URLSearchParams }) {
     return () => { on = false; };
   }, [opt.ai, aiQuestion, records.length, lang]);
 
-  if (inv.error) return <div className="mx-auto max-w-[1320px] px-4 pt-9 sm:px-6 lg:px-8"><ErrorBox error={inv.error} retry={inv.retry} /></div>;
-  if (!inv.data || !src.data) return <div className="mx-auto max-w-[1320px] px-4 pt-9 sm:px-6 lg:px-8"><PageSkeleton /></div>;
+  if (inv.error) return <div className="mx-auto max-w-[1440px] px-4 pt-9 sm:px-6 lg:px-8"><ErrorBox error={inv.error} retry={inv.retry} /></div>;
+  if (!inv.data || !src.data) return <div className="mx-auto max-w-[1440px] px-4 pt-9 sm:px-6 lg:px-8"><PageSkeleton /></div>;
   const avail = inv.data.filter((i) => !ids.includes(i.id));
   const docTitle = title.trim() || t("rp.defaultTitle", { names: records.map((r) => r.acronym).join(" · ") || "—" });
   const stamp = generated.toLocaleString(lang === "ru" ? "ru-RU" : "en-GB", { dateStyle: "long", timeStyle: "short" });

@@ -34,9 +34,10 @@
 | **Evidence Graph** *(new)* | Interactive SVG graph built by `/api/graph` **only from stored fields** (`related`, `source_ids`, findings’ `source_id`, `research_domain`, `fire_safety_domain`, `fuel_type`, `relevance`). Zoom/pan, hover highlighting, node-type filters, search, details panel, and an accessible list view. No SUPPORTS/CONTRADICTS edges — the data does not record them. Custom deterministic force layout, no graph library. |
 | **Mission Scenarios** *(new)* | Research mapping (not a simulation) for ISS, lunar habitat, lunar rover and Mars transit via `/api/scenarios`: relevant records, safety-domain coverage, missing domains, scenario knowledge gaps, limitations, sources, and the curator’s relevance notes. |
 | **Reports** *(new)* | Structured research report from 1–4 selected records: branding, title, generation timestamp, records with conditions/findings/limitations, comparison table, optional assistant analysis, methodology, limitations and numbered references with URLs and link type. **Print / Save as PDF** via the browser’s print dialog (dedicated print stylesheet) and **Markdown download**. |
+| **Navigation groups** | **Research:** Research Explorer, Experiment Comparison · **Intelligence:** AI Research Assistant, Fire Safety Intelligence, Evidence Graph, Mission Scenario Analysis · **Resources:** Research Reports, Data Sources, API documentation (the backend’s `/docs`), About FLAMEWISE (dialog). Experiment detail pages live under Research Explorer; no separate “Experiments” page exists, so none is listed. |
 | **Data Sources** | Every source with publisher, type, URL, note, citation count and an honest **link type**: *Direct document*, *Catalog search* or *Portal*. |
 
-**Application shell:** collapsible sidebar with tooltips (state persisted), mobile drawer, top toolbar with breadcrumb, **global search palette** (Ctrl/⌘+K or `/`: records via BM25, pages, “ask the assistant”), EN/RU switch, dark/light theme, about & system-status dialog, skip link, focus management, toasts, skeletons, reduced-motion support, route-level code splitting.
+**Application shell:** no sidebar — a sticky, full-width **horizontal top navigation** (logo · Overview · Research ▾ · Intelligence ▾ · Resources ▾ · search · status · EN/RU · theme). Dropdowns open on click, close on outside click or Esc, only one is open at a time, support arrow keys, and highlight the active route; the bar gains opacity and blur once the page scrolls. Below 1024 px it collapses to a compact bar with a full-width menu of expandable categories. Plus a **global search palette** (Ctrl/⌘+K or `/`: records via BM25, pages, “ask the assistant”), EN/RU switch, dark/light theme, about & system-status dialog, skip link, focus management, toasts, skeletons, reduced-motion support, route-level code splitting.
 
 ## 🔬 Scientific honesty
 
@@ -71,7 +72,7 @@ FastAPI + Pydantic
 ```
 frontend/src/
 ├── components/
-│   ├── layout/      AppShell (toolbar, drawer, status), Sidebar, CommandSearch, navItems
+│   ├── layout/      AppShell (frame), TopNav (desktop dropdowns + mobile menu + status), CommandSearch, navItems (IA)
 │   ├── research/    ResearchCard, SourceLink (+ LinkKindBadge)
 │   ├── assistant/   Markdown (safe renderer with citation hook)
 │   ├── ui.tsx       Page, Panel, Chip, Segmented, SearchInput, Empty, Field, NotAvailable, EpistemicTag, skeletons, errors

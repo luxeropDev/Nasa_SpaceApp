@@ -24,7 +24,7 @@ export default function Detail({ inv, all, srcs }: P) {
   const num = (v: number | null) => (v === null ? <NotAvailable /> : v);
 
   return (
-    <div className="mx-auto w-full max-w-[1320px] px-4 pb-24 pt-6 sm:px-6 md:pt-8 lg:px-8">
+    <div className="mx-auto w-full max-w-[1440px] px-4 pb-24 pt-6 sm:px-6 md:pt-8 lg:px-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
         <a className="btn btn-ghost btn-sm -ml-2" href={href("explorer")}><ArrowLeft size={14} />{t("det.back")}</a>
         <div className="flex gap-1.5">

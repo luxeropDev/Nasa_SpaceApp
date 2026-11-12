@@ -119,7 +119,7 @@ export function Ext({ href, children, className = "" }: { href: string; children
 
 /** Page container + editorial header. Every workspace page uses it so spacing stays consistent. */
 export const Page = ({ title, sub, eyebrow, actions, children, wide = false }: { title: string; sub?: string; eyebrow?: string; actions?: ReactNode; children: ReactNode; wide?: boolean }) => (
-  <div className={`mx-auto w-full px-4 pb-16 pt-6 sm:px-6 md:pt-9 lg:px-8 ${wide ? "max-w-[1560px]" : "max-w-[1320px]"}`}>
+  <div className={`mx-auto w-full px-4 pb-16 pt-6 sm:px-6 md:pt-9 lg:px-8 ${wide ? "max-w-[1560px]" : "max-w-[1440px]"}`}>
     <header className="mb-6 flex flex-wrap items-end justify-between gap-4 md:mb-8">
       <div className="min-w-0 max-w-3xl">
         {eyebrow && <p className="eyebrow reveal mb-2.5 text-brand">{eyebrow}</p>}

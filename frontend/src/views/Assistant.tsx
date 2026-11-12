@@ -82,7 +82,7 @@ export default function Assistant({ params, health }: { params: URLSearchParams;
     : health.data!.llm_live ? { tone: "ok" as const, text: t("mode.live") } : { tone: "warn" as const, text: t("mode.demo") };
 
   return (
-    <div className="mx-auto flex min-h-[calc(100vh-56px)] w-full max-w-[1240px] flex-col px-4 pt-6 sm:px-6 lg:px-8">
+    <div className="mx-auto flex min-h-[calc(100vh-64px)] w-full max-w-[1240px] flex-col px-4 pt-6 sm:px-6 lg:px-8">
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
         <div className="min-w-0">
           <h1 className="text-[22px] font-semibold tracking-tight text-fg sm:text-[26px]">{t("as.title")}</h1>

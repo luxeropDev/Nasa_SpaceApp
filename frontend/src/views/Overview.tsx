@@ -25,9 +25,9 @@ function Hero({ health }: { health: Health | null }) {
   return (
     <section className="hero relative isolate overflow-hidden border-b border-white/10">
       <HeroAtmosphere caption={t("ov.hero.caption")} />
-      <div className="relative mx-auto flex min-h-[520px] max-w-[1320px] flex-col justify-center px-5 py-16 sm:px-8 md:min-h-[600px] lg:min-h-[min(720px,calc(100vh-56px))] lg:px-10">
+      <div className="relative mx-auto flex min-h-[520px] max-w-[1440px] flex-col justify-center px-5 py-16 sm:px-8 md:min-h-[600px] lg:min-h-[min(760px,calc(100vh-64px))] lg:px-8">
         <p className="eyebrow reveal text-[#FF9B45]">{t("ov.hero.eyebrow")}</p>
-        <h1 className="reveal d-1 mt-5 max-w-4xl text-[44px] font-semibold leading-[1.02] tracking-[-0.04em] text-white sm:text-[56px] lg:text-[72px]">
+        <h1 className="reveal d-1 mt-5 max-w-4xl text-[44px] font-semibold leading-[1.02] tracking-[-0.04em] text-white sm:text-[56px] lg:text-[68px] xl:text-[76px]">
           {t("ov.hero.title1")}<br /><span className="text-white/55">{t("ov.hero.title2")}</span>
         </h1>
         <p className="reveal d-2 mt-6 max-w-xl text-[15px] leading-relaxed text-[#A5B4C7] sm:text-[17px]">{t("ov.hero.lead")}</p>
@@ -157,7 +157,7 @@ export default function Overview({ health }: { health: Health | null }) {
   return (
     <>
       <Hero health={health} />
-      <div className="mx-auto w-full max-w-[1320px] space-y-14 px-4 pb-16 pt-10 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1440px] space-y-14 px-4 pb-16 pt-10 sm:px-6 lg:px-8">
         {ov.error ? <ErrorBox error={ov.error} retry={ov.retry} /> : !d ? <Skeleton className="h-40" /> : <Metrics d={d} />}
 
         {inv.error ? <ErrorBox error={inv.error} retry={inv.retry} /> : !inv.data ? <Skeleton className="h-96" /> : <Highlights invs={inv.data} srcs={srcs} />}

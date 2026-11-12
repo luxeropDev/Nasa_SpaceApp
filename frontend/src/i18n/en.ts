@@ -1,6 +1,6 @@
 export const en = {
   // navigation / chrome
-  "nav.overview": "Overview", "nav.explorer": "Research Explorer", "nav.assistant": "AI Assistant", "nav.compare": "Compare Experiments", "nav.intel": "Fire Safety Intelligence", "nav.sources": "Data Sources",
+  "nav.overview": "Overview", "nav.explorer": "Research Explorer", "nav.assistant": "AI Research Assistant", "nav.compare": "Experiment Comparison", "nav.intel": "Fire Safety Intelligence", "nav.sources": "Data Sources",
   "nav.overview.full": "Mission Overview", "nav.explorer.full": "Investigation Explorer", "nav.assistant.full": "AI Research Assistant",
   "nav.compare.full": "Experiment Comparator", "nav.intel.full": "Fire Safety Intelligence", "nav.sources.full": "Data Sources",
   "nav.main": "Main navigation", "nav.menu": "Open menu", "nav.close": "Close menu", "nav.skip": "Skip to content", "brand.tag": "Scientific Intelligence",
@@ -87,12 +87,12 @@ export const en = {
   "so.findings": "{n} findings cite this", "so.open": "Open source",
 
   // ---------- v2: shell ----------
-  "nav.graph": "Evidence Graph", "nav.scenarios": "Mission Scenarios", "nav.reports": "Reports",
-  "nav.g.research": "Research", "nav.g.analysis": "Analysis", "nav.g.output": "Output & data",
-  "nav.collapse": "Collapse sidebar", "nav.expand": "Expand sidebar", "nav.breadcrumb": "Breadcrumb", "brand.home": "FLAMEWISE home",
-  "nav.overview.desc": "Hero, metrics and research coverage", "nav.explorer.desc": "Search and filter investigations", "nav.compare.desc": "Side-by-side comparison of 2–4 records",
-  "nav.assistant.desc": "Cited answers from the knowledge base", "nav.intel.desc": "Transparent research-relevance scoring", "nav.graph.desc": "Relationships stored in the records",
-  "nav.scenarios.desc": "Evidence mapped to mission contexts", "nav.reports.desc": "Printable research report", "nav.sources.desc": "Provenance of every source",
+  "nav.graph": "Evidence Graph", "nav.scenarios": "Mission Scenario Analysis", "nav.reports": "Research Reports",
+  "nav.g.research": "Research", "nav.g.intelligence": "Intelligence", "nav.g.resources": "Resources", "brand.home": "FLAMEWISE home",
+  "nav.docs": "API documentation", "nav.docs.desc": "Interactive OpenAPI reference served by the backend", "nav.about": "About FLAMEWISE", "nav.about.desc": "Purpose, data provenance and live system status",
+  "nav.overview.desc": "Hero, metrics and research coverage", "nav.explorer.desc": "Search and filter NASA microgravity combustion investigations", "nav.compare.desc": "Compare conditions and findings of 2–4 experiments",
+  "nav.assistant.desc": "Questions answered with traceable citations", "nav.intel.desc": "Transparent research-relevance scoring by scenario", "nav.graph.desc": "Relationships between experiments, sources and domains",
+  "nav.scenarios.desc": "Evidence mapped to ISS, lunar and Mars contexts", "nav.reports.desc": "Printable, citation-complete research reports", "nav.sources.desc": "Provenance and link type of every source",
   "cmd.open": "Search research…", "cmd.title": "Search FLAMEWISE", "cmd.ph": "Search investigations, pages, or ask a question…", "cmd.results": "Results",
   "cmd.empty": "No matches.", "cmd.hint": "↑↓ to move · Enter to open · Esc to close", "cmd.ask": "Ask the assistant: “{q}”",
   "cmd.g.record": "Investigations", "cmd.g.page": "Pages", "cmd.g.ask": "Assistant",

@@ -21,7 +21,7 @@ export function SelectionTray() {
   if (!ids.length) return null;
   const q = { ids: ids.join(",") };
   return (
-    <div className="no-print pointer-events-none fixed inset-x-0 bottom-4 z-[45] flex justify-center px-3 lg:pl-[var(--sb)]">
+    <div className="no-print pointer-events-none fixed inset-x-0 bottom-4 z-[45] flex justify-center px-3">
       <div className="pointer-events-auto flex max-w-full items-center gap-2 rounded-surface border border-line-strong bg-surface/95 p-1.5 pl-4 shadow-pop backdrop-blur-xl" style={{ animation: "fadeUpSm .3s cubic-bezier(0.16,1,0.3,1) both" }} role="region" aria-label={t("sel.title")}>
         <span className="truncate text-[13px] text-fg"><b className="font-semibold">{ids.length}</b><span className="text-subtle">/{MAX_COMPARE}</span> {t("sel.selected")}</span>
         <a className={`btn btn-sm btn-accent ${ids.length < 2 ? "pointer-events-none opacity-45" : ""}`} aria-disabled={ids.length < 2} href={href("compare", null, q)}><GitCompareArrows size={14} /><span className="hidden sm:inline">{t("sel.compare")}</span></a>
@@ -77,12 +77,12 @@ export default function Explorer({ id, params }: { id: string | null; params: UR
 
   const toggle = (iid: string) => { if (!selection.toggle(iid)) toast.push(t("cp.max"), "info"); };
 
-  if (inv.error) return <div className="mx-auto max-w-[1320px] px-4 pt-9 sm:px-6 lg:px-8"><ErrorBox error={inv.error} retry={inv.retry} /></div>;
-  if (!inv.data || !src.data) return <div className="mx-auto max-w-[1320px] px-4 pt-9 sm:px-6 lg:px-8"><PageSkeleton /></div>;
+  if (inv.error) return <div className="mx-auto max-w-[1440px] px-4 pt-9 sm:px-6 lg:px-8"><ErrorBox error={inv.error} retry={inv.retry} /></div>;
+  if (!inv.data || !src.data) return <div className="mx-auto max-w-[1440px] px-4 pt-9 sm:px-6 lg:px-8"><PageSkeleton /></div>;
   const d = inv.data;
   if (id) {
     const sel = d.find((i) => i.id === id);
-    if (!sel) return <div className="mx-auto max-w-[1320px] px-4 pt-9 sm:px-6 lg:px-8"><Empty icon={SearchX} text={t("det.notFound")} action={<a className="btn" href={href("explorer")}>{t("det.back")}</a>} /></div>;
+    if (!sel) return <div className="mx-auto max-w-[1440px] px-4 pt-9 sm:px-6 lg:px-8"><Empty icon={SearchX} text={t("det.notFound")} action={<a className="btn" href={href("explorer")}>{t("det.back")}</a>} /></div>;
     return <><Detail inv={sel} all={d} srcs={Object.fromEntries(src.data.map((s) => [s.id, s]))} /><SelectionTray /></>;
   }
 

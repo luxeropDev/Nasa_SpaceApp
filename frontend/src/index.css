@@ -2,99 +2,211 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ---------- Design tokens (RGB triplets so Tailwind alpha modifiers work) ---------- */
+/* =====================================================================
+   FLAMEWISE design tokens — RGB triplets so Tailwind alpha modifiers work.
+   Light is defined on :root, dark (primary experience) on .dark.
+   ===================================================================== */
 :root {
-  --bg: 245 247 251;
+  --bg: 245 247 250;          /* #F5F7FA */
+  --bg2: 255 255 255;
   --surface: 255 255 255;
-  --raised: 240 243 249;
-  --line: 224 229 239;
-  --fg: 15 23 42;
-  --muted: 71 85 105;
-  --subtle: 100 116 139;
-  --accent: 3 105 161;
-  --warn: 194 65 12;
+  --raised: 248 250 252;      /* elevated surface #F8FAFC */
+  --hover: 241 245 249;
+  --line: 203 213 225;        /* borders #E2E8F0 equivalent via alpha */
+  --line-a: 0.62;
+  --line-a-strong: 1;
+  --fg: 17 24 39;             /* #111827 */
+  --muted: 71 85 105;         /* #475569 */
+  --subtle: 100 116 139;      /* #64748B */
+  --accent: 3 105 161;        /* blue, darkened for AA text contrast on white */
+  --brand: 185 83 15;         /* combustion orange, darkened for AA on white */
+  --cyan: 14 116 144;
+  --warn: 161 98 7;
   --ok: 4 120 87;
-  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.05), 0 4px 16px -6px rgb(15 23 42 / 0.08);
-  --shadow-pop: 0 12px 40px -8px rgb(15 23 42 / 0.25);
-  --glow: radial-gradient(60rem 28rem at 85% -10%, rgb(14 165 233 / 0.10), transparent 60%);
+  --danger: 185 28 28;
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 2px 8px -2px rgb(15 23 42 / 0.06);
+  --shadow-pop: 0 18px 48px -12px rgb(15 23 42 / 0.22), 0 2px 6px rgb(15 23 42 / 0.06);
+  --cut-ring: 17 24 39;
+  --hero-ink: 248 250 252;
 }
 .dark {
-  --bg: 14 18 29;
-  --surface: 20 26 40;
-  --raised: 28 36 54;
-  --line: 40 50 72;
-  --fg: 232 237 246;
-  --muted: 158 171 192;
-  --subtle: 117 132 156;
-  --accent: 56 189 248;
-  --warn: 251 146 60;
-  --ok: 52 211 153;
-  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.25), 0 8px 24px -10px rgb(0 0 0 / 0.5);
-  --shadow-pop: 0 16px 48px -8px rgb(0 0 0 / 0.65);
-  --glow: radial-gradient(60rem 28rem at 85% -10%, rgb(56 189 248 / 0.10), transparent 60%);
+  --bg: 8 11 18;              /* #080B12 */
+  --bg2: 12 18 32;            /* #0C1220 */
+  --surface: 17 24 39;        /* #111827 */
+  --raised: 23 34 53;         /* #172235 */
+  --hover: 27 42 64;          /* #1B2A40 */
+  --line: 148 163 184;
+  --line-a: 0.13;
+  --line-a-strong: 0.27;
+  --fg: 248 250 252;          /* #F8FAFC */
+  --muted: 165 180 199;       /* #A5B4C7 */
+  --subtle: 122 138 160;      /* lifted from #64748B for AA on #080B12 */
+  --accent: 54 191 250;       /* #36BFFA */
+  --brand: 255 155 69;        /* #FF9B45 */
+  --cyan: 103 232 249;        /* #67E8F9 */
+  --warn: 251 191 36;         /* #FBBF24 */
+  --ok: 52 211 153;           /* #34D399 */
+  --danger: 248 113 113;      /* #F87171 */
+  --shadow-card: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 8px 24px -16px rgb(0 0 0 / 0.7);
+  --shadow-pop: 0 24px 64px -16px rgb(0 0 0 / 0.75), 0 0 0 1px rgb(148 163 184 / 0.1);
+  --cut-ring: 248 250 252;
 }
 
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+/* A report "paper" always renders with the light palette, in the app preview and in print. */
+.paper {
+  --bg: 255 255 255; --bg2: 255 255 255; --surface: 255 255 255; --raised: 248 250 252; --hover: 241 245 249;
+  --line: 203 213 225; --line-a: 0.75; --line-a-strong: 1;
+  --fg: 17 24 39; --muted: 55 65 81; --subtle: 100 116 139;
+  --accent: 3 105 161; --brand: 185 83 15; --warn: 161 98 7; --ok: 4 120 87; --danger: 185 28 28;
+  color-scheme: light;
+}
+
+html { -webkit-text-size-adjust: 100%; }
 body {
-  @apply bg-bg text-fg font-sans antialiased;
-  background-image: var(--glow);
-  background-repeat: no-repeat;
-  font-feature-settings: "cv11", "ss01";
+  @apply bg-bg font-sans text-[14px] text-fg antialiased;
+  font-feature-settings: "cv11", "ss01", "ss03";
   overflow-x: clip;
 }
-h1, h2, h3 { letter-spacing: -0.015em; }
-::selection { background: rgb(var(--accent) / 0.25); }
+h1, h2, h3 { letter-spacing: -0.02em; }
+::selection { background: rgb(var(--accent) / 0.28); }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-thumb { background: rgb(var(--line)); border-radius: 8px; border: 2px solid rgb(var(--bg)); }
+::-webkit-scrollbar-thumb { background: rgb(var(--line) / calc(var(--line-a-strong) * 1.4)); border-radius: 8px; border: 2px solid rgb(var(--bg)); }
 :focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; border-radius: 6px; }
-/* <main> is focused programmatically after navigation (screen readers); it is not an interactive control, so no ring */
 main:focus, main:focus-visible { outline: none; }
 
-/* Smooth cross-fade only while the theme is switching (keeps normal interactions cheap). */
 html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *::after {
-  transition: background-color .35s ease, border-color .35s ease, color .35s ease, fill .35s ease, stroke .35s ease !important;
+  transition: background-color .3s ease, border-color .3s ease, color .3s ease, fill .3s ease, stroke .3s ease !important;
 }
 
 @layer components {
-  .panel { @apply bg-surface border border-line rounded-2xl shadow-card; }
-  .panel-hover { @apply transition duration-200 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-pop; }
-  .label { @apply font-mono text-[10.5px] uppercase tracking-[.12em] text-subtle; }
-  .chip { @apply inline-flex items-center gap-1 rounded-full border border-line bg-raised/60 px-2.5 py-0.5 text-[11px] font-medium text-muted; }
-  .chip-accent { @apply border-accent/30 bg-accent/10 text-accent; }
-  .chip-warn { @apply border-warn/30 bg-warn/10 text-warn; }
-  .chip-ok { @apply border-ok/30 bg-ok/10 text-ok; }
-  .btn { @apply inline-flex items-center justify-center gap-2 rounded-xl border border-line bg-surface px-3.5 py-2 text-sm font-medium text-fg shadow-sm transition duration-150 hover:border-accent/50 hover:bg-raised active:scale-[.98] disabled:pointer-events-none disabled:opacity-50; }
-  .btn-primary { @apply border-transparent bg-accent text-white hover:bg-accent/90 hover:border-transparent; }
-  .dark .btn-primary { @apply text-[#06121c]; }
-  .btn-ghost { @apply border-transparent bg-transparent shadow-none hover:bg-raised; }
-  .input { @apply w-full rounded-xl border border-line bg-surface px-3 py-2 text-sm text-fg outline-none transition placeholder:text-subtle focus:border-accent/70 focus:ring-2 focus:ring-accent/20; }
-  .prose-sm-fg { @apply text-sm leading-relaxed text-muted; }
+  /* ---------- surfaces ---------- */
+  .panel { @apply rounded-card border border-line bg-surface shadow-card; }
+  .panel-hover { @apply transition duration-200 ease-out hover:border-line-strong hover:bg-raised; }
+  .glass { @apply border border-white/10 bg-[rgb(12_18_32/0.55)] backdrop-blur-xl; }
+  .label { @apply font-mono text-[10.5px] font-medium uppercase tracking-[.14em] text-subtle; }
+  .eyebrow { @apply font-mono text-[11px] font-medium uppercase tracking-[.22em]; }
+  .kbd { @apply rounded border border-line bg-raised px-1.5 py-px font-mono text-[10px] text-subtle; }
+
+  /* ---------- chips ---------- */
+  .chip { @apply inline-flex items-center gap-1 whitespace-nowrap rounded-md border border-line bg-raised px-2 py-0.5 text-[11.5px] font-medium text-muted; }
+  .chip-accent { @apply border-accent/25 bg-accent/10 text-accent; }
+  .chip-brand { @apply border-brand/25 bg-brand/10 text-brand; }
+  .chip-warn { @apply border-warn/25 bg-warn/10 text-warn; }
+  .chip-ok { @apply border-ok/25 bg-ok/10 text-ok; }
+  .chip-danger { @apply border-danger/25 bg-danger/10 text-danger; }
+
+  /* ---------- buttons ---------- */
+  .btn { @apply inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-btn border border-line bg-surface px-3.5 py-2 text-[13px] font-medium text-fg transition duration-200 ease-out hover:border-line-strong hover:bg-hover active:scale-[.98] disabled:pointer-events-none disabled:opacity-45; }
+  .btn-sm { @apply px-2.5 py-1.5 text-xs; }
+  .btn-primary { @apply border-transparent bg-fg text-bg hover:border-transparent hover:bg-fg/90; }
+  .btn-accent { @apply border-transparent bg-accent text-white hover:border-transparent hover:bg-accent/90; }
+  .dark .btn-accent { @apply text-[#04121c]; }
+  .btn-ghost { @apply border-transparent bg-transparent hover:border-transparent hover:bg-hover; }
+  .icon-btn { @apply inline-grid h-9 w-9 shrink-0 place-items-center rounded-btn text-muted transition duration-200 hover:bg-hover hover:text-fg; }
+
+  /* ---------- form controls ---------- */
+  .input { @apply w-full rounded-ctl border border-line bg-surface px-3 py-2 text-[13px] text-fg outline-none transition placeholder:text-subtle hover:border-line-strong focus:border-accent/60 focus:ring-[3px] focus:ring-accent/15; }
+  .select { @apply input cursor-pointer appearance-none bg-no-repeat pr-8; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237A8AA0' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-position: right .65rem center; }
+
+  .prose-sm-fg { @apply text-[13.5px] leading-relaxed text-muted; }
 }
 
-/* ---------- Motion ---------- */
-.page-in { animation: fade-up .4s cubic-bezier(.2,.7,.2,1) both; }
-.fade { animation: fade-up .4s cubic-bezier(.2,.7,.2,1) both; }
-.pop-in { animation: pop-in .16s ease-out both; transform-origin: top right; }
-.stagger > * { animation: fade-up .45s cubic-bezier(.2,.7,.2,1) both; }
-.stagger > *:nth-child(1) { animation-delay: 0ms; } .stagger > *:nth-child(2) { animation-delay: 40ms; }
-.stagger > *:nth-child(3) { animation-delay: 80ms; } .stagger > *:nth-child(4) { animation-delay: 120ms; }
-.stagger > *:nth-child(5) { animation-delay: 160ms; } .stagger > *:nth-child(6) { animation-delay: 200ms; }
-.stagger > *:nth-child(7) { animation-delay: 240ms; } .stagger > *:nth-child(n+8) { animation-delay: 280ms; }
-.skeleton { position: relative; overflow: hidden; @apply rounded-xl bg-raised; }
-.skeleton::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgb(var(--fg) / .06), transparent); animation: shimmer 1.4s infinite; }
-.bar-grow { transform-origin: left; animation: bar-grow .7s cubic-bezier(.2,.7,.2,1) both; }
+/* =====================================================================
+   Octagonal cut-corner buttons (VortxLab-inspired). Used selectively for
+   hero CTAs and primary research actions only.
+   ===================================================================== */
+.btn-cut, .btn-cut-border, .btn-cut-sm {
+  --cut: 12px;
+  clip-path: polygon(var(--cut) 0%, calc(100% - var(--cut)) 0%, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, var(--cut) 100%, 0% calc(100% - var(--cut)), 0% var(--cut));
+  border-radius: 0;
+  border: 0;
+}
+.btn-cut-sm { --cut: 8px; }
+.btn-cut { @apply inline-flex items-center justify-center gap-2 bg-fg px-6 py-3 text-[13.5px] font-semibold text-bg transition duration-200 ease-out hover:bg-fg/85 active:scale-[.98]; }
+.btn-cut-border { @apply relative isolate inline-flex items-center justify-center gap-2 px-6 py-3 text-[13.5px] font-semibold text-fg transition duration-200 ease-out active:scale-[.98]; background: rgb(var(--cut-ring) / 0.55); }
+.btn-cut-border::before {
+  content: ""; position: absolute; inset: 1px; z-index: -1; background: rgb(var(--bg));
+  clip-path: inherit; transition: background-color .2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-cut-border:hover { background: rgb(var(--cut-ring)); }
+.btn-cut-border:hover::before { background: rgb(var(--hover)); }
+.btn-cut-border.on-hero { background: rgb(255 255 255 / 0.6); color: #F8FAFC; }
+.btn-cut-border.on-hero::before { background: rgb(8 11 18 / 0.88); }
+.btn-cut-border.on-hero:hover { background: #fff; }
+.btn-cut-border.on-hero:hover::before { background: rgb(27 42 64 / 0.95); }
+.btn-cut.on-hero { background: #F8FAFC; color: #080B12; }
+.btn-cut.on-hero:hover { background: #fff; }
+.btn-cut-sm.btn-cut, .btn-cut-sm.btn-cut-border { @apply px-4 py-2 text-[13px]; }
+
+/* =====================================================================
+   Motion — fadeUp/fadeIn with cubic-bezier(0.16, 1, 0.3, 1).
+   Only transform & opacity animate; content is never hidden for long.
+   ===================================================================== */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeUpSm { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes shimmer { 100% { transform: translateX(100%); } }
+@keyframes pop-in { from { opacity: 0; transform: translateY(-4px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes dialog-in { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes drawer-in { from { transform: translateX(-100%); } to { transform: none; } }
+@keyframes toast-in { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: none; } }
 @keyframes bar-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-@keyframes toast-in { from { opacity: 0; transform: translateY(10px) scale(.96); } to { opacity: 1; transform: none; } }
-@keyframes toast-out { to { opacity: 0; transform: translateY(6px) scale(.96); } }
-@keyframes backdrop-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes dialog-in { from { opacity: 0; transform: translateY(12px) scale(.97); } to { opacity: 1; transform: none; } }
-@keyframes sheet-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
-@keyframes spin-slow { to { transform: rotate(360deg); } }
 @keyframes pulse-dot { 0% { box-shadow: 0 0 0 0 currentColor; } 70% { box-shadow: 0 0 0 6px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+@keyframes breathe { 0%, 100% { transform: scale(1); opacity: .9; } 50% { transform: scale(1.035); opacity: 1; } }
+@keyframes drift { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-40px, -30px, 0); } }
+
+.reveal { animation: fadeUp .8s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.reveal-in { animation: fadeIn .9s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.d-1 { animation-delay: 60ms; } .d-2 { animation-delay: 120ms; } .d-3 { animation-delay: 180ms; }
+.d-4 { animation-delay: 240ms; } .d-5 { animation-delay: 300ms; } .d-6 { animation-delay: 360ms; }
+.page-in { animation: fadeUpSm .45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.fade { animation: fadeUpSm .45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.pop-in { animation: pop-in .18s cubic-bezier(0.16, 1, 0.3, 1) both; transform-origin: top; }
+.stagger > * { animation: fadeUpSm .55s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.stagger > *:nth-child(2) { animation-delay: 40ms; } .stagger > *:nth-child(3) { animation-delay: 80ms; }
+.stagger > *:nth-child(4) { animation-delay: 120ms; } .stagger > *:nth-child(5) { animation-delay: 160ms; }
+.stagger > *:nth-child(6) { animation-delay: 200ms; } .stagger > *:nth-child(n+7) { animation-delay: 240ms; }
+.skeleton { position: relative; overflow: hidden; @apply rounded-card bg-raised; }
+.skeleton::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgb(var(--fg) / .05), transparent); animation: shimmer 1.4s infinite; }
+.bar-grow { transform-origin: left; animation: bar-grow .8s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .status-dot { animation: pulse-dot 2.4s infinite; }
 
+/* =====================================================================
+   Hero atmosphere — original CSS/SVG, no video or WebGL required.
+   ===================================================================== */
+.hero { background: radial-gradient(120% 90% at 78% 40%, #0F1B30 0%, #080B12 55%, #05070C 100%); color: #F8FAFC; }
+.hero-grid {
+  background-image: linear-gradient(rgb(148 163 184 / .06) 1px, transparent 1px), linear-gradient(90deg, rgb(148 163 184 / .06) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(80% 70% at 70% 45%, #000 20%, transparent 75%);
+}
+.hero-flame { animation: breathe 7s ease-in-out infinite; transform-origin: center; }
+.hero-dust { animation: drift 30s linear infinite alternate; }
+.hero-vignette { background: linear-gradient(90deg, rgb(8 11 18 / .92) 0%, rgb(8 11 18 / .55) 48%, rgb(8 11 18 / .1) 100%), linear-gradient(0deg, rgb(8 11 18 / .9), transparent 35%); }
+
+/* sidebar width comes from a data attribute so the first paint is already correct */
+:root { --sb: 248px; }
+:root[data-sidebar="collapsed"] { --sb: 68px; }
+
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; animation-delay: 0ms !important; transition-duration: .01ms !important; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; animation-delay: 0ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
 
+/* =====================================================================
+   Print — research reports render as clean light documents.
+   ===================================================================== */
+@media print {
+  @page { margin: 16mm 14mm; }
+  html, body { background: #fff !important; color: #111827 !important; }
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+  .report-doc { box-shadow: none !important; border: 0 !important; padding: 0 !important; max-width: none !important; }
+  .report-doc a { color: #0369a1 !important; text-decoration: underline; }
+  .report-doc section { break-inside: avoid-page; }
+  .report-doc table { break-inside: auto; }
+  .report-doc tr { break-inside: avoid; }
+  main { padding: 0 !important; }
+  .report-grid { display: block !important; }
+  .page-in, .reveal, .fade, .stagger > * { animation: none !important; }
+}
+.print-only { display: none; }

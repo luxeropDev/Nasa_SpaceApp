@@ -1,5 +1,6 @@
+import re
 from typing import Literal, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, computed_field
 
 Scenario = Literal["iss", "lunar_habitat", "lunar_rover", "mars_transit"]
 SafetyDomain = Literal["prevention", "material_flammability", "smoke_detection", "suppression"]
@@ -18,7 +19,7 @@ class AssistantRequest(BaseModel):
 
 
 class CompareRequest(BaseModel):
-    ids: list[str] = Field(..., min_length=2, max_length=3)
+    ids: list[str] = Field(..., min_length=2, max_length=4)
     lang: Lang = "en"
 
 
@@ -65,3 +66,13 @@ class Source(BaseModel):
     type: str
     url: str
     note: str = ""
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def link_kind(self) -> str:
+        """How the URL resolves: 'search' (catalog query, not a specific document), 'portal' (site root) or 'direct'."""
+        if "/search" in self.url or "?q=" in self.url:
+            return "search"
+        if re.fullmatch(r"https?://[^/]+/?", self.url):
+            return "portal"
+        return "direct"

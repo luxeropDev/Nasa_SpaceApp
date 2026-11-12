@@ -7,7 +7,7 @@ import { useI18n } from "../i18n";
 const FOCUSABLE = 'a[href],button:not([disabled]),input,select,textarea,[tabindex]:not([tabindex="-1"])';
 
 /** Accessible modal: focus trap, Esc to close, scroll lock, focus restore, animated backdrop. */
-export function Dialog({ open, onClose, title, description, children }: { open: boolean; onClose: () => void; title: string; description?: string; children: ReactNode }) {
+export function Dialog({ open, onClose, title, description, children, wide = false }: { open: boolean; onClose: () => void; title: string; description?: string; children: ReactNode; wide?: boolean }) {
   const { t } = useI18n();
   const box = useRef<HTMLDivElement>(null);
 
@@ -33,11 +33,11 @@ export function Dialog({ open, onClose, title, description, children }: { open: 
   if (!open) return null;
   return createPortal(
     <div className="fixed inset-0 z-[60] grid place-items-center p-4">
-      <div className="absolute inset-0 bg-black/55 backdrop-blur-[2px]" style={{ animation: "backdrop-in .2s ease-out both" }} onClick={onClose} aria-hidden="true" />
-      <div ref={box} role="dialog" aria-modal="true" aria-label={title} className="panel relative w-full max-w-md p-5 shadow-pop" style={{ animation: "dialog-in .24s cubic-bezier(.2,.8,.2,1) both" }}>
+      <div className="absolute inset-0 bg-[#05070C]/70 backdrop-blur-sm" style={{ animation: "fadeIn .2s ease-out both" }} onClick={onClose} aria-hidden="true" />
+      <div ref={box} role="dialog" aria-modal="true" aria-label={title} className={`relative max-h-[88vh] w-full overflow-y-auto rounded-surface border border-line-strong bg-surface p-5 shadow-pop sm:p-6 ${wide ? "max-w-xl" : "max-w-md"}`} style={{ animation: "dialog-in .26s cubic-bezier(0.16,1,0.3,1) both" }}>
         <div className="mb-4 flex items-start justify-between gap-3">
-          <div><h2 className="text-base font-semibold text-fg">{title}</h2>{description && <p className="mt-0.5 text-xs text-subtle">{description}</p>}</div>
-          <button className="btn btn-ghost !p-1.5" onClick={onClose} aria-label={t("status.close")}><X size={16} /></button>
+          <div><h2 className="text-[17px] font-semibold text-fg">{title}</h2>{description && <p className="mt-1 text-[12.5px] leading-relaxed text-subtle">{description}</p>}</div>
+          <button className="icon-btn !h-8 !w-8" onClick={onClose} aria-label={t("status.close")}><X size={16} /></button>
         </div>
         {children}
       </div>

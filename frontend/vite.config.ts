@@ -5,6 +5,13 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    proxy: { "/api": "http://127.0.0.1:8000" },
+    proxy: { "/api": "http://127.0.0.1:8000", "/docs": "http://127.0.0.1:8000", "/openapi.json": "http://127.0.0.1:8000" },
+  },
+  build: {
+    // recharts (~550 kB) is a lazily loaded vendor chunk used only by Overview and Intelligence
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: { manualChunks: { react: ["react", "react-dom"], recharts: ["recharts"] } },
+    },
   },
 });

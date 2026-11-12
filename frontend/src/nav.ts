@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export const VIEWS = ["overview", "explorer", "assistant", "compare", "intel", "sources"] as const;
+export const VIEWS = ["overview", "explorer", "compare", "assistant", "intel", "graph", "scenarios", "reports", "sources"] as const;
 export type View = (typeof VIEWS)[number];
 export type Route = { view: View; id: string | null; params: URLSearchParams };
 
@@ -21,7 +21,14 @@ export const go = (h: string) => { window.location.hash = h; };
 export function useRoute(): Route {
   const [r, setR] = useState<Route>(() => parse(window.location.hash));
   useEffect(() => {
-    const on = () => { setR(parse(window.location.hash)); window.scrollTo({ top: 0 }); };
+    const on = () => {
+      const next = parse(window.location.hash);
+      setR((prev) => {
+        // only reset scroll when the page itself changes, not when a query param (filter/selection) changes
+        if (prev.view !== next.view || prev.id !== next.id) window.scrollTo({ top: 0 });
+        return next;
+      });
+    };
     window.addEventListener("hashchange", on);
     return () => window.removeEventListener("hashchange", on);
   }, []);

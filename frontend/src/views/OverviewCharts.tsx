@@ -21,7 +21,7 @@ export default function OverviewCharts({ byDomain, byFuel, total }: Props) {
             <XAxis type="number" allowDecimals={false} stroke={ch.axis} fontSize={11} tickLine={false} />
             <YAxis type="category" dataKey="name" width={150} stroke={ch.axis} fontSize={11} tickLine={false} axisLine={false} />
             <Tooltip {...tip} />
-            <Bar dataKey="count" radius={[0, 6, 6, 0]} barSize={18}>{byDomain.map((_, i) => <Cell key={i} fill={color(i)} />)}</Bar>
+            <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={14}>{byDomain.map((_, i) => <Cell key={i} fill={color(i)} />)}</Bar>
           </BarChart>
         </ResponsiveContainer></div>
       </Panel>
@@ -29,13 +29,13 @@ export default function OverviewCharts({ byDomain, byFuel, total }: Props) {
         <div className="relative h-64" role="img" aria-label={t("ov.land.title")}>
           <ResponsiveContainer>
             <PieChart>
-              <Pie data={fuel} dataKey="count" nameKey="name" innerRadius={58} outerRadius={88} stroke="none" paddingAngle={3} cornerRadius={4}>
+              <Pie data={fuel} dataKey="count" nameKey="name" innerRadius={64} outerRadius={86} stroke="none" paddingAngle={2} cornerRadius={3}>
                 {fuel.map((_, i) => <Cell key={i} fill={color(i)} />)}
               </Pie>
               <Tooltip {...tip} />
             </PieChart>
           </ResponsiveContainer>
-          <div className="pointer-events-none absolute inset-0 grid place-items-center text-center"><div><div className="font-mono text-3xl font-semibold text-fg">{total}</div><div className="label">{t("ov.land.total")}</div></div></div>
+          <div className="pointer-events-none absolute inset-0 grid place-items-center text-center"><div><div className="text-[34px] font-light tracking-tight text-fg tabular-nums">{total}</div><div className="label">{t("ov.land.total")}</div></div></div>
         </div>
         <ul className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-muted">{fuel.map((f, i) => <li key={f.name} className="flex items-center gap-1.5"><i className="h-2 w-2 rounded-full" style={{ background: color(i) }} />{f.name} · {f.count}</li>)}</ul>
       </Panel>

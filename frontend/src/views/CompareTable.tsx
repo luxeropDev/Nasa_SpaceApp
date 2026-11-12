@@ -2,17 +2,37 @@ import { Check, CircleDashed, Equal, GitCompareArrows } from "lucide-react";
 import { Chip, Panel } from "../components/ui";
 import { useI18n } from "../i18n";
 import type { Key } from "../i18n";
+import { href } from "../nav";
 
 export type Val = string | number | string[] | null;
 export type Row = { key: string; label: string; values: Val[]; status: "same" | "different" | "missing" | "partial_missing" };
 export type Cmp = { investigations: { id: string; acronym: string; full_name: string }[]; rows: Row[]; summary: string };
+type T = (k: Key, p?: Record<string, string | number>) => string;
 
 const TONE = { same: "ok", different: "accent", missing: "neutral", partial_missing: "warn" } as const;
 const ICON = { same: Equal, different: GitCompareArrows, missing: CircleDashed, partial_missing: CircleDashed } as const;
+const statusKey = (s: Row["status"]) => (s === "partial_missing" ? "cp.partial_missing" : `cp.${s}`) as Key;
+const flat = (v: Val, na: string) => (v === null ? na : Array.isArray(v) ? v.join("; ") : String(v));
+
+/** CSV export (RFC 4180 quoting). Missing values are written explicitly, never left blank. */
+export function toCSV(res: Cmp, t: T): string {
+  const q = (s: string) => `"${s.replace(/"/g, '""')}"`;
+  const head = [t("cp.param"), ...res.investigations.map((i) => `${i.acronym} (${i.id})`), t("cp.status")];
+  const rows = res.rows.map((r) => [r.label, ...r.values.map((v) => flat(v, t("cp.notInKb"))), t(statusKey(r.status))]);
+  return "﻿" + [head, ...rows].map((r) => r.map(q).join(",")).join("\r\n");
+}
+
+export function toMarkdown(res: Cmp, t: T): string {
+  const esc = (s: string) => s.replace(/\|/g, "\\|").replace(/\n/g, " ");
+  const head = `| ${t("cp.param")} | ${res.investigations.map((i) => `${i.acronym} (${i.id})`).join(" | ")} | ${t("cp.status")} |`;
+  const sep = `|${" --- |".repeat(res.investigations.length + 2)}`;
+  const rows = res.rows.map((r) => `| ${esc(r.label)} | ${r.values.map((v) => esc(flat(v, `_${t("cp.notInKb")}_`))).join(" | ")} | ${t(statusKey(r.status))} |`);
+  return `# FLAMEWISE — ${t("cp.title")}\n\n${res.summary}\n\n${[head, sep, ...rows].join("\n")}\n\n_${t("cp.exportNote")}_\n`;
+}
 
 function Value({ v }: { v: Val }) {
   const { t } = useI18n();
-  if (v === null) return <span className="text-xs italic text-subtle">{t("cp.notInKb")}</span>;
+  if (v === null) return <span className="text-[12px] italic text-subtle">{t("cp.notInKb")}</span>;
   if (Array.isArray(v)) return <ul className="list-disc space-y-1 pl-4 marker:text-subtle">{v.map((x) => <li key={x}>{x}</li>)}</ul>;
   return <>{String(v)}</>;
 }
@@ -23,42 +43,51 @@ export default function CompareTable({ res, onlyDiff }: { res: Cmp; onlyDiff: bo
   const same = count(["same"]), diff = count(["different"]), miss = count(["missing", "partial_missing"]);
   const ratio = res.rows.length ? Math.round((same / res.rows.length) * 100) : 0;
   const rows = onlyDiff ? res.rows.filter((r) => r.status !== "same") : res.rows;
+  const pct = (n: number) => `${(n / Math.max(1, res.rows.length)) * 100}%`;
   return (
     <div className="space-y-4">
       <Panel title={t("cp.summary")} sub={t("cp.summarySub")}>
-        <p className="text-sm leading-relaxed text-fg">{res.summary}</p>
-        <div className="mt-4 flex flex-wrap items-center gap-2" aria-label={t("cp.legend")}>
-          <Chip tone="ok">{same} · {t("cp.same")}</Chip><Chip tone="accent">{diff} · {t("cp.different")}</Chip><Chip tone="warn">{miss} · {t("cp.missing")}</Chip>
-        </div>
-        <div className="mt-4">
-          <div className="mb-1.5 flex justify-between text-xs text-muted"><span>{t("cp.similarity")}</span><span className="font-mono">{ratio}%</span></div>
-          <div className="flex h-2 overflow-hidden rounded-full bg-raised" role="meter" aria-valuenow={ratio} aria-valuemin={0} aria-valuemax={100} aria-label={t("cp.similarity")}>
-            <div className="bg-ok transition-all duration-500" style={{ width: `${(same / Math.max(1, res.rows.length)) * 100}%` }} />
-            <div className="bg-accent transition-all duration-500" style={{ width: `${(diff / Math.max(1, res.rows.length)) * 100}%` }} />
-            <div className="bg-warn/70 transition-all duration-500" style={{ width: `${(miss / Math.max(1, res.rows.length)) * 100}%` }} />
+        <p className="text-[14px] leading-relaxed text-fg">{res.summary}</p>
+        <div className="mt-5 grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
+          <div>
+            <div className="mb-1.5 flex justify-between text-[12px] text-muted"><span>{t("cp.similarity")}</span><span className="font-mono">{ratio}%</span></div>
+            <div className="flex h-1.5 overflow-hidden rounded-full bg-raised" role="meter" aria-valuenow={ratio} aria-valuemin={0} aria-valuemax={100} aria-label={t("cp.similarity")}>
+              <div className="bg-ok transition-all duration-500" style={{ width: pct(same) }} />
+              <div className="bg-accent transition-all duration-500" style={{ width: pct(diff) }} />
+              <div className="bg-warn/70 transition-all duration-500" style={{ width: pct(miss) }} />
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5" aria-label={t("cp.legend")}>
+            <Chip tone="ok">{same} · {t("cp.same")}</Chip><Chip tone="accent">{diff} · {t("cp.different")}</Chip><Chip tone="warn">{miss} · {t("cp.missing")}</Chip>
           </div>
         </div>
+        <p className="mt-4 text-[11.5px] leading-relaxed text-subtle">{t("cp.unitsNote")}</p>
       </Panel>
-      {rows.length === 0 ? <div className="panel p-8 text-center text-sm text-muted">{t("cp.noRows")}</div> : (
+      {rows.length === 0 ? <div className="panel p-8 text-center text-[13px] text-muted">{t("cp.noRows")}</div> : (
         <div className="panel overflow-x-auto">
-          <table className="w-full min-w-[640px] text-sm">
+          <table className="w-full text-[13px]" style={{ minWidth: 220 + res.investigations.length * 220 }}>
             <caption className="sr-only">{t("cp.title")}</caption>
             <thead>
-              <tr className="border-b border-line bg-raised/50">
-                <th scope="col" className="w-40 p-3 text-left"><span className="label">{t("cp.param")}</span></th>
-                {res.investigations.map((i) => <th key={i.id} scope="col" className="p-3 text-left align-bottom"><div className="font-semibold text-fg">{i.acronym}</div><div className="text-[11px] font-normal text-subtle">{i.full_name}</div></th>)}
+              <tr className="border-b border-line">
+                <th scope="col" className="sticky left-0 z-10 w-44 bg-surface p-3 text-left"><span className="label">{t("cp.param")}</span></th>
+                {res.investigations.map((i, n) => (
+                  <th key={i.id} scope="col" className="p-3 text-left align-bottom">
+                    <span className="font-mono text-[10.5px] font-normal text-brand">{String.fromCharCode(65 + n)} · {i.id}</span>
+                    <a href={href("explorer", i.id)} className="block text-[14px] font-semibold text-fg hover:text-accent">{i.acronym}</a>
+                    <span className="block text-[11.5px] font-normal text-subtle">{i.full_name}</span>
+                  </th>
+                ))}
                 <th scope="col" className="w-32 p-3 text-left"><span className="label">{t("cp.status")}</span></th>
               </tr>
             </thead>
             <tbody>
               {rows.map((r) => {
                 const I = ICON[r.status];
-                const key = (r.status === "partial_missing" ? "cp.partial_missing" : `cp.${r.status}`) as Key;
                 return (
-                  <tr key={r.key} className="border-b border-line/60 align-top last:border-0 hover:bg-raised/30">
-                    <th scope="row" className="p-3 text-left font-medium text-muted">{r.label}</th>
+                  <tr key={r.key} className={`border-b border-line align-top last:border-0 ${r.status === "different" ? "bg-accent/[.03]" : ""}`}>
+                    <th scope="row" className="sticky left-0 z-10 bg-surface p-3 text-left text-[12.5px] font-medium text-muted">{r.label}</th>
                     {r.values.map((v, i) => <td key={i} className="min-w-[200px] p-3 leading-relaxed text-fg"><Value v={v} /></td>)}
-                    <td className="p-3"><Chip tone={TONE[r.status]}>{r.status === "same" ? <Check size={11} /> : <I size={11} />}{t(key)}</Chip></td>
+                    <td className="p-3"><Chip tone={TONE[r.status]}>{r.status === "same" ? <Check size={11} /> : <I size={11} />}{t(statusKey(r.status))}</Chip></td>
                   </tr>
                 );
               })}

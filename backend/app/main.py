@@ -4,14 +4,14 @@ from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from . import analysis, assistant, compare as cmp, i18n_data, scoring
+from . import analysis, assistant, compare as cmp, graph, i18n_data, scenarios, scoring
 from .data_loader import DATASET_VERSION, INV, INVESTIGATIONS, SOURCES
 from .models import AssistantRequest, CompareRequest, Lang, RiskRequest, SearchRequest
 from .retrieval import INDEX
 
 i18n_data.verify(INVESTIGATIONS, SOURCES)  # fail fast if any translation is missing
 
-app = FastAPI(title="FLAMEWISE API", version="2.0.0")
+app = FastAPI(title="FLAMEWISE API", version="2.1.0")
 app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"], allow_methods=["*"], allow_headers=["*"])
 
 
@@ -78,3 +78,13 @@ def compare(req: CompareRequest):
 @app.post("/api/risk-analysis")
 def risk(req: RiskRequest):
     return scoring.analyze(req.scenario, req.domain, req.lang)
+
+
+@app.get("/api/graph")
+def evidence_graph(lang: Lang = Query("en")):
+    return graph.build(lang)
+
+
+@app.get("/api/scenarios")
+def scenario_mapping(lang: Lang = Query("en")):
+    return scenarios.mapping(lang)

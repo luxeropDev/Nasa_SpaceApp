@@ -102,3 +102,50 @@ def test_search_and_detail():
     assert hits and hits[0]["investigation"]["id"].startswith("SAME")
     assert client.get("/api/investigations/NOPE").status_code == 404
     assert client.get("/api/investigations/BASS_001?lang=ru").json()["id"] == "BASS_001"
+
+
+# ---------- v2.1: comparison of 4, source link kinds, evidence graph, scenario mapping ----------
+
+def test_compare_accepts_four_and_rejects_five():
+    ids = ["BASS_001", "SAFFIRE_001", "FLEX_001", "SAME_001"]
+    r = client.post("/api/compare", json={"ids": ids})
+    assert r.status_code == 200 and len(r.json()["investigations"]) == 4
+    assert all(len(row["values"]) == 4 for row in r.json()["rows"])
+    assert client.post("/api/compare", json={"ids": ids + ["CFI_001"]}).status_code == 422
+
+
+def test_source_link_kind_is_honest():
+    kinds = {s["id"]: s["link_kind"] for s in client.get("/api/sources").json()}
+    assert kinds["SRC_NTRS_BASS"] == "search"   # NTRS query, not a specific paper
+    assert kinds["SRC_PSI"] == "portal"
+    assert set(kinds.values()) <= {"search", "portal", "direct"}
+
+
+@pytest.mark.parametrize("lang", LANGS)
+def test_graph_edges_come_from_stored_fields(lang):
+    g = client.get(f"/api/graph?lang={lang}").json()
+    ids = {n["id"] for n in g["nodes"]}
+    assert all(e["source"] in ids and e["target"] in ids for e in g["edges"])
+    assert not {e["type"] for e in g["edges"]} & {"SUPPORTS", "CONTRADICTS"}  # not recorded in the KB
+    inv = {i.id: i for i in INVESTIGATIONS}
+    for e in g["edges"]:
+        a = inv[e["source"]]
+        if e["type"] == "RELATED_TO":
+            assert e["target"] in a.related or e["source"] in inv[e["target"]].related
+        elif e["type"] == "CITES":
+            assert e["target"] in a.source_ids + [f.source_id for f in a.findings]
+        elif e["type"] == "RELEVANT_TO":
+            assert e["target"].removeprefix("scen:") in a.relevance
+    assert sum(1 for n in g["nodes"] if n["type"] == "investigation") == len(INVESTIGATIONS)
+
+
+@pytest.mark.parametrize("lang", LANGS)
+def test_scenario_mapping_matches_relevance_tags(lang):
+    data = client.get(f"/api/scenarios?lang={lang}").json()
+    assert [s["key"] for s in data] == ["iss", "lunar_habitat", "lunar_rover", "mars_transit"]
+    for s in data:
+        expected = {i.id for i in INVESTIGATIONS if s["key"] in i.relevance}
+        assert {x["id"] for x in s["investigations"]} == expected
+        assert sum(c["count"] for c in s["domain_coverage"]) == len(expected)
+        assert s["missing_domains"] == [c["domain"] for c in s["domain_coverage"] if c["count"] == 0]
+        assert s["knowledge_gaps"] and s["numeric_measurements"] == 0

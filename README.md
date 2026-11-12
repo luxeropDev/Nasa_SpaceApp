@@ -1,10 +1,10 @@
 <div align="center">
 
-# 🔥 FLAMEWISE
+# FLAMEWISE
 
-**Flame in Freefall — SI-powered fire safety intelligence**
+**Scientific research intelligence for microgravity combustion and spacecraft fire safety**
 
-*Turning microgravity combustion research into actionable fire safety intelligence.*
+*Understanding fire. Protecting the future.*
 
 ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
@@ -17,99 +17,111 @@
 
 </div>
 
-> Built for the **NASA Space Apps Challenge 2026**. FLAMEWISE helps aerospace engineers, fire-safety researchers and students find, compare and interpret NASA microgravity combustion investigations (BASS, Saffire, FLEX, SAME, ACME, CFI, SPICE, SLICE, E-FIELD Flames) — with every statement traced to a source.
+> Built for the **NASA Space Apps Challenge 2026**. FLAMEWISE organises NASA microgravity combustion investigations (BASS, Saffire, FLEX, SAME, ACME, CFI, SPICE, SLICE, E-FIELD Flames) into searchable, comparable, source-linked evidence for spacecraft fire safety research. It is an independent project — **not affiliated with or endorsed by NASA**.
 
 ---
 
 ## ✨ Features
 
-| Module | What it does |
+| Area | What it does |
 | --- | --- |
-| **Mission Overview** | KPIs and charts computed from the real knowledge base, a scenario × safety-domain **coverage matrix** that exposes research gaps, evidence-per-source meters, curated insights. |
-| **Investigation Explorer** | Debounced BM25 search, filters (fuel, domain, hardware, gravity), sorting, detail pages with conditions, findings, limitations, related records and previous/next navigation. |
-| **AI Research Assistant** | Retrieval-grounded answers in a fixed 7-section structure with citations. Works with no API key (clearly labelled **Demo / local knowledge mode**); optional OpenAI / Anthropic synthesis with citation validation. |
-| **Experiment Comparator** | Compare 2–3 investigations; every parameter is marked *same*, *different* or *missing*; match ratio; “differences only” view; shareable URLs. |
-| **Fire Safety Intelligence** | Transparent 0–100 **research relevance score** for a mission scenario × safety domain, with per-dimension contributions, methodology, gaps and recommendations. |
-| **Data Sources** | Every source used, its type and how many findings cite it. |
+| **Overview** | Cinematic hero (original SVG/CSS spherical-flame illustration), editorial metrics computed live from the knowledge base, one highlight per investigation program, source-linked insights, scenario × safety-domain **coverage matrix**, distributions, knowledge gaps, and an honest “no activity log” state (the data has no timestamps). |
+| **Research Explorer** | Debounced BM25 search (backend), six data-derived filters (fuel, research domain, safety domain, mission scenario, hardware, gravity) with removable chips, list/grid views, BM25 score per hit, and a selection tray (up to 4) that feeds Compare and Reports. |
+| **Experiment detail** | Findings with per-finding source links, conditions (unknown values shown as *Not available in source data*), curated mission relevance (labelled *contextual assumption*), limitations, every source with its link type, related records, prev/next, and actions (select, compare, report, ask, show in graph). |
+| **Compare Experiments** | 2–4 investigations side by side (backend `/api/compare`), same/different/missing status per parameter, “differences only”, sticky parameter column, shareable URLs, **CSV and Markdown export**. No unit conversion is performed because no numerical values are stored — the UI says so. |
+| **AI Assistant** | Conversation thread, multiline composer (Enter / Shift+Enter), suggested questions, **numbered interactive citations** that highlight the exact supporting excerpt and its source in a “Sources supporting this answer” panel, epistemic labels (*Source record*, *Template summary* / *AI-generated*, *Contextual assumption*, *Missing evidence*), and a status badge that reflects the backend (*Live AI*, *Demo*, *Offline*). Minimal safe Markdown renderer (no `innerHTML`). |
+| **Fire Safety Intelligence** | The existing 0–100 **research relevance score** (unchanged formula), shown as a radial gauge with per-component contribution bars (`value × weight = points`), a ranking, a stacked composition chart, the methodology table, and a panel separating *measurements* (none stored), *derived metrics*, *contextual assumptions* and *unknown parameters*. Never labelled as a probability. |
+| **Evidence Graph** *(new)* | Interactive SVG graph built by `/api/graph` **only from stored fields** (`related`, `source_ids`, findings’ `source_id`, `research_domain`, `fire_safety_domain`, `fuel_type`, `relevance`). Zoom/pan, hover highlighting, node-type filters, search, details panel, and an accessible list view. No SUPPORTS/CONTRADICTS edges — the data does not record them. Custom deterministic force layout, no graph library. |
+| **Mission Scenarios** *(new)* | Research mapping (not a simulation) for ISS, lunar habitat, lunar rover and Mars transit via `/api/scenarios`: relevant records, safety-domain coverage, missing domains, scenario knowledge gaps, limitations, sources, and the curator’s relevance notes. |
+| **Reports** *(new)* | Structured research report from 1–4 selected records: branding, title, generation timestamp, records with conditions/findings/limitations, comparison table, optional assistant analysis, methodology, limitations and numbered references with URLs and link type. **Print / Save as PDF** via the browser’s print dialog (dedicated print stylesheet) and **Markdown download**. |
+| **Data Sources** | Every source with publisher, type, URL, note, citation count and an honest **link type**: *Direct document*, *Catalog search* or *Portal*. |
 
-**Product shell:** top navigation with mobile sheet · light / dark themes (persisted, no flash) · EN / RU interface with a typed dictionary · accessible dialog and toasts · skeleton loaders · reduced-motion support.
+**Application shell:** collapsible sidebar with tooltips (state persisted), mobile drawer, top toolbar with breadcrumb, **global search palette** (Ctrl/⌘+K or `/`: records via BM25, pages, “ask the assistant”), EN/RU switch, dark/light theme, about & system-status dialog, skip link, focus management, toasts, skeletons, reduced-motion support, route-level code splitting.
 
 ## 🔬 Scientific honesty
 
-FLAMEWISE is deliberately conservative:
-
-- The knowledge base is a **curated starter set** (15 records, 9 sources) — **not** a PSI export.
-- **No numerical experimental results are stored.** Unknown values are `null` and shown as *missing*; nothing is estimated.
-- Source links point to the NASA PSI / nasa.gov portals and **NTRS search queries**, not to specific papers.
-- Mission-relevance tags and score weights are the authors’ **contextual assumptions**, not NASA statements.
-- The relevance score is **not** a probability of fire, ignition or material failure, and the app gives no operational firefighting guidance.
-
-## 📸 Screenshots
-
-| Overview (dark) | Overview (light, RU) |
-| --- | --- |
-| ![Overview dark](docs/screenshots/overview-dark.png) | ![Overview light RU](docs/screenshots/overview-light-ru.png) |
-
-| Assistant (dark) | Comparator (light, RU) |
-| --- | --- |
-| ![Assistant](docs/screenshots/assistant-dark.png) | ![Comparator](docs/screenshots/compare-light-ru.png) |
-
-| Fire Safety Intelligence (dark) | Explorer (mobile) |
-| --- | --- |
-| ![Intelligence](docs/screenshots/intelligence-dark.png) | ![Explorer mobile](docs/screenshots/explorer-mobile.png) |
-
-*Screenshots were captured from the running app with headless Chromium. Re-capture them after visual changes.*
+- The knowledge base is a **curated starter set** (15 records, 9 sources) — not a PSI export. It was **not expanded** in this upgrade: no additional records could be verified against primary sources in this environment, and nothing was added to “fill” the UI.
+- **No numerical experimental results are stored.** Unknown values are `null` and displayed as *Not available in source data*.
+- Source URLs are NASA portals and **NTRS catalog searches**, not specific papers. The API now exposes `link_kind` (`search` / `portal` / `direct`) and the UI shows it next to every link.
+- Mission-relevance tags and score weights are **contextual assumptions** and are labelled as such.
+- The relevance score is **not** a probability of fire, ignition or failure.
+- The hero image is an **original illustration**, captioned “not data”. A suggested stock video was evaluated and rejected (unrelated content, unknown licence).
+- No activity feed, telemetry or historical statistics are shown, because the data contains none.
 
 ## 🏗️ Architecture
 
 ```
-React + Vite (TypeScript, Tailwind, Recharts)
-   │  hash routing · I18nProvider · ThemeProvider · ToastProvider
-   │  fetch /api/*?lang=en|ru  (Vite dev proxy → :8000)
+React 18 + Vite (TypeScript strict, Tailwind, Recharts, lucide-react)
+   │  hash routing · lazy routes · I18nProvider · ThemeProvider · ToastProvider · selection store
+   │  fetch /api/*?lang=en|ru   (Vite dev proxy → :8000)
    ▼
 FastAPI + Pydantic
-   ├─ data_loader   → data/investigations.json, data/sources.json (English, canonical)
-   ├─ i18n_data     → Russian overlay (data/i18n_ru_*.json), verified at startup
-   ├─ retrieval     → BM25 + synonyms (+ Russian stem → English term mapping)
-   ├─ assistant     → select → aggregate evidence → optional LLM → validate citations
-   ├─ compare       → per-parameter same / different / missing (language-independent)
-   └─ scoring       → transparent relevance score (5 weighted dimensions)
+   ├─ data_loader  → data/investigations.json, data/sources.json (English, canonical)
+   ├─ i18n_data    → Russian overlay (data/i18n_ru_*.json), verified at startup
+   ├─ retrieval    → BM25 + synonyms (+ Russian stem → English term mapping)
+   ├─ assistant    → select → aggregate evidence → optional LLM → validate citations
+   ├─ compare      → per-parameter same / different / missing (language-independent), 2–4 ids
+   ├─ scoring      → transparent relevance score (5 weighted dimensions)
+   ├─ graph        → evidence graph from stored fields only            (new)
+   └─ scenarios    → scenario research mapping (coverage, gaps, limits) (new)
 ```
 
-Design notes: English is the canonical data; structural codes (`fuel_type`, `fire_safety_domain`, scenario keys) are never translated — the UI maps codes to labels. Comparison status is computed on canonical values, so switching language can never change a result.
+### Frontend structure
+
+```
+frontend/src/
+├── components/
+│   ├── layout/      AppShell (toolbar, drawer, status), Sidebar, CommandSearch, navItems
+│   ├── research/    ResearchCard, SourceLink (+ LinkKindBadge)
+│   ├── assistant/   Markdown (safe renderer with citation hook)
+│   ├── ui.tsx       Page, Panel, Chip, Segmented, SearchInput, Empty, Field, NotAvailable, EpistemicTag, skeletons, errors
+│   ├── charts.tsx   Meter, Stat, RadialScore, tooltip style
+│   ├── HeroAtmosphere.tsx, Logo.tsx, Dialog.tsx, Toast.tsx, Switchers.tsx
+├── views/           Overview, Explorer(+Detail, Filters), Comparator(+CompareTable), Assistant(+AnswerView),
+│                    Intelligence(+IntelResults), EvidenceGraph, Scenarios, Reports, Sources
+├── i18n/            en.ts (source of truth), ru*.ts (ru_v2.ts holds v2 strings), provider
+├── selection.ts     cross-page selection (sessionStorage)
+├── api.ts nav.ts theme.tsx index.css
+```
+
+### Design system
+
+Tokens live in `frontend/src/index.css` as RGB triplets (dark is the primary theme; a full light theme is defined separately, not inverted). Inter (300–900) for UI, IBM Plex Mono for identifiers and technical labels. Radius tokens: 8 px controls, 10 px buttons, 14 px cards, 20 px large surfaces/dialogs. Reusable `.btn-cut`, `.btn-cut-border`, `.btn-cut-sm` octagonal buttons are used only for hero CTAs and primary research actions. Motion: `fadeUp` / `fadeIn` with `cubic-bezier(0.16, 1, 0.3, 1)`, transform/opacity only, disabled under `prefers-reduced-motion`.
 
 ## 🧰 Technology stack
 
 | Layer | Technology |
 | --- | --- |
-| Frontend | React 18, Vite 5, TypeScript 5, Tailwind CSS 3, Recharts 2, Lucide React |
+| Frontend | React 18, Vite 5, TypeScript 5, Tailwind CSS 3, Recharts 2, lucide-react |
 | Backend | Python 3, FastAPI, Pydantic 2, Uvicorn, httpx |
-| Retrieval | In-process BM25 (no external services) |
-| LLM (optional) | OpenAI Chat Completions or Anthropic Messages, via environment variables |
+| Retrieval | In-process BM25 (no external services). Semantic search is **not** implemented. |
+| LLM (optional) | OpenAI Chat Completions or Anthropic Messages via environment variables |
 | Tests | pytest (API + data integrity); TypeScript strict type-check |
+
+No new runtime dependencies were added in v2 (graph, Markdown, PDF/print and exports are implemented in-house).
 
 ## 🚀 Getting started
 
 **Requirements:** Python 3.10+ and Node.js 18+.
 
 ```bash
-# 1 — backend (terminal 1)
+# backend (terminal 1)
 cd backend
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 
-# 2 — frontend (terminal 2)
+# frontend (terminal 2)
 cd frontend
 npm install
-npm run dev          # http://localhost:5173  (proxies /api → :8000)
+npm run dev          # http://localhost:5173  (proxies /api and /docs → :8000)
 ```
 
-Open <http://localhost:5173>. Interactive API docs: <http://localhost:8000/docs>.
+Interactive API docs: <http://localhost:8000/docs>.
 
 ## ⚙️ Configuration
 
-The app runs without any configuration. Optionally enable live LLM synthesis by exporting variables **before** starting uvicorn (see [`.env.example`](.env.example)):
+The app runs without configuration. Optionally enable live LLM synthesis by exporting variables **before** starting uvicorn (see [`.env.example`](.env.example)):
 
 | Variable | Purpose | Default |
 | --- | --- | --- |
@@ -118,14 +130,7 @@ The app runs without any configuration. Optionally enable live LLM synthesis by 
 | `ANTHROPIC_API_KEY` | Enables Anthropic synthesis | unset |
 | `ANTHROPIC_MODEL` | Anthropic model | `claude-3-5-haiku-latest` |
 
-If a key is set but the call fails, the assistant falls back to the local answer and reports the failure to the user — it never pretends an LLM answered. The backend does not load `.env` files itself; export the variables in your shell.
-
-## 🧭 Usage
-
-1. **Overview** → open the *coverage matrix*; empty (dashed) cells are research gaps. Click a cell to open the matching analysis.
-2. **Assistant** → try a suggested question, e.g. *“Compare BASS and Saffire.”* Switching language re-asks the question in the new language.
-3. **Comparator** → pick 2–3 investigations or a quick comparison; the URL can be shared.
-4. **Intelligence** → choose a scenario and a safety domain; read the methodology before trusting the ranking.
+If a key is set but the call fails, the assistant falls back to the local answer and reports the failure — it never pretends an LLM answered. The backend does not load `.env` files itself.
 
 ## 🔌 API
 
@@ -137,74 +142,61 @@ All GET endpoints and POST bodies accept `lang` (`en` | `ru`, default `en`); oth
 | GET | `/api/overview` | KPIs, distributions, coverage matrix, gaps |
 | GET | `/api/investigations` | All investigations |
 | GET | `/api/investigations/{id}` | One investigation (`404` if unknown) |
-| GET | `/api/sources` | Source documents |
+| GET | `/api/sources` | Sources, now including computed `link_kind` (`search` · `portal` · `direct`) |
 | GET | `/api/insights` | Evidence-linked insights |
+| GET | `/api/graph` | **New.** `{nodes, edges}`; each edge has `type` and the stored field it derives from (`basis`) |
+| GET | `/api/scenarios` | **New.** Per-scenario records, domain coverage, missing domains, gaps, limitations, sources |
 | POST | `/api/search` | BM25 search `{query, limit}` |
 | POST | `/api/assistant` | Structured answer `{question}` |
-| POST | `/api/compare` | Compare `{ids: [2–3 ids]}` |
+| POST | `/api/compare` | Compare `{ids: [2–4 ids]}` (was 2–3; additive change) |
 | POST | `/api/risk-analysis` | Relevance ranking `{scenario, domain}` |
 
-## 🗂️ Project structure
+All changes are additive; existing request/response shapes are unchanged.
 
-```
-.
-├── backend/
-│   ├── app/            # FastAPI app, retrieval, scoring, localization
-│   ├── data/           # investigations.json, sources.json, i18n_ru_*.json
-│   ├── tests/          # pytest suite
-│   └── requirements*.txt
-├── frontend/
-│   └── src/
-│       ├── components/ # TopBar, Switchers, Dialog, Toast, charts, ui
-│       ├── i18n/       # en.ts (source of truth), ru*.ts, provider
-│       ├── views/      # one file (or a small group) per screen
-│       ├── api.ts  nav.ts  theme.tsx  index.css
-├── docs/screenshots/
-├── .env.example
-├── README.md  README.ru.md
-```
-
-## 🛠️ Development
+## 🛠️ Development & testing
 
 ```bash
-# backend tests (from /backend)
+# backend (from /backend)
 pip install -r requirements-dev.txt
-python -m pytest -q
+python -m pytest -q          # 24 tests: API, data integrity, graph provenance, scenario mapping, 4-way compare
 
 # frontend (from /frontend)
-npm run typecheck    # strict TypeScript — also verifies every RU key exists
+npm run typecheck            # strict TypeScript — also verifies every Russian key exists
 npm run build
 ```
 
-- **Add a UI string:** add the key to `frontend/src/i18n/en.ts`, then to the matching `ru_*.ts` file — the compiler rejects a missing Russian key.
-- **Add an investigation:** add it to `investigations.json`, its Russian text to `data/i18n_ru_records_*.json`, and sources to `sources.json`. The backend refuses to start if a reference or translation is missing.
-- **Theme tokens** live in `frontend/src/index.css` as RGB triplets; chart colours in `theme.tsx`.
+- **Add a UI string:** add it to `frontend/src/i18n/en.ts` and to a `ru_*.ts` file (the compiler rejects a missing Russian key).
+- **Add an investigation:** add it to `investigations.json`, Russian text to `data/i18n_ru_records_*.json`, sources to `sources.json`. The backend refuses to start if a reference or translation is missing. Keep provenance: prefer direct document URLs and never invent numbers.
 
-There is currently no ESLint configuration; `npm run typecheck` is the static check.
+There is no ESLint configuration and no frontend unit-test suite yet.
+
+## 🚢 Deployment
+
+`npm run build` produces static files in `frontend/dist/`. Serve them from any static host and route `/api/*` (and optionally `/docs`, `/openapi.json`) to the FastAPI app (`uvicorn app.main:app`). The backend’s CORS allow-list contains only the Vite dev origins; when serving the frontend from another origin, either reverse-proxy `/api` on the same origin (recommended) or extend `allow_origins` in `backend/app/main.py`.
+
+## ⚠️ Known limitations
+
+- Small curated dataset (15 records); no numerical measurements; sources are catalog searches/portals rather than specific documents.
+- PDF export uses the browser’s print dialog (“Save as PDF”), not server-side rendering.
+- The evidence graph reflects curated cross-references; it does not encode scientific support or contradiction.
+- No timestamps in the data → no research activity feed.
+- Screenshots in `docs/screenshots/` show the **v1 interface** and have not been re-captured after the redesign.
+- No authentication (none is needed for this read-only tool).
 
 ## 🗺️ Roadmap
 
-- [ ] Extract quantitative conditions (O₂ fraction, pressure, flow) from cited NTRS / PSI documents, with per-value provenance
-- [ ] Link individual papers and PSI datasets instead of NTRS search queries
+- [ ] Extract quantitative conditions (O₂, pressure, flow) from cited NTRS / PSI documents, with per-value provenance and retrieval dates
+- [ ] Replace NTRS search links with verified direct document links
 - [ ] Partial-gravity (lunar / Martian) coverage once sources are available
-- [ ] Optional semantic (embedding) retrieval alongside BM25
-- [ ] Frontend component tests and CI
-
-## 🤝 Contributing
-
-Contributions are welcome. Please:
-
-1. Open an issue describing the change.
-2. Keep scientific claims **sourced** — never add unsourced numbers; use `null` for unknown values.
-3. Run `python -m pytest -q` and `npm run typecheck` before submitting.
-4. Provide both English and Russian text for anything user-facing.
+- [ ] Optional semantic retrieval alongside BM25
+- [ ] Frontend component tests, ESLint and CI; re-capture screenshots
 
 ## 📄 License
 
-**No license file is present in this repository**, so no open-source license is granted yet. Add a `LICENSE` file before redistributing or accepting outside contributions.
+**No license file is present**, so no open-source licence is granted yet. Recommendation for the maintainers: choose a permissive licence such as **MIT** or **Apache-2.0** for the code (Apache-2.0 adds an explicit patent grant), and keep NASA-derived text as references to public sources. Add a `LICENSE` file before redistributing or accepting outside contributions.
 
 ## 🙏 Acknowledgements
 
-Research context comes from publicly described NASA investigations and the NASA Physical Sciences Informatics (PSI) and NTRS portals. FLAMEWISE is an independent project and is **not affiliated with or endorsed by NASA**.
+Research context comes from publicly described NASA investigations and the NASA PSI and NTRS portals. FLAMEWISE is an independent project and is **not affiliated with or endorsed by NASA**. The interface’s visual language was inspired by public design references; no third-party branding is used.
 
 <div align="center"><sub>Not an operational or firefighting tool.</sub></div>

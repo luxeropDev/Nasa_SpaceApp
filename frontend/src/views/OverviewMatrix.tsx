@@ -27,8 +27,8 @@ export default function Matrix({ cells, scenarios, domains }: { cells: Cell[]; s
                 return (
                   <td key={d}>
                     <a href={href("intel", null, { scenario: s, domain: d })} title={`${tc("scen", s)} · ${tc("sd", d)}: ${label}`} aria-label={`${tc("scen", s)}, ${tc("sd", d)}: ${label}`}
-                      className={`grid h-14 place-items-center rounded-xl border font-mono text-sm font-semibold transition hover:scale-[1.03] hover:shadow-card ${n === 0 ? "border-dashed border-warn/50 bg-warn/5 text-warn" : "border-accent/20 text-fg"}`}
-                      style={n === 0 ? undefined : { background: `rgb(var(--accent) / ${(0.1 + (n / max) * 0.5).toFixed(2)})` }}>
+                      className={`grid h-12 place-items-center rounded-ctl border font-mono text-[13px] font-semibold transition duration-200 ease-out hover:-translate-y-px hover:border-line-strong ${n === 0 ? "border-dashed border-warn/45 bg-warn/[.06] text-warn" : "border-accent/20 text-fg"}`}
+                      style={n === 0 ? undefined : { background: `rgb(var(--accent) / ${(0.08 + (n / max) * 0.42).toFixed(2)})` }}>
                       {n === 0 ? "0" : n}
                     </a>
                   </td>

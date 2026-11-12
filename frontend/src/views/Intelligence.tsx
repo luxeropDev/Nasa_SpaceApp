@@ -9,12 +9,15 @@ import type { Res } from "./IntelResults";
 
 const pick = <T extends string>(v: string | null, all: readonly T[], d: T): T => ((all as readonly string[]).includes(v ?? "") ? (v as T) : d);
 
-function Segment<T extends string>({ label, value, options, render, onChange }: { label: string; value: T; options: readonly T[]; render: (v: T) => string; onChange: (v: T) => void }) {
+function Options<T extends string>({ label, value, options, render, onChange }: { label: string; value: T; options: readonly T[]; render: (v: T) => string; onChange: (v: T) => void }) {
   return (
-    <div role="radiogroup" aria-label={label}>
-      <p className="label mb-1.5">{label}</p>
+    <div role="radiogroup" aria-label={label} className="min-w-0">
+      <p className="label mb-2">{label}</p>
       <div className="flex flex-wrap gap-1.5">
-        {options.map((o) => <button key={o} role="radio" aria-checked={value === o} onClick={() => onChange(o)} className={`btn ${value === o ? "btn-primary" : ""}`}>{render(o)}</button>)}
+        {options.map((o) => (
+          <button key={o} role="radio" aria-checked={value === o} onClick={() => onChange(o)}
+            className={`rounded-ctl border px-3 py-1.5 text-[13px] font-medium transition-colors duration-200 ${value === o ? "border-fg bg-fg text-bg" : "border-line bg-surface text-muted hover:border-line-strong hover:text-fg"}`}>{render(o)}</button>
+        ))}
       </div>
     </div>
   );
@@ -39,18 +42,18 @@ export default function Intelligence({ params }: { params: URLSearchParams }) {
 
   const set = (s: string, d: string) => go(href("intel", null, { scenario: s, domain: d }));
   return (
-    <Page title={t("in.title")} sub={t("in.sub")}>
-      <div className="panel flex flex-wrap gap-x-8 gap-y-4 p-4">
-        <Segment label={t("in.scenario")} value={scenario} options={SCENARIOS} render={(v) => tc("scen", v)} onChange={(v) => set(v, domain)} />
-        <Segment label={t("in.domain")} value={domain} options={SAFETY_DOMAINS} render={(v) => tc("sd", v)} onChange={(v) => set(scenario, v)} />
+    <Page eyebrow={t("in.eyebrow")} title={t("in.title")} sub={t("in.sub")}>
+      <div className="panel grid gap-5 p-4 lg:grid-cols-2">
+        <Options label={t("in.scenario")} value={scenario} options={SCENARIOS} render={(v) => tc("scen", v)} onChange={(v) => set(v, domain)} />
+        <Options label={t("in.domain")} value={domain} options={SAFETY_DOMAINS} render={(v) => tc("sd", v)} onChange={(v) => set(scenario, v)} />
       </div>
-      <div className="panel flex gap-3 border-warn/30 bg-warn/5 p-3.5 text-xs leading-relaxed text-muted" role="note">
-        <Info size={16} className="mt-0.5 shrink-0 text-warn" aria-hidden="true" />
-        <p><b className="font-semibold text-warn">{t("in.badge")}.</b> {res?.methodology.disclaimer}</p>
+      <div className="flex gap-3 rounded-card border border-warn/30 bg-warn/[.06] p-4 text-[13px] leading-relaxed text-muted" role="note">
+        <Info size={17} className="mt-0.5 shrink-0 text-warn" aria-hidden="true" />
+        <p><b className="font-semibold text-fg">{t("in.badge")}.</b> {res?.methodology.disclaimer}</p>
       </div>
       {err != null && <ErrorBox error={err} retry={() => setTick((n) => n + 1)} />}
       {busy && !res && <PageSkeleton label={t("in.loading")} />}
-      {res && !err && <div className={busy ? "opacity-60 transition-opacity" : "transition-opacity"}><IntelResults res={res} /></div>}
+      {res && !err && <div className={busy ? "opacity-60 transition-opacity" : "transition-opacity"}><IntelResults key={`${scenario}-${domain}`} res={res} /></div>}
     </Page>
   );
 }

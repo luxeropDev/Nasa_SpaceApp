@@ -1,6 +1,7 @@
 """Transparent research RELEVANCE score. NOT a probability of fire, ignition or failure."""
 from .data_loader import INVESTIGATIONS
 from .i18n_data import invs
+from .scenarios import scenario_gaps
 from .texts import T, table
 
 WEIGHTS = {"domain": 30, "environment": 20, "fuel_material": 15, "evidence": 15, "scenario": 20}
@@ -51,10 +52,7 @@ def analyze(scenario: str, domain: str, lang: str = "en") -> dict:
     rows.sort(key=lambda r: -r["score"])
     top = rows[:6]
     direct = [r for r in rows if r["fire_safety_domain"] == domain]
-    gaps = [T(lang, "sc_gap_numbers")]
-    if scenario.startswith("lunar"): gaps.append(T(lang, "sc_gap_partial"))
-    if scenario == "lunar_rover": gaps.append(T(lang, "sc_gap_rover"))
-    if scenario == "mars_transit": gaps.append(T(lang, "sc_gap_mars"))
+    gaps = scenario_gaps(scenario, lang)
     if len(direct) < 3: gaps.append(T(lang, "sc_gap_thin", n=len(direct), domain=dom_l[domain]))
     recs = [T(lang, "sc_rec1"), T(lang, "sc_rec2", domain=dom_l[domain].lower(), scenario=scen_l[scenario])]
     if scenario.startswith("lunar"): recs.append(T(lang, "sc_rec3"))

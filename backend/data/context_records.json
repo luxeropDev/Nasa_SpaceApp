@@ -1,0 +1,92 @@
+[
+ {
+  "id": "CTX_APOLLO1", "kind": "historical_incident", "source_id": "SRC_APOLLO1", "doc_id": "DOC_APOLLO1", "year": 1967,
+  "title": {"en": "Apollo 1 (AS-204) cabin fire", "ru": "Пожар в кабине Apollo 1 (AS-204)"},
+  "facts": [
+   {"en": "On 27 January 1967, during a launch-pad test with hatches closed and the cabin pressurized with 100% oxygen, a flash fire swept through Command Module 012; the crew could not open the hatches in time.",
+    "ru": "27 января 1967 г. во время испытаний на стартовом комплексе при закрытых люках и кабине, наддутой 100% кислородом, по командному модулю 012 мгновенно распространился пожар; экипаж не успел открыть люки.",
+    "excerpt": "a flash fire swept through the spacecraft so quickly, there was no time to open the hatches"},
+   {"en": "U.S. Air Force pathologists concluded the astronauts died of asphyxia from carbon monoxide and other toxic gases produced by the fire.",
+    "ru": "Патологоанатомы ВВС США пришли к выводу, что астронавты погибли от асфиксии угарным газом и другими токсичными продуктами горения.",
+    "excerpt": "perished from asphyxia from carbon monoxide and other toxic gases"},
+   {"en": "Afterwards NASA adopted a unified hatch that opens in three seconds, restricted and controlled combustible materials in the spacecraft (including the Lunar Module), and introduced spacesuits made of fire-resistant materials.",
+    "ru": "После этого NASA ввело единый люк, открывающийся за три секунды, ограничило и взяло под контроль горючие материалы в корабле (включая лунный модуль) и перешло на скафандры из огнестойких материалов.",
+    "excerpt": "severely restricted and controlled the number of combustible materials in the spacecraft"}
+  ],
+  "relevance": {"en": "Oxygen-enriched atmospheres and the quantity and placement of combustible materials — the questions material-flammability experiments such as BASS and Saffire study under microgravity.",
+                "ru": "Атмосферы, обогащённые кислородом, а также количество и размещение горючих материалов — вопросы, которые эксперименты по горючести материалов (BASS, Saffire) изучают в условиях микрогравитации."},
+  "related_investigations": ["BASS_001", "SAFFIRE_001"]
+ },
+ {
+  "id": "CTX_APOLLO13", "kind": "historical_incident", "source_id": "SRC_APOLLO13", "doc_id": "DOC_APOLLO13", "year": 1970,
+  "title": {"en": "Apollo 13 oxygen-tank explosion", "ru": "Взрыв кислородного бака Apollo 13"},
+  "facts": [
+   {"en": "On the third day of the flight an explosion in oxygen tank number two also damaged tank number one, making the fuel cells unusable; the crew used the Lunar Module Aquarius as a lifeboat.",
+    "ru": "На третий день полёта взрыв кислородного бака №2 повредил и бак №1, что вывело из строя топливные элементы; экипаж использовал лунный модуль Aquarius как «спасательную шлюпку».",
+    "excerpt": "the explosion in tank number two also damaged tank number one"},
+   {"en": "The Review Board (report released 15 June 1970) found the accident was a combination of mistakes and a deficient design.",
+    "ru": "Комиссия по расследованию (отчёт опубликован 15 июня 1970 г.) установила, что авария стала следствием сочетания ошибок и недостатков конструкции.",
+    "excerpt": "the accident was a combination of mistakes and a deficient design"},
+   {"en": "For later missions the oxygen system was redesigned: a third tank in a different bay, upgraded thermostats, stirring fans removed and electrical wiring sheathed in stainless steel.",
+    "ru": "Для последующих миссий кислородная система была переработана: третий бак в другом отсеке, улучшенные термостаты, удалены вентиляторы-мешалки, электропроводка помещена в оболочку из нержавеющей стали.",
+    "excerpt": "removing stirring fans and sheathing all electrical wiring in stainless steel"}
+  ],
+  "relevance": {"en": "Oxygen-system engineering and electrical ignition sources. This is a pressure-vessel and systems failure, not a microgravity flame experiment.",
+                "ru": "Инженерия кислородных систем и электрические источники воспламенения. Это отказ сосуда под давлением и систем, а не эксперимент с пламенем в микрогравитации."},
+  "related_investigations": []
+ },
+ {
+  "id": "CTX_MIR1997", "kind": "historical_incident", "source_id": "SRC_MIR_FIRE", "doc_id": "DOC_MIR_FIRE", "year": 1997,
+  "title": {"en": "Mir oxygen-generator fire (24 February 1997)", "ru": "Пожар кислородного генератора на «Мире» (24 февраля 1997 г.)"},
+  "facts": [
+   {"en": "A solid-fuel oxygen generator (lithium perchlorate canister) in the Kvant-1 module ignited, producing a flame of about three feet with sparks and molten metal and dense smoke; it blocked access to one of the two Soyuz vehicles.",
+    "ru": "Твердотопливный генератор кислорода (картридж с перхлоратом лития) в модуле «Квант-1» воспламенился: пламя около трёх футов, искры, расплавленный металл и густой дым; был перекрыт доступ к одному из двух «Союзов».",
+    "excerpt": "the canister ignited, shooting a three-foot flame with sparks and bits of molten metal"},
+   {"en": "Such canisters had been used without incident more than 2,500 times aboard Mir; after two years of study investigators named latex glove material introduced into the canister as the most likely cause.",
+    "ru": "Такие картриджи более 2500 раз использовались на «Мире» без происшествий; после двух лет изучения наиболее вероятной причиной назван попавший в картридж латекс перчаток.",
+    "excerpt": "the most likely culprit as latex working glove material"},
+   {"en": "The crew used oxygen masks and foam extinguishers; the station's life-support system cleared the smoke over several hours. Lessons were applied to crew training, ground response, canister preparation and to ISS oxygen generation with dissimilar redundancy.",
+    "ru": "Экипаж использовал кислородные маски и пенные огнетушители; система жизнеобеспечения очистила атмосферу от дыма за несколько часов. Уроки учтены в подготовке экипажей, действиях наземных служб, подготовке картриджей и в кислородных системах МКС с разнородным резервированием.",
+    "excerpt": "a robust oxygen generation system with dissimilar redundancies"}
+  ],
+  "relevance": {"en": "Smoke transport and detection in a closed station, suppression in confined modules, and oxygen-generation hardware as an ignition source — topics addressed by SAME/SAME-R (smoke) and FLEX (suppression atmospheres).",
+                "ru": "Перенос и обнаружение дыма на закрытой станции, тушение в тесных модулях и оборудование генерации кислорода как источник воспламенения — темы, которые изучают SAME/SAME-R (дым) и FLEX (атмосферы подавления)."},
+  "related_investigations": ["SAME_001", "SAME_002", "FLEX_001"]
+ },
+ {
+  "id": "CTX_SPINOFF_AIR_TANKS", "kind": "technology_transfer", "source_id": "SRC_SPINOFF_AIR_TANKS", "doc_id": "DOC_SPINOFF_AIR_TANKS", "year": 1976,
+  "title": {"en": "Lightweight firefighter air tanks", "ru": "Облегчённые дыхательные баллоны пожарных"},
+  "facts": [
+   {"en": "Developed with NASA Johnson Space Center: a 30-minute backpack air supply weighing 20 pounds (13 pounds less than conventional tanks), pressurized at 4,500 psi, with an aluminum liner wrapped in resin-impregnated glass fiber.",
+    "ru": "Разработаны совместно с Космическим центром Джонсона NASA: ранцевый запас воздуха на 30 минут массой 20 фунтов (на 13 фунтов легче обычных баллонов), давление 4500 psi, алюминиевый лейнер с намоткой из стекловолокна, пропитанного смолой.",
+    "excerpt": "New backpack system weighs only 20 pounds for 30 minute air supply"}
+  ],
+  "relevance": {"en": "Life-support pressure-vessel technology transferred to terrestrial firefighting. Not combustion evidence.",
+                "ru": "Технология сосудов давления систем жизнеобеспечения, переданная в наземное пожаротушение. Не является доказательством по горению."},
+  "related_investigations": []
+ },
+ {
+  "id": "CTX_SPINOFF_FIRE_DETECTOR", "kind": "technology_transfer", "source_id": "SRC_SPINOFF_FIRE_DETECTOR", "doc_id": "DOC_SPINOFF_FIRE_DETECTOR", "year": 1978,
+  "title": {"en": "Incipient fire detector that rejects dust", "ru": "Извещатель ранней стадии пожара, не реагирующий на пыль"},
+  "facts": [
+   {"en": "The Brunswick Incipient Fire Detector, originally used in Space Shuttle orbiters, samples air for combustion particles and discriminates them from extraneous matter such as dust, making it less prone to false alarms; networked sensors suit large areas such as mines.",
+    "ru": "Извещатель Brunswick Incipient Fire Detector, первоначально применявшийся на орбитальных кораблях Space Shuttle, анализирует пробы воздуха на частицы горения и отличает их от посторонних частиц, например пыли, что снижает число ложных срабатываний; сеть датчиков подходит для больших объектов, например шахт.",
+    "excerpt": "can discriminate between combustion particles and extraneous matters such as dust"}
+  ],
+  "relevance": {"en": "Smoke/dust discrimination is directly relevant to lunar-surface habitats where regolith dust is present; SAME/SAME-R measured smoke particle sizes in microgravity for detector design.",
+                "ru": "Различение дыма и пыли напрямую важно для лунных баз, где присутствует пыль реголита; SAME/SAME-R измеряли размеры частиц дыма в микрогравитации для разработки извещателей."},
+  "related_investigations": ["SAME_001", "SAME_002"]
+ },
+ {
+  "id": "CTX_SPINOFF_FIRE_ATTIRE", "kind": "technology_transfer", "source_id": "SRC_SPINOFF_FIRE_ATTIRE", "doc_id": "DOC_SPINOFF_FIRE_ATTIRE", "year": 1982,
+  "title": {"en": "Project FIRES firefighter protective ensemble", "ru": "Проект FIRES: защитная экипировка пожарных"},
+  "facts": [
+   {"en": "Project FIRES (Firefighter's Integrated Response Equipment System), sponsored by NASA and FEMA's U.S. Fire Administration with technical management by Marshall Space Flight Center, applied lightweight fire-resistant, heat-protective materials developed for spacesuits and spacecraft to firefighter gear; fourteen municipal fire departments took part in field evaluation.",
+    "ru": "Проект FIRES (Firefighter's Integrated Response Equipment System), финансируемый NASA и Пожарной администрацией США (FEMA) при техническом руководстве Центра Маршалла, применил лёгкие огнестойкие теплозащитные материалы скафандров и космических аппаратов в снаряжении пожарных; в полевой оценке участвовали четырнадцать муниципальных пожарных служб.",
+    "excerpt": "lightweight, fire-resistant, heat-protective materials originally developed for use in astronauts' space suits"}
+  ],
+  "relevance": {"en": "Material fire resistance transferred from spaceflight to firefighting. Not combustion evidence.",
+                "ru": "Огнестойкость материалов, переданная из космонавтики в пожаротушение. Не является доказательством по горению."},
+  "related_investigations": []
+ }
+]

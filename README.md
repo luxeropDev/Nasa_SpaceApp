@@ -25,7 +25,7 @@
 
 | Area | What it does |
 | --- | --- |
-| **Overview** | Cinematic hero (original SVG/CSS spherical-flame illustration), editorial metrics computed live from the knowledge base, one highlight per investigation program, source-linked insights, scenario × safety-domain **coverage matrix**, distributions, knowledge gaps, and an honest “no activity log” state (the data has no timestamps). |
+| **Overview** | Photo-led introduction using the supplied project image (captioned as illustrative), search entry and backend-computed counts (PSI investigations, experiment-table rows, DOI publications, indexed pages); research feed with program table, findings and coverage matrix; side column with computed dataset status, the ten **challenge resources and their integration status**, and the last ingestion run. |
 | **Research Explorer** | Debounced BM25 search (backend), six data-derived filters (fuel, research domain, safety domain, mission scenario, hardware, gravity) with removable chips, list/grid views, BM25 score per hit, and a selection tray (up to 4) that feeds Compare and Reports. |
 | **Experiment detail** | Findings with per-finding source links, conditions (unknown values shown as *Not available in source data*), curated mission relevance (labelled *contextual assumption*), limitations, every source with its link type, related records, prev/next, and actions (select, compare, report, ask, show in graph). |
 | **Compare Experiments** | 2–4 investigations side by side (backend `/api/compare`), same/different/missing status per parameter, “differences only”, sticky parameter column, shareable URLs, **CSV and Markdown export**. No unit conversion is performed because no numerical values are stored — the UI says so. |
@@ -35,19 +35,29 @@
 | **Mission Scenarios** *(new)* | Research mapping (not a simulation) for ISS, lunar habitat, lunar rover and Mars transit via `/api/scenarios`: relevant records, safety-domain coverage, missing domains, scenario knowledge gaps, limitations, sources, and the curator’s relevance notes. |
 | **Reports** *(new)* | Structured research report from 1–4 selected records: branding, title, generation timestamp, records with conditions/findings/limitations, comparison table, optional assistant analysis, methodology, limitations and numbered references with URLs and link type. **Print / Save as PDF** via the browser’s print dialog (dedicated print stylesheet) and **Markdown download**. |
 | **Navigation groups** | **Research:** Research Explorer, Experiment Comparison · **Intelligence:** AI Research Assistant, Fire Safety Intelligence, Evidence Graph, Mission Scenario Analysis · **Resources:** Research Reports, Data Sources, API documentation (the backend’s `/docs`), About FLAMEWISE (dialog). Experiment detail pages live under Research Explorer; no separate “Experiments” page exists, so none is listed. |
-| **Data Sources** | Every source with publisher, type, URL, note, citation count and an honest **link type**: *Direct document*, *Catalog search* or *Portal*. |
+| **Data Sources** | Challenge-resource coverage matrix (8 stages × 10 resources), source library grouped by evidence class with verification status, extracted-document reader with page navigation and section jumps, and historical-incident / technology-transfer context kept apart from evidence. |
+| **Experiments (PSI datasets)** *(new)* | All 24 ingested PSI Combustion Science investigations: DOI, dates, platform, hardware, published experiment-table conditions, publication lists, link to the curated record. |
 
-**Application shell:** no sidebar — a sticky, full-width **horizontal top navigation** (logo · Overview · Research ▾ · Intelligence ▾ · Resources ▾ · search · status · EN/RU · theme). Dropdowns open on click, close on outside click or Esc, only one is open at a time, support arrow keys, and highlight the active route; the bar gains opacity and blur once the page scrolls. Below 1024 px it collapses to a compact bar with a full-width menu of expandable categories. Plus a **global search palette** (Ctrl/⌘+K or `/`: records via BM25, pages, “ask the assistant”), EN/RU switch, dark/light theme, about & system-status dialog, skip link, focus management, toasts, skeletons, reduced-motion support, route-level code splitting.
+**Application shell:** no sidebar — a sticky, full-width **horizontal top navigation** (logo · Overview · Research ▾ · Intelligence ▾ · Resources ▾ · search · status · EN/RU · theme). Dropdowns open on click, close on outside click or Esc, only one is open at a time, support arrow keys, and highlight the active route; the bar is a flat, solid surface (no blur). Below 1024 px it collapses to a compact bar with a full-width menu of expandable categories. Plus a **global search palette** (Ctrl/⌘+K or `/`: records via BM25, pages, “ask the assistant”), EN/RU switch, dark/light theme, about & system-status dialog, skip link, focus management, toasts, skeletons, reduced-motion support, route-level code splitting.
 
-## 🔬 Scientific honesty
+## 🔬 Scientific honesty (FLAMEWISE 2.0)
 
-- The knowledge base is a **curated starter set** (15 records, 9 sources) — not a PSI export. It was **not expanded** in this upgrade: no additional records could be verified against primary sources in this environment, and nothing was added to “fill” the UI.
-- **No numerical experimental results are stored.** Unknown values are `null` and displayed as *Not available in source data*.
-- Source URLs are NASA portals and **NTRS catalog searches**, not specific papers. The API now exposes `link_kind` (`search` / `portal` / `direct`) and the UI shows it next to every link.
-- Mission-relevance tags and score weights are **contextual assumptions** and are labelled as such.
-- The relevance score is **not** a probability of fire, ignition or failure.
-- The hero image is an **original illustration**, captioned “not data”. A suggested stock video was evaluated and rejected (unrelated content, unknown licence).
-- No activity feed, telemetry or historical statistics are shown, because the data contains none.
+- **Data.** 15 curated investigation records are linked to **24 NASA PSI Combustion Science investigations** ingested through PSI's public endpoints: DOIs, dates, hardware, 352 listed publications (284 with DOI) and **20 experiment tables (1,735 rows)**. Per-test conditions (O₂, pressure, flow) are shown as *published column ranges with the original header*; units are never converted and incompatible ranges are marked *not comparable*.
+- **Documents.** The 2015 *Researcher's Guide to ISS Combustion Science* (56 pages) and seven NASA pages are extracted, page-addressed and searchable; image-only pages are reported, no OCR is applied.
+- **Evidence classes.** Experimental data, publications, background, **historical incidents** (Apollo 1, Apollo 13, Mir 1997) and **technology transfer** (three Spinoffs) are kept apart; historical cases are never used as experimental evidence.
+- **Challenge resources.** Coverage of the ten official resources is computed, not asserted: 4 fully, 5 partially integrated, 1 link-only (the ScienceCasts video). See [docs/RESOURCE_COVERAGE_AUDIT.md](docs/RESOURCE_COVERAGE_AUDIT.md).
+- **Assistant.** Every answer lists typed statements (EVIDENCE / INTERPRETATION / HYPOTHESIS / SAFETY CONSIDERATION) and evidence items marked *verbatim* (with page or DOI) or *curated summary*. LLM statements labelled EVIDENCE are checked against the cited excerpt and downgraded when unsupported.
+- **Scores.** The relevance score is a transparent heuristic — **not** a probability of fire and not a physical model. Scenario analysis is evidence mapping, not simulation.
+- **Photograph.** The Overview photo is the image supplied by the project owner, cropped to exclude the NASA insignia and captioned as illustrative — not experimental imagery.
+- FLAMEWISE is independent and **not affiliated with or endorsed by NASA**. Details: [docs/SCIENTIFIC_DATA_PROVENANCE.md](docs/SCIENTIFIC_DATA_PROVENANCE.md).
+
+### Refreshing the data
+
+```bash
+cd backend
+python -m ingest.psi_ingest      # NASA PSI → data/psi_records.json, data/psi/tables/
+python -m ingest.documents       # PDFs/pages → data/documents/ (needs poppler-utils)
+```
 
 ## 🏗️ Architecture
 
@@ -77,7 +87,7 @@ frontend/src/
 │   ├── assistant/   Markdown (safe renderer with citation hook)
 │   ├── ui.tsx       Page, Panel, Chip, Segmented, SearchInput, Empty, Field, NotAvailable, EpistemicTag, skeletons, errors
 │   ├── charts.tsx   Meter, Stat, RadialScore, tooltip style
-│   ├── HeroAtmosphere.tsx, Logo.tsx, Dialog.tsx, Toast.tsx, Switchers.tsx
+│   ├── Logo.tsx, Dialog.tsx, Toast.tsx, Switchers.tsx
 ├── views/           Overview, Explorer(+Detail, Filters), Comparator(+CompareTable), Assistant(+AnswerView),
 │                    Intelligence(+IntelResults), EvidenceGraph, Scenarios, Reports, Sources
 ├── i18n/            en.ts (source of truth), ru*.ts (ru_v2.ts holds v2 strings), provider
@@ -87,7 +97,7 @@ frontend/src/
 
 ### Design system
 
-Tokens live in `frontend/src/index.css` as RGB triplets (dark is the primary theme; a full light theme is defined separately, not inverted). Inter (300–900) for UI, IBM Plex Mono for identifiers and technical labels. Radius tokens: 8 px controls, 10 px buttons, 14 px cards, 20 px large surfaces/dialogs. Reusable `.btn-cut`, `.btn-cut-border`, `.btn-cut-sm` octagonal buttons are used only for hero CTAs and primary research actions. Motion: `fadeUp` / `fadeIn` with `cubic-bezier(0.16, 1, 0.3, 1)`, transform/opacity only, disabled under `prefers-reduced-motion`.
+Tokens live in `frontend/src/index.css` as RGB triplets. **Hybrid theme:** light is the default research workspace (catalog, dossiers, comparison, reports); the `.dark` theme and the `<DarkZone>` wrapper (`src/zone.tsx`) apply the dark analysis tokens — the AI assistant, the evidence-graph canvas, the scenario coverage block and the overview introduction always render dark, and charts inside a dark zone switch to the dark palette. Palette: institutional blue `#0B3D91`, interactive blue `#105BD8`, neutral light surfaces (`#F6F7F9` / `#FFFFFF`, borders `#D9DEE7`), dark surfaces `#11151C` / `#191F29` / `#202936`; combustion orange is reserved for flame-related marks. Inter for UI, IBM Plex Sans Condensed for headings, IBM Plex Mono for identifiers, dates and measurements. Radii: 3–6 px. No glass, glow or gradients; motion is short fades only, disabled under `prefers-reduced-motion`.
 
 ## 🧰 Technology stack
 

@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowUp, History, Sparkles, Trash2 } from "lucide-react";
+import { ArrowUp, History, Trash2 } from "lucide-react";
 import { api } from "../api";
 import type { Health } from "../api";
 import { useI18n } from "../i18n";
 import type { Key } from "../i18n";
-import { Chip, ErrorBox, Skeleton } from "../components/ui";
-import { LogoMark } from "../components/Logo";
+import { Chip, EpistemicTag, ErrorBox, Skeleton, Spinner } from "../components/ui";
+import { DarkZone } from "../zone";
 import { useToast } from "../components/Toast";
 import AnswerView from "./AnswerView";
 import type { Ans } from "./AnswerView";
@@ -82,10 +82,12 @@ export default function Assistant({ params, health }: { params: URLSearchParams;
     : health.data!.llm_live ? { tone: "ok" as const, text: t("mode.live") } : { tone: "warn" as const, text: t("mode.demo") };
 
   return (
-    <div className="mx-auto flex min-h-[calc(100vh-64px)] w-full max-w-[1240px] flex-col px-4 pt-6 sm:px-6 lg:px-8">
+    <DarkZone className="min-h-[calc(100vh-56px)]">
+    <div className="mx-auto flex min-h-[calc(100vh-56px)] w-full max-w-[1320px] flex-col px-4 pt-6 sm:px-6 lg:px-8">
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
         <div className="min-w-0">
-          <h1 className="text-[22px] font-semibold tracking-tight text-fg sm:text-[26px]">{t("as.title")}</h1>
+          <p className="eyebrow mb-1.5">{t("as2.kicker")}</p>
+          <h1 className="font-display text-[24px] font-semibold text-fg sm:text-[28px]">{t("as.title")}</h1>
           <p className="mt-1 max-w-2xl text-[13px] text-muted">{t("as.sub")}</p>
         </div>
         <div className="flex items-center gap-2">
@@ -96,33 +98,44 @@ export default function Assistant({ params, health }: { params: URLSearchParams;
 
       <div className="flex-1 py-6" aria-live="polite" aria-busy={busy}>
         {turns.length === 0 ? (
-          <div className="mx-auto flex max-w-2xl flex-col items-center py-10 text-center sm:py-16">
-            <span className="reveal relative grid h-16 w-16 place-items-center rounded-full border border-line bg-raised"><LogoMark size={34} className="text-accent" /></span>
-            <h2 className="reveal d-1 mt-6 text-[26px] font-semibold tracking-tight text-fg sm:text-[32px]">{t("as.emptyTitle")}</h2>
-            <p className="reveal d-2 mt-3 text-[14px] leading-relaxed text-muted">{t("as.empty")}</p>
-            <ul className="reveal d-3 mt-8 grid w-full gap-2 text-left sm:grid-cols-2">
-              {SUGGEST.map((k) => (
-                <li key={k}><button className="panel panel-hover flex h-full w-full items-start gap-2.5 p-3.5 text-left text-[13px] text-fg" onClick={() => ask(t(k))}>
-                  <Sparkles size={14} className="mt-0.5 shrink-0 text-brand" aria-hidden="true" />{t(k)}</button></li>
-              ))}
-            </ul>
-            {hist.length > 0 && (
-              <div className="reveal d-4 mt-6 w-full text-left">
-                <p className="label mb-2 flex items-center gap-1.5"><History size={12} />{t("as.recent")}</p>
-                <div className="flex flex-wrap gap-1.5">{hist.map((h) => <button key={h} className="chip max-w-full truncate transition-colors hover:border-line-strong hover:text-fg" onClick={() => ask(h)}>{h}</button>)}</div>
-              </div>
-            )}
+          <div className="grid gap-8 py-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+            <div className="min-w-0">
+              <h2 className="font-display text-[20px] font-semibold text-fg">{t("as.emptyTitle")}</h2>
+              <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-muted">{t("as.empty")}</p>
+              <p className="label mb-2 mt-6">{t("as2.examples")}</p>
+              <ul className="divide-y divide-line border-y border-line">
+                {SUGGEST.map((k, n) => (
+                  <li key={k}><button className="group flex w-full items-start gap-3 py-2.5 text-left text-[13.5px] text-fg transition-colors hover:bg-hover" onClick={() => ask(t(k))}>
+                    <span className="mt-px font-mono text-[11px] text-subtle">Q{n + 1}</span><span className="flex-1 group-hover:text-accent">{t(k)}</span></button></li>
+                ))}
+              </ul>
+              {hist.length > 0 && (
+                <div className="mt-6">
+                  <p className="label mb-2 flex items-center gap-1.5"><History size={12} />{t("as.recent")}</p>
+                  <div className="flex flex-wrap gap-1.5">{hist.map((h) => <button key={h} className="chip max-w-full truncate transition-colors hover:border-line-strong hover:text-fg" onClick={() => ask(h)}>{h}</button>)}</div>
+                </div>
+              )}
+            </div>
+            <aside className="rounded-card border border-line bg-surface p-4 text-[12.5px] leading-relaxed text-muted">
+              <p className="label mb-2">{t("as2.method")}</p>
+              <ol className="space-y-2">
+                {(["as2.m1", "as2.m2", "as2.m3", "as2.m4"] as Key[]).map((k, n) => <li key={k} className="grid grid-cols-[18px_1fr] gap-2"><span className="font-mono text-[11px] text-subtle">{n + 1}.</span><span>{t(k)}</span></li>)}
+              </ol>
+              <p className="mt-3 border-t border-line pt-3 text-[11.5px] text-subtle">{t("as2.legend")}</p>
+              <p className="mt-2 flex flex-wrap gap-1.5"><EpistemicTag kind="record" /><EpistemicTag kind="ai" /><EpistemicTag kind="rule" /><EpistemicTag kind="assumption" /><EpistemicTag kind="missing" /></p>
+            </aside>
           </div>
         ) : (
           <ol className="space-y-10">
             {turns.map((x, n) => (
               <li key={x.id} ref={n === turns.length - 1 ? endRef : undefined} className="scroll-mt-20 space-y-4">
-                <div className="flex justify-end">
-                  <p className="max-w-[85%] rounded-surface rounded-br-md bg-hover px-4 py-2.5 text-[14px] leading-relaxed text-fg">{x.question}</p>
+                <div className="border-l-2 border-accent bg-surface px-4 py-2.5">
+                  <p className="font-mono text-[10.5px] uppercase tracking-[.06em] text-subtle">{t("as2.query")} · Q{n + 1}</p>
+                  <p className="mt-0.5 text-[14.5px] leading-relaxed text-fg">{x.question}</p>
                 </div>
                 {x.busy ? (
                   <div className="space-y-3" role="status" aria-label={t("as.loading")}>
-                    <p className="flex items-center gap-2 text-[12.5px] text-muted"><LogoMark size={16} className="animate-pulse text-accent" />{t("as.loading")}…</p>
+                    <p className="flex items-center gap-2 text-[12.5px] text-muted"><Spinner size={14} />{t("as.loading")}…</p>
                     <Skeleton className="h-4 w-11/12" /><Skeleton className="h-4 w-9/12" /><Skeleton className="h-4 w-10/12" />
                   </div>
                 ) : x.err != null ? <ErrorBox error={x.err} retry={() => void run(x.id, x.question)} />
@@ -133,22 +146,23 @@ export default function Assistant({ params, health }: { params: URLSearchParams;
         )}
       </div>
 
-      <div className="no-print sticky bottom-0 -mx-4 bg-gradient-to-t from-bg via-bg to-bg/0 px-4 pb-4 pt-6 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+      <div className="no-print sticky bottom-0 -mx-4 border-t border-line bg-bg px-4 pb-4 pt-3 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         {turns.length > 0 && (
           <div className="mb-2 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {SUGGEST.map((k) => <button key={k} className="chip shrink-0 transition-colors hover:border-line-strong hover:text-fg" onClick={() => ask(t(k))} disabled={busy}>{t(k)}</button>)}
           </div>
         )}
-        <form className="flex items-end gap-2 rounded-surface border border-line-strong bg-surface p-2 shadow-pop transition focus-within:border-accent/50 focus-within:ring-[3px] focus-within:ring-accent/10"
+        <form className="flex items-end gap-2 rounded-card border border-line-strong bg-surface p-1.5 transition focus-within:border-accent"
           onSubmit={(e) => { e.preventDefault(); if (!busy) ask(q); }}>
           <label htmlFor="as-q" className="sr-only">{t("as.label")}</label>
           <textarea id="as-q" ref={box} rows={1} className="max-h-[200px] min-h-[40px] flex-1 resize-none bg-transparent px-2.5 py-2 text-[14px] leading-relaxed text-fg outline-none placeholder:text-subtle"
             placeholder={t("as.ph")} value={q} maxLength={800} onChange={(e) => setQ(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); if (!busy) ask(q); } }} />
-          <button className="grid h-10 w-10 shrink-0 place-items-center rounded-btn bg-fg text-bg transition hover:bg-fg/85 disabled:opacity-30" disabled={busy || q.trim().length < 3} aria-label={t("as.ask")}><ArrowUp size={18} /></button>
+          <button className="grid h-10 w-10 shrink-0 place-items-center rounded-btn bg-accent text-on-accent transition hover:bg-accent/90 disabled:opacity-30" disabled={busy || q.trim().length < 3} aria-label={t("as.ask")}><ArrowUp size={18} /></button>
         </form>
         <p className="mt-1.5 px-1 text-[11px] text-subtle">{t("as.composerHint")}</p>
       </div>
     </div>
+    </DarkZone>
   );
 }

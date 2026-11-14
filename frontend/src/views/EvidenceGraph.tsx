@@ -5,9 +5,12 @@ import { useGet, ErrorBox, Page, PageSkeleton, Segmented, SearchInput, Empty } f
 import { LinkKindBadge } from "../components/research/SourceLink";
 import { useI18n } from "../i18n";
 import { go, href } from "../nav";
+import { DarkZone } from "../zone";
 import { useChartTheme } from "../theme";
 
-const TYPES: GraphNodeType[] = ["investigation", "source", "research_domain", "safety_domain", "fuel", "scenario"];
+const TYPES: GraphNodeType[] = ["investigation", "dataset", "document", "source", "context", "research_domain", "safety_domain", "fuel", "scenario"];
+/** Node types shown on first load: the research entities. Taxonomy nodes can be switched on from the filter. */
+const DEFAULT_TYPES: GraphNodeType[] = ["investigation", "dataset", "document", "source", "context", "scenario"];
 const W = 1100, H = 760;
 type Pos = Record<string, { x: number; y: number }>;
 
@@ -15,7 +18,7 @@ type Pos = Record<string, { x: number; y: number }>;
 function layout(g: Graph): Pos {
   const n = g.nodes.length;
   const p: Pos = {};
-  const ring: Record<GraphNodeType, number> = { investigation: 150, source: 330, research_domain: 300, safety_domain: 310, fuel: 290, scenario: 320 };
+  const ring: Record<GraphNodeType, number> = { investigation: 150, dataset: 230, document: 300, context: 320, source: 330, research_domain: 300, safety_domain: 310, fuel: 290, scenario: 320 };
   g.nodes.forEach((nd, i) => {
     const a = (i / n) * Math.PI * 2 + TYPES.indexOf(nd.type) * 0.7;
     p[nd.id] = { x: W / 2 + Math.cos(a) * ring[nd.type], y: H / 2 + Math.sin(a) * ring[nd.type] * 0.8 };
@@ -63,10 +66,10 @@ function layout(g: Graph): Pos {
 
 export default function EvidenceGraph({ params }: { params: URLSearchParams }) {
   const { t, tc } = useI18n();
-  const ch = useChartTheme();
+  const ch = useChartTheme(true) /* canvas is always a dark plotting surface */;
   const g = useGet<Graph>("/graph");
   const [view, setView] = useState<"graph" | "list">("graph");
-  const [types, setTypes] = useState<Set<GraphNodeType>>(() => new Set(TYPES));
+  const [types, setTypes] = useState<Set<GraphNodeType>>(() => new Set(DEFAULT_TYPES));
   const [q, setQ] = useState("");
   const [hover, setHover] = useState<string | null>(null);
   const [sel, setSel] = useState<string | null>(params.get("focus"));
@@ -131,6 +134,9 @@ export default function EvidenceGraph({ params }: { params: URLSearchParams }) {
       </div>
       {selNode.type === "investigation" && <a className="btn btn-sm w-full" href={href("explorer", selNode.id)}>{t("gr.openRecord")}<ArrowRight size={13} /></a>}
       {selNode.type === "source" && selNode.url && <div className="space-y-2"><a className="btn btn-sm w-full" href={selNode.url} target="_blank" rel="noreferrer">{t("so.open")}</a>{selNode.link_kind && <LinkKindBadge kind={selNode.link_kind} />}</div>}
+      {(selNode.type === "dataset" || selNode.type === "document") && selNode.url && <a className="btn btn-sm w-full" href={selNode.url} target="_blank" rel="noreferrer">{selNode.type === "dataset" ? t("v4.ds.openPsi") : t("v4.doc.open")}</a>}
+      {selNode.doi && <p className="font-mono text-[11px] text-muted">DOI <a className="text-accent hover:underline" href={`https://doi.org/${selNode.doi}`} target="_blank" rel="noreferrer">{selNode.doi}</a></p>}
+      {selNode.type === "context" && <p className="rounded-ctl border border-warn/30 bg-warn/[.06] p-2.5 text-[12px] leading-relaxed text-muted">{t("v4.ctx.notEvidence")}</p>}
       {selNode.type === "scenario" && <a className="btn btn-sm w-full" href={href("scenarios", null, { s: selNode.code ?? "" })}>{t("gr.openScenario")}<ArrowRight size={13} /></a>}
       <div>
         <p className="label mb-2">{t("gr.connections", { n: conns(selNode.id).length })}</p>
@@ -138,8 +144,8 @@ export default function EvidenceGraph({ params }: { params: URLSearchParams }) {
           <li key={k}><button className="flex w-full items-center gap-2 rounded-ctl px-2 py-1.5 text-left text-[12.5px] transition-colors hover:bg-hover" onClick={() => setSel(other.id)}>
             <i className="h-2 w-2 shrink-0 rounded-full" style={{ background: ch.node[other.type] }} />
             <span className="min-w-0 flex-1 truncate text-fg">{label(other)}</span>
-            <span className="shrink-0 font-mono text-[9.5px] text-subtle">{e.type}</span>
-          </button></li>))}</ul>
+            <span className="shrink-0 text-right font-mono text-[9.5px] leading-tight text-subtle">{e.type}<span className="block text-[9px]">{t(`v4.origin.${e.origin}`)}</span></span>
+          </button>{e.basis && e.type === "MENTIONED_IN" && <p className="px-2 pb-1 font-mono text-[10px] text-subtle">{e.basis}</p>}</li>))}</ul>
       </div>
     </div>
   );
@@ -162,7 +168,7 @@ export default function EvidenceGraph({ params }: { params: URLSearchParams }) {
 
       {view === "graph" ? (
         <div className="grid gap-4 xl:grid-cols-[1fr_320px]">
-          <div className="panel relative overflow-hidden bg-bg2 p-0">
+          <DarkZone className="relative overflow-hidden rounded-card border border-line bg-bg2">
             <svg ref={svg} viewBox={`0 0 ${W} ${H}`} className="block h-[56vh] min-h-[380px] w-full cursor-grab touch-none select-none active:cursor-grabbing" role="group" aria-label={t("gr.canvas")}
               onPointerDown={(e) => { if ((e.target as Element).closest("[data-node]")) return; drag.current = { x: e.clientX, y: e.clientY, tx: tf.x, ty: tf.y, moved: false }; (e.currentTarget as Element).setPointerCapture(e.pointerId); }}
               onPointerMove={(e) => {
@@ -179,7 +185,7 @@ export default function EvidenceGraph({ params }: { params: URLSearchParams }) {
                   const a = pos[e.source], b = pos[e.target];
                   const on = neigh ? neigh.has(e.source) && neigh.has(e.target) && (e.source === focusId || e.target === focusId) : false;
                   return <line key={k} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={on ? ch.node[byId[e.source === focusId ? e.target : e.source]?.type ?? "investigation"] : ch.edge}
-                    strokeOpacity={neigh ? (on ? 0.9 : 0.06) : e.type === "RELATED_TO" ? 0.55 : 0.22} strokeWidth={(on ? 1.6 : e.type === "RELATED_TO" ? 1.3 : 0.8) / tf.k} strokeDasharray={e.type === "RELEVANT_TO" ? `${4 / tf.k} ${3 / tf.k}` : undefined} />;
+                    strokeOpacity={neigh ? (on ? 0.9 : 0.06) : e.type === "RELATED_TO" ? 0.55 : 0.22} strokeWidth={(on ? 1.6 : e.type === "RELATED_TO" ? 1.3 : 0.8) / tf.k} strokeDasharray={e.type === "RELEVANT_TO" || e.origin === "curated_context" || e.origin === "text_match" ? `${4 / tf.k} ${3 / tf.k}` : undefined} />;
                 })}
                 {nodes.map((n) => {
                   const p = pos[n.id];
@@ -199,13 +205,13 @@ export default function EvidenceGraph({ params }: { params: URLSearchParams }) {
                 })}
               </g>
             </svg>
-            <div className="absolute bottom-3 left-3 flex gap-1 rounded-btn border border-line bg-surface/90 p-1 backdrop-blur">
+            <div className="absolute bottom-3 left-3 flex gap-1 rounded-btn border border-line bg-surface p-1">
               <button className="icon-btn !h-8 !w-8" onClick={() => zoom(1.25)} aria-label={t("gr.zoomIn")}><Plus size={15} /></button>
               <button className="icon-btn !h-8 !w-8" onClick={() => zoom(0.8)} aria-label={t("gr.zoomOut")}><Minus size={15} /></button>
               <button className="icon-btn !h-8 !w-8" onClick={() => setTf({ x: 0, y: 0, k: 1 })} aria-label={t("gr.reset")}><Maximize2 size={14} /></button>
             </div>
-            <p className="pointer-events-none absolute right-3 top-3 hidden rounded-ctl bg-surface/80 px-2 py-1 text-[11px] text-subtle backdrop-blur md:block">{t("gr.hint")}</p>
-          </div>
+            <p className="pointer-events-none absolute right-3 top-3 hidden rounded-ctl bg-surface px-2 py-1 text-[11px] text-subtle md:block">{t("gr.hint")}</p>
+          </DarkZone>
           <aside className="panel p-4 xl:sticky xl:top-20 xl:self-start" aria-live="polite">
             {details || (
               <div className="space-y-4">

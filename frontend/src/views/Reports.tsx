@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Download, FileText, Plus, Printer, RefreshCw, X } from "lucide-react";
 import { api, MAX_COMPARE } from "../api";
 import type { Inv, Source } from "../api";
+import type { Key } from "../i18n";
 import { useGet, ErrorBox, PageSkeleton, Empty, Spinner } from "../components/ui";
 import { LogoMark } from "../components/Logo";
 import { useToast } from "../components/Toast";
@@ -18,7 +19,7 @@ function download(name: string, text: string) {
 }
 
 const H2 = ({ n, children }: { n: number; children: React.ReactNode }) => (
-  <h2 className="mb-3 flex items-baseline gap-3 border-b border-line pb-2 text-[17px] font-semibold text-fg"><span className="font-mono text-[11px] text-brand">{String(n).padStart(2, "0")}</span>{children}</h2>
+  <h2 className="mb-3 flex items-baseline gap-3 border-b border-line pb-2 text-[17px] font-semibold text-fg"><span className="font-mono text-[11px] text-subtle">{String(n).padStart(2, "0")}</span>{children}</h2>
 );
 
 /** Structured research report built only from stored records (+ optional assistant answer). Printed via the browser to PDF. */
@@ -76,6 +77,8 @@ export default function Reports({ params }: { params: URLSearchParams }) {
     if (cmp) L.push("", `## ${t("rp.s.comparison")}`, "", cmp.summary, "", ...cmp.rows.map((row) => `- **${row.label}** (${t(row.status === "partial_missing" ? "cp.partial_missing" : (`cp.${row.status}` as "cp.same"))}): ${row.values.map((v, i) => `${cmp.investigations[i].acronym}: ${v === null ? na : Array.isArray(v) ? v.join("; ") : v}`).join(" | ")}`));
     if (ai) L.push("", `## ${t("rp.s.ai")}`, "", `_${ai.llm_used ? t("as.badge.live") : t("as.badge.demo")}_ — ${aiQuestion}`, "", ai.direct_answer, "", ai.interpretation);
     if (opt.method) L.push("", `## ${t("rp.s.method")}`, "", t("rp.method"), "", `## ${t("rp.s.limits")}`, "", ...Array.from(new Set(records.flatMap((r) => r.limitations))).map((l) => `- ${l}`), `- ${t("rp.limitNumeric")}`);
+    const dsets = records.flatMap((r) => r.datasets ?? []);
+    if (dsets.length) L.push("", `## ${t("v4.rp.datasets")}`, "", ...dsets.map((d, i) => `${i + 1}. NASA Physical Sciences Informatics. ${d.title} (${d.accession}). ${d.doi ? "https://doi.org/" + d.doi : d.landing_url}`));
     L.push("", `## ${t("rp.s.refs")}`, "", ...refs.map((id, i) => { const s = srcById[id]; return `${i + 1}. ${s?.title ?? id} — ${s?.publisher ?? ""}. ${s?.url ?? ""} (${s ? t(`src.kind.${s.link_kind}`) : ""})`; }));
     return L.join("\n") + "\n";
   };
@@ -85,14 +88,14 @@ export default function Reports({ params }: { params: URLSearchParams }) {
     <div className="mx-auto w-full max-w-[1400px] px-4 pb-16 pt-6 sm:px-6 md:pt-9 lg:px-8">
       <header className="no-print mb-6 flex flex-wrap items-end justify-between gap-4">
         <div className="max-w-2xl">
-          <p className="eyebrow reveal mb-2.5 text-brand">{t("rp.eyebrow")}</p>
+          <p className="eyebrow reveal mb-2.5">{t("rp.eyebrow")}</p>
           <h1 className="reveal d-1 text-[28px] font-semibold tracking-[-0.03em] text-fg sm:text-[36px]">{t("rp.title")}</h1>
           <p className="reveal d-2 mt-2 text-[14px] leading-relaxed text-muted">{t("rp.sub")}</p>
         </div>
         {records.length > 0 && (
           <div className="flex flex-wrap gap-2">
             <button className="btn" onClick={() => { download(`flamewise-report-${generated.toISOString().slice(0, 10)}.md`, toMd()); toast.push(t("cp.exported"), "success"); }}><Download size={14} />Markdown</button>
-            <button className="btn-cut-sm btn-cut" onClick={() => window.print()} disabled={aiBusy}><Printer size={14} />{t("rp.print")}</button>
+            <button className="btn btn-primary" onClick={() => window.print()} disabled={aiBusy}><Printer size={14} />{t("rp.print")}</button>
           </div>
         )}
       </header>
@@ -132,7 +135,7 @@ export default function Reports({ params }: { params: URLSearchParams }) {
         {records.length === 0 ? (
           <Empty icon={FileText} title={t("rp.emptyTitle")} text={t("rp.empty")} action={<div className="flex flex-wrap justify-center gap-2"><a className="btn" href={href("explorer")}>{t("cp.browse")}</a><a className="btn" href={href("reports", null, { ids: "BASS_001,SAFFIRE_001" })}>{t("rp.example")}</a></div>} />
         ) : (
-          <article className="report-doc paper mx-auto w-full max-w-[860px] rounded-card border border-line bg-surface px-6 py-8 text-fg shadow-pop sm:px-12 sm:py-12">
+          <article className="report-doc paper mx-auto w-full max-w-[860px] border border-line bg-surface px-6 py-8 text-fg shadow-card sm:px-12 sm:py-12">
             <header className="mb-8 border-b-2 border-fg pb-5">
               <div className="flex items-center justify-between gap-3">
                 <span className="flex items-center gap-2"><LogoMark size={22} className="text-accent" /><span className="text-[12px] font-bold tracking-[.2em]">FLAMEWISE</span></span>
@@ -157,6 +160,14 @@ export default function Reports({ params }: { params: URLSearchParams }) {
                       [t("det.o2"), r.oxygen_concentration ?? null], [t("det.air"), r.airflow_speed ?? null], [t("det.fsd"), tc("sd", r.fire_safety_domain)]] as const).map(([k, v]) => (
                       <tr key={k} className="border-b border-line"><th className="w-44 py-1.5 pr-3 text-left font-medium text-subtle">{k}</th><td className="py-1.5">{v === null ? <i className="text-subtle">{na}</i> : v}</td></tr>))}
                   </tbody></table>
+                  {(r.datasets ?? []).map((d) => (
+                    <div key={d.accession} className="mt-3 text-[12px]">
+                      <p className="font-semibold">{t("v4.det.dataset")}: <span className="font-mono font-normal">{d.accession}</span>{d.doi && <> · <a className="font-mono font-normal text-accent underline" href={`https://doi.org/${d.doi}`}>DOI {d.doi}</a></>}</p>
+                      <ul className="mt-1 list-disc space-y-0.5 pl-5 font-mono text-[11px] text-muted">
+                        {d.conditions.filter((c) => ["oxygen", "pressure", "flow"].includes(c.parameter)).map((c, k) => <li key={k}>{t(`v4.param.${c.parameter}` as Key)}: {c.kind === "numeric" ? `${c.min} – ${c.max}` : (c.examples ?? []).slice(0, 3).join("; ")} [{c.column}] ({c.filled_rows}/{c.total_rows})</li>)}
+                      </ul>
+                    </div>
+                  ))}
                   <p className="mt-3 text-[12px] font-semibold">{t("det.findings")}</p>
                   <ul className="mt-1 list-disc space-y-1 pl-5 text-[12.5px] leading-relaxed">{r.findings.map((f) => <li key={f.text}>{f.text} <sup className="font-mono text-accent">[{refN(f.source_id)}]</sup></li>)}</ul>
                   <p className="mt-2 text-[12px] font-semibold">{t("det.limits")}</p>
@@ -210,6 +221,16 @@ export default function Reports({ params }: { params: URLSearchParams }) {
                 <li key={id} className="grid grid-cols-[2rem_1fr]"><span className="font-mono text-subtle">[{i + 1}]</span>
                   <span>{s ? <>{s.title}. {s.publisher}. <a href={s.url} className="break-all text-accent underline">{s.url}</a> <i className="text-subtle">({t(`src.kind.${s.link_kind}`)})</i></> : <>{id} — <i>{na}</i></>}</span></li>); })}</ol>
             </section>
+            {records.some((r) => (r.datasets ?? []).length) && (
+              <section className="mt-6">
+                <h3 className="text-[13px] font-semibold">{t("v4.rp.datasets")}</h3>
+                <ol className="mt-2 space-y-1.5 text-[12px] leading-relaxed">
+                  {records.flatMap((r) => r.datasets ?? []).map((d) => (
+                    <li key={d.accession}>NASA Physical Sciences Informatics. <i>{d.title}</i> ({d.accession}){d.release_date ? `, ${d.release_date}` : ""}{d.version ? `, v${d.version}` : ""}. {d.doi ? <a className="text-accent underline" href={`https://doi.org/${d.doi}`}>https://doi.org/{d.doi}</a> : <a className="text-accent underline" href={d.landing_url}>{d.landing_url}</a>}</li>
+                  ))}
+                </ol>
+              </section>
+            )}
             <footer className="mt-10 border-t border-line pt-3 text-[10.5px] leading-relaxed text-subtle">{t("footer.text")}</footer>
           </article>
         )}

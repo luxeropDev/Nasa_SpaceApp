@@ -1,18 +1,19 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="FLAMEWISE — research intelligence for microgravity combustion and spacecraft fire safety. Independent project; not affiliated with NASA." />
-    <meta name="theme-color" content="#080B12" />
+    <meta name="theme-color" content="#F6F7F9" />
     <title>FLAMEWISE</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" as="image" type="image/webp" href="/media/hero-1600.webp" imagesrcset="/media/hero-960.webp 960w, /media/hero-1600.webp 1600w, /media/hero-2400.webp 2400w" imagesizes="(min-width: 1024px) 58vw, 100vw" />
     <script>
-      // Apply persisted theme/lang before first paint. Dark is the primary experience when nothing is saved.
+      // Apply persisted theme/lang before first paint. Light (research workspace) is the default when nothing is saved.
       (function () {
         try {
           var t = localStorage.getItem("flamewise.theme");
-          if (t !== "light" && t !== "dark") t = "dark";
+          if (t !== "light" && t !== "dark") t = "light";
           document.documentElement.classList.toggle("dark", t === "dark");
           document.documentElement.style.colorScheme = t;
           var l = localStorage.getItem("flamewise.lang");
@@ -22,7 +23,7 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=Public+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   </head>
   <body>
     <div id="root"></div>

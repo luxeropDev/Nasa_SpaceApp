@@ -1,17 +1,17 @@
-import { Check, CircleDashed, Equal, GitCompareArrows } from "lucide-react";
+import { Ban, Check, CircleDashed, Database, Equal, GitCompareArrows, Ruler } from "lucide-react";
 import { Chip, Panel } from "../components/ui";
 import { useI18n } from "../i18n";
 import type { Key } from "../i18n";
 import { href } from "../nav";
 
 export type Val = string | number | string[] | null;
-export type Row = { key: string; label: string; values: Val[]; status: "same" | "different" | "missing" | "partial_missing" };
+export type Row = { key: string; label: string; values: Val[]; status: "same" | "different" | "missing" | "partial_missing" | "not_comparable" | "same_basis" | "reference" };
 export type Cmp = { investigations: { id: string; acronym: string; full_name: string }[]; rows: Row[]; summary: string };
 type T = (k: Key, p?: Record<string, string | number>) => string;
 
-const TONE = { same: "ok", different: "accent", missing: "neutral", partial_missing: "warn" } as const;
-const ICON = { same: Equal, different: GitCompareArrows, missing: CircleDashed, partial_missing: CircleDashed } as const;
-const statusKey = (s: Row["status"]) => (s === "partial_missing" ? "cp.partial_missing" : `cp.${s}`) as Key;
+const TONE = { same: "ok", different: "accent", missing: "neutral", partial_missing: "warn", not_comparable: "warn", same_basis: "ok", reference: "neutral" } as const;
+const ICON = { same: Equal, different: GitCompareArrows, missing: CircleDashed, partial_missing: CircleDashed, not_comparable: Ban, same_basis: Ruler, reference: Database } as const;
+const statusKey = (s: Row["status"]) => (["not_comparable", "same_basis", "reference"].includes(s) ? `v4.cp.${s}` : s === "partial_missing" ? "cp.partial_missing" : `cp.${s}`) as Key;
 const flat = (v: Val, na: string) => (v === null ? na : Array.isArray(v) ? v.join("; ") : String(v));
 
 /** CSV export (RFC 4180 quoting). Missing values are written explicitly, never left blank. */
@@ -42,7 +42,7 @@ export default function CompareTable({ res, onlyDiff }: { res: Cmp; onlyDiff: bo
   const count = (s: Row["status"][]) => res.rows.filter((r) => s.includes(r.status)).length;
   const same = count(["same"]), diff = count(["different"]), miss = count(["missing", "partial_missing"]);
   const ratio = res.rows.length ? Math.round((same / res.rows.length) * 100) : 0;
-  const rows = onlyDiff ? res.rows.filter((r) => r.status !== "same") : res.rows;
+  const rows = onlyDiff ? res.rows.filter((r) => r.status !== "same" && r.status !== "reference") : res.rows;
   const pct = (n: number) => `${(n / Math.max(1, res.rows.length)) * 100}%`;
   return (
     <div className="space-y-4">
@@ -51,7 +51,7 @@ export default function CompareTable({ res, onlyDiff }: { res: Cmp; onlyDiff: bo
         <div className="mt-5 grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
           <div>
             <div className="mb-1.5 flex justify-between text-[12px] text-muted"><span>{t("cp.similarity")}</span><span className="font-mono">{ratio}%</span></div>
-            <div className="flex h-1.5 overflow-hidden rounded-full bg-raised" role="meter" aria-valuenow={ratio} aria-valuemin={0} aria-valuemax={100} aria-label={t("cp.similarity")}>
+            <div className="flex h-1.5 overflow-hidden bg-raised" role="meter" aria-valuenow={ratio} aria-valuemin={0} aria-valuemax={100} aria-label={t("cp.similarity")}>
               <div className="bg-ok transition-all duration-500" style={{ width: pct(same) }} />
               <div className="bg-accent transition-all duration-500" style={{ width: pct(diff) }} />
               <div className="bg-warn/70 transition-all duration-500" style={{ width: pct(miss) }} />
@@ -61,7 +61,7 @@ export default function CompareTable({ res, onlyDiff }: { res: Cmp; onlyDiff: bo
             <Chip tone="ok">{same} · {t("cp.same")}</Chip><Chip tone="accent">{diff} · {t("cp.different")}</Chip><Chip tone="warn">{miss} · {t("cp.missing")}</Chip>
           </div>
         </div>
-        <p className="mt-4 text-[11.5px] leading-relaxed text-subtle">{t("cp.unitsNote")}</p>
+        <p className="mt-4 text-[11.5px] leading-relaxed text-subtle">{t("cp.unitsNote")} {t("v4.cp.psiNote")}</p>
       </Panel>
       {rows.length === 0 ? <div className="panel p-8 text-center text-[13px] text-muted">{t("cp.noRows")}</div> : (
         <div className="panel overflow-x-auto">
@@ -72,7 +72,7 @@ export default function CompareTable({ res, onlyDiff }: { res: Cmp; onlyDiff: bo
                 <th scope="col" className="sticky left-0 z-10 w-44 bg-surface p-3 text-left"><span className="label">{t("cp.param")}</span></th>
                 {res.investigations.map((i, n) => (
                   <th key={i.id} scope="col" className="p-3 text-left align-bottom">
-                    <span className="font-mono text-[10.5px] font-normal text-brand">{String.fromCharCode(65 + n)} · {i.id}</span>
+                    <span className="font-mono text-[10.5px] font-normal text-accent">{String.fromCharCode(65 + n)} · {i.id}</span>
                     <a href={href("explorer", i.id)} className="block text-[14px] font-semibold text-fg hover:text-accent">{i.acronym}</a>
                     <span className="block text-[11.5px] font-normal text-subtle">{i.full_name}</span>
                   </th>
@@ -86,7 +86,7 @@ export default function CompareTable({ res, onlyDiff }: { res: Cmp; onlyDiff: bo
                 return (
                   <tr key={r.key} className={`border-b border-line align-top last:border-0 ${r.status === "different" ? "bg-accent/[.03]" : ""}`}>
                     <th scope="row" className="sticky left-0 z-10 bg-surface p-3 text-left text-[12.5px] font-medium text-muted">{r.label}</th>
-                    {r.values.map((v, i) => <td key={i} className="min-w-[200px] p-3 leading-relaxed text-fg"><Value v={v} /></td>)}
+                    {r.values.map((v, i) => <td key={i} className={`min-w-[200px] p-3 leading-relaxed text-fg ${r.key.startsWith("psi_") ? "font-mono text-[11.5px]" : ""}`}><Value v={v} /></td>)}
                     <td className="p-3"><Chip tone={TONE[r.status]}>{r.status === "same" ? <Check size={11} /> : <I size={11} />}{t(statusKey(r.status))}</Chip></td>
                   </tr>
                 );

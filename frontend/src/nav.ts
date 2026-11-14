@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export const VIEWS = ["overview", "explorer", "compare", "assistant", "intel", "graph", "scenarios", "reports", "sources"] as const;
+export const VIEWS = ["overview", "explorer", "compare", "assistant", "intel", "graph", "scenarios", "reports", "sources", "datasets"] as const;
 export type View = (typeof VIEWS)[number];
 export type Route = { view: View; id: string | null; params: URLSearchParams };
 

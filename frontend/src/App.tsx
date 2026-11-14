@@ -18,6 +18,7 @@ const EvidenceGraph = lazy(() => import("./views/EvidenceGraph"));
 const Scenarios = lazy(() => import("./views/Scenarios"));
 const Reports = lazy(() => import("./views/Reports"));
 const Sources = lazy(() => import("./views/Sources"));
+const Datasets = lazy(() => import("./views/Datasets"));
 
 function Fallback() {
   return <div className="mx-auto max-w-[1440px] px-4 pt-9 sm:px-6 lg:px-8"><PageSkeleton /></div>;
@@ -53,6 +54,7 @@ export default function App() {
           {route.view === "scenarios" && <Scenarios params={route.params} />}
           {route.view === "reports" && <Reports params={route.params} />}
           {route.view === "sources" && <Sources />}
+          {route.view === "datasets" && <Datasets />}
         </Suspense>
       </div>
 

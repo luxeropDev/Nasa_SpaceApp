@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { AlertTriangle, ArrowRight, FlaskConical, HelpCircle, Ruler, Sigma } from "lucide-react";
 import { Panel, EpistemicTag } from "../components/ui";
-import { RadialScore, useTooltipStyle } from "../components/charts";
+import { ScoreScale, useTooltipStyle } from "../components/charts";
 import { useI18n } from "../i18n";
 import type { Key } from "../i18n";
 import { useChartTheme } from "../theme";
@@ -47,8 +47,8 @@ export default function IntelResults({ res }: { res: Res }) {
             </div>
             <EpistemicTag kind="derived" />
           </div>
-          <div className="mt-5 grid items-center gap-6 sm:grid-cols-[auto_1fr]">
-            <RadialScore value={cur.score} label={t("in.scoreLabel")} caption={t("in.scoreCaption")} segments={cur.factors.map((f) => ({ key: f.dimension, points: f.points, color: color(f.dimension) }))} />
+          <div className="mt-5 grid items-start gap-6 sm:grid-cols-[220px_1fr]">
+            <ScoreScale value={cur.score} label={t("in.scoreLabel")} caption={t("in.scoreCaption")} segments={cur.factors.map((f) => ({ key: f.dimension, points: f.points, color: color(f.dimension) }))} />
             <ul className="space-y-3">
               {cur.factors.map((f) => (
                 <li key={f.dimension}>
@@ -56,9 +56,9 @@ export default function IntelResults({ res }: { res: Res }) {
                     <span className="flex items-center gap-2 text-fg"><i className="h-2 w-2 rounded-sm" style={{ background: color(f.dimension) }} aria-hidden="true" />{dim(f.dimension)}</span>
                     <span className="font-mono text-[11px] text-muted">{f.value.toFixed(2)} × {f.weight} = <b className="font-semibold text-fg">{f.points}</b></span>
                   </div>
-                  <div className="relative h-1.5 overflow-hidden rounded-full bg-raised" role="meter" aria-label={dim(f.dimension)} aria-valuenow={f.points} aria-valuemin={0} aria-valuemax={f.weight}>
-                    <div className="absolute inset-y-0 left-0 rounded-full bg-line-strong" style={{ width: `${f.weight}%` }} aria-hidden="true" />
-                    <div className="bar-grow absolute inset-y-0 left-0 rounded-full" style={{ width: `${f.points}%`, background: color(f.dimension) }} />
+                  <div className="relative h-1.5 overflow-hidden bg-raised" role="meter" aria-label={dim(f.dimension)} aria-valuenow={f.points} aria-valuemin={0} aria-valuemax={f.weight}>
+                    <div className="absolute inset-y-0 left-0 bg-line-strong" style={{ width: `${f.weight}%` }} aria-hidden="true" />
+                    <div className="bar-grow absolute inset-y-0 left-0 " style={{ width: `${f.points}%`, background: color(f.dimension) }} />
                   </div>
                 </li>
               ))}
@@ -80,7 +80,7 @@ export default function IntelResults({ res }: { res: Res }) {
                   <span className="font-mono text-[11px] text-subtle">{String(n + 1).padStart(2, "0")}</span>
                   <span className="min-w-0">
                     <span className="block truncate text-[13px] font-medium text-fg">{r.acronym}</span>
-                    <span className="mt-1 flex h-1 overflow-hidden rounded-full bg-raised" aria-hidden="true">{r.factors.map((f) => <i key={f.dimension} style={{ width: `${f.points}%`, background: color(f.dimension) }} />)}</span>
+                    <span className="mt-1 flex h-1 overflow-hidden bg-raised" aria-hidden="true">{r.factors.map((f) => <i key={f.dimension} style={{ width: `${f.points}%`, background: color(f.dimension) }} />)}</span>
                   </span>
                   <span className="font-mono text-[13px] font-semibold tabular-nums text-fg">{r.score}</span>
                 </button>

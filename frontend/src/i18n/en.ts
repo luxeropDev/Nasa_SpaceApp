@@ -1,4 +1,6 @@
-export const en = {
+import { enV4 } from "./en_v4";
+
+const base = {
   // navigation / chrome
   "nav.overview": "Overview", "nav.explorer": "Research Explorer", "nav.assistant": "AI Research Assistant", "nav.compare": "Experiment Comparison", "nav.intel": "Fire Safety Intelligence", "nav.sources": "Data Sources",
   "nav.overview.full": "Mission Overview", "nav.explorer.full": "Investigation Explorer", "nav.assistant.full": "AI Research Assistant",
@@ -90,7 +92,7 @@ export const en = {
   "nav.graph": "Evidence Graph", "nav.scenarios": "Mission Scenario Analysis", "nav.reports": "Research Reports",
   "nav.g.research": "Research", "nav.g.intelligence": "Intelligence", "nav.g.resources": "Resources", "brand.home": "FLAMEWISE home",
   "nav.docs": "API documentation", "nav.docs.desc": "Interactive OpenAPI reference served by the backend", "nav.about": "About FLAMEWISE", "nav.about.desc": "Purpose, data provenance and live system status",
-  "nav.overview.desc": "Hero, metrics and research coverage", "nav.explorer.desc": "Search and filter NASA microgravity combustion investigations", "nav.compare.desc": "Compare conditions and findings of 2–4 experiments",
+  "nav.explorer.desc": "Search and filter NASA microgravity combustion investigations", "nav.compare.desc": "Compare conditions and findings of 2–4 experiments",
   "nav.assistant.desc": "Questions answered with traceable citations", "nav.intel.desc": "Transparent research-relevance scoring by scenario", "nav.graph.desc": "Relationships between experiments, sources and domains",
   "nav.scenarios.desc": "Evidence mapped to ISS, lunar and Mars contexts", "nav.reports.desc": "Printable, citation-complete research reports", "nav.sources.desc": "Provenance and link type of every source",
   "cmd.open": "Search research…", "cmd.title": "Search FLAMEWISE", "cmd.ph": "Search investigations, pages, or ask a question…", "cmd.results": "Results",
@@ -194,6 +196,53 @@ export const en = {
   "rp.limitNumeric": "The knowledge base stores no numerical measurements (e.g. oxygen concentration, flow speed); those values are reported as not available.",
   // sources v2
   "so.eyebrow": "Provenance", "so.provenance": "Records were curated for a starter knowledge base; the dataset does not store retrieval dates. Catalog-search links must be refined to specific papers by the researcher.",
+  // v3 — scientific research platform redesign
+  "nav.overview.desc": "Dataset status, programs and research coverage",
+  "ov2.kicker": "Research portal · microgravity combustion & spacecraft fire safety", "ov2.dataset": "Dataset {v}",
+  "ov2.title": "Microgravity Combustion Research",
+  "ov2.lead": "A curated catalog of NASA combustion investigations (BASS, Saffire, FLEX, ACME and others) with keyword search, source-linked findings, experiment comparison and mission-relevance analysis. Records are qualitative; no measurements are stored.",
+  "ov2.search.ph": "Search investigations, identifiers or topics — e.g. SAFFIRE, droplet, smoke", "ov2.search.go": "Search", "ov2.search.hint": "Keyword ranking (BM25) over the indexed records. Opens the Research Explorer.",
+  "ov2.programs": "Investigation programs",
+  "ov2.programs.title": "Investigation programs", "ov2.programs.meta": "{n} programs · {total} records",
+  "ov2.col.id": "Record ID", "ov2.col.inv": "Investigation", "ov2.col.platform": "Hardware / platform", "ov2.col.domain": "Research domain", "ov2.col.records": "Records", "ov2.col.data": "Data coverage",
+  "ov2.ins.meta": "one finding per program · qualitative",
+  "ov2.cov.meta": "computed from curated tags",
+  "ov2.axis.records": "Records (count)",
+  "ov2.aside": "Dataset status and tools",
+  "ov2.ds.title": "Dataset status", "ov2.ds.sub": "Computed from the records themselves",
+  "ov2.ds.complete": "Records with complete metadata", "ov2.ds.o2": "Records with O\u2082 concentration", "ov2.ds.air": "Records with airflow speed",
+  "ov2.ds.date": "Experiment dates", "ov2.ds.direct": "Sources linking to a specific document", "ov2.ds.media": "Flame imagery / frames",
+  "ov2.ds.note": "Sources are NASA catalog searches and portals; specific papers must be selected and verified by the researcher.",
+  "ov2.tools": "Analysis tools",
+  // flame schematic
+  "fs.label": "Reference diagram · flame morphology",
+  "fs.title": "Diffusion flame shape in normal gravity and in microgravity",
+  "fs.desc": "Panel A: in 1 g, buoyant flow draws the flame into an elongated teardrop. Panel B: in microgravity there is no buoyant convection, oxygen reaches the flame by diffusion and the flame becomes near-spherical.",
+  "fs.a.flow": "buoyant air flow \u2191", "fs.b.flow": "O\u2082 by diffusion \u2192",
+  "fs.a": "Normal gravity: buoyancy elongates the flame.", "fs.b": "Microgravity: diffusion-controlled, near-spherical flame.",
+  "fs.note": "Schematic · not to scale · not measured data",
+  // data completeness
+  "dc.coverage": "{n} of {total} metadata fields stored",
+  "dc.flag.complete": "Complete metadata", "dc.flag.complete.hint": "Every schema field has a value.",
+  "dc.flag.partial": "Partial metadata", "dc.flag.partial.hint": "Some schema fields are empty in this record.",
+  "dc.flag.noNumeric": "No numerical measurements", "dc.flag.noNumeric.hint": "Neither oxygen concentration nor airflow speed is stored.",
+  "dc.flag.verify": "Source verification required", "dc.flag.verify.hint": "Sources are catalog searches or portals, not a specific document.",
+  "dc.flag.qualitative": "Qualitative findings only", "dc.flag.qualitative.hint": "Findings are text summaries; no numbers are stored.",
+  "dc.field.fuel_material": "Fuel material", "dc.field.hardware": "Hardware", "dc.field.gravity_environment": "Gravity environment", "dc.field.oxygen_concentration": "O\u2082 concentration",
+  "dc.field.airflow_speed": "Airflow speed", "dc.field.measurement_types": "Measurement types", "dc.field.findings": "Findings", "dc.field.source_ids": "Sources",
+  "ex2.filters": "Filters",
+  "det2.program": "Program", "det2.platform": "Platform / environment", "det2.date": "Experiment date", "det2.coverage": "Data coverage", "det2.contents": "Dossier contents",
+  "det2.publisher": "Publisher", "det2.docType": "Document type", "det2.pubDate": "Publication date", "det2.doi": "DOI / report no.",
+  "det2.dc.title": "Data completeness", "det2.dc.sub": "Which schema fields this record stores", "det2.stored": "stored",
+  "as2.kicker": "Analysis workspace · retrieval-grounded", "as2.examples": "Example research questions", "as2.query": "Query",
+  "as2.method": "How answers are produced",
+  "as2.m1": "Your question is ranked against the stored records with BM25 keyword retrieval.",
+  "as2.m2": "Findings of the top records are collected together with their source links.",
+  "as2.m3": "In live mode a language model writes the answer from that evidence only; in demo mode it is assembled by rules.",
+  "as2.m4": "Every inline citation is checked against the retrieved evidence; unmatched references are not shown as citations.",
+  "as2.legend": "Each answer section is labelled by what kind of statement it contains:",
+  "sc2.vis": "Evidence coverage · {s}", "sc2.visMeta": "record counts from the knowledge base · no physical simulation",
 } as const;
 
+export const en = { ...base, ...enV4 };
 export type Key = keyof typeof en;

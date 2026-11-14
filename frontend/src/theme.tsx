@@ -1,11 +1,12 @@
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import type { ReactNode } from "react";
+import { DarkZoneCtx } from "./zone";
 
 export type Theme = "light" | "dark";
 const STORE = "flamewise.theme";
 
 function initial(): Theme {
-  // the inline pre-paint script in index.html applies the saved theme (dark by default)
+  // the inline pre-paint script in index.html applies the saved theme (light by default)
   return document.documentElement.classList.contains("dark") ? "dark" : "light";
 }
 
@@ -38,13 +39,19 @@ export function useTheme() {
 }
 
 export type ChartTheme = { series: string[]; grid: string; axis: string; tipBg: string; tipBorder: string; text: string; cursor: string; node: Record<string, string>; edge: string; track: string };
-// five ordered series: blue, cyan, violet, orange, green — distinguishable in both themes, orange used once
+// Ordered categorical series: blue, teal, slate-violet, amber, green. Muted, distinguishable in both themes;
+// the combustion orange is reserved for safety-domain marks so it keeps meaning.
 const LIGHT: ChartTheme = {
-  series: ["#0369A1", "#0E7490", "#6D28D9", "#C2410C", "#047857"], grid: "#E2E8F0", axis: "#64748B", tipBg: "#FFFFFF", tipBorder: "#E2E8F0", text: "#111827", cursor: "#F1F5F9",
-  node: { investigation: "#0369A1", source: "#0E7490", research_domain: "#6D28D9", safety_domain: "#C2410C", fuel: "#047857", scenario: "#A16207" }, edge: "#94A3B8", track: "#E2E8F0",
+  series: ["#105BD8", "#0F7C8C", "#5B4BB7", "#B4500F", "#2F7D4F"], grid: "#E3E7EE", axis: "#687282", tipBg: "#FFFFFF", tipBorder: "#D9DEE7", text: "#172033", cursor: "#F1F3F7",
+  node: { investigation: "#0B3D91", source: "#0F7C8C", research_domain: "#5B4BB7", safety_domain: "#B4500F", fuel: "#2F7D4F", scenario: "#8A6A00", dataset: "#105BD8", document: "#6B4E16", context: "#8C2F39" }, edge: "#A8B2C2", track: "#E3E7EE",
 };
 const DARK: ChartTheme = {
-  series: ["#36BFFA", "#67E8F9", "#A78BFA", "#FF9B45", "#34D399"], grid: "rgba(148,163,184,.13)", axis: "#7A8AA0", tipBg: "#111827", tipBorder: "rgba(148,163,184,.27)", text: "#F8FAFC", cursor: "rgba(148,163,184,.08)",
-  node: { investigation: "#36BFFA", source: "#67E8F9", research_domain: "#A78BFA", safety_domain: "#FF9B45", fuel: "#34D399", scenario: "#FBBF24" }, edge: "#64748B", track: "#172235",
+  series: ["#6EA8FE", "#5CC4CF", "#A99BF0", "#E88842", "#6CCB91"], grid: "rgba(166,177,192,.12)", axis: "#8A96A7", tipBg: "#191F29", tipBorder: "#303B4A", text: "#EDF2F7", cursor: "rgba(166,177,192,.08)",
+  node: { investigation: "#6EA8FE", source: "#5CC4CF", research_domain: "#A99BF0", safety_domain: "#E88842", fuel: "#6CCB91", scenario: "#E0B04A", dataset: "#9EC5FF", document: "#D9B77A", context: "#E58A93" }, edge: "#5A6678", track: "#202936",
 };
-export const useChartTheme = (): ChartTheme => (useTheme().theme === "dark" ? DARK : LIGHT);
+/** Chart colors follow the surface they are drawn on: a dark zone forces the dark palette in either theme. */
+export const useChartTheme = (forceDark = false): ChartTheme => {
+  const zone = useContext(DarkZoneCtx);
+  const { theme } = useTheme();
+  return forceDark || zone || theme === "dark" ? DARK : LIGHT;
+};

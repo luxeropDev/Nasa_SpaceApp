@@ -33,7 +33,7 @@ export function Dialog({ open, onClose, title, description, children, wide = fal
   if (!open) return null;
   return createPortal(
     <div className="fixed inset-0 z-[60] grid place-items-center p-4">
-      <div className="absolute inset-0 bg-[#05070C]/70 backdrop-blur-sm" style={{ animation: "fadeIn .2s ease-out both" }} onClick={onClose} aria-hidden="true" />
+      <div className="absolute inset-0 bg-[#05070C]/70" style={{ animation: "fadeIn .2s ease-out both" }} onClick={onClose} aria-hidden="true" />
       <div ref={box} role="dialog" aria-modal="true" aria-label={title} className={`relative max-h-[88vh] w-full overflow-y-auto rounded-surface border border-line-strong bg-surface p-5 shadow-pop sm:p-6 ${wide ? "max-w-xl" : "max-w-md"}`} style={{ animation: "dialog-in .26s cubic-bezier(0.16,1,0.3,1) both" }}>
         <div className="mb-4 flex items-start justify-between gap-3">
           <div><h2 className="text-[17px] font-semibold text-fg">{title}</h2>{description && <p className="mt-1 text-[12.5px] leading-relaxed text-subtle">{description}</p>}</div>

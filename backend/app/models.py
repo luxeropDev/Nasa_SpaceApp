@@ -55,6 +55,7 @@ class Investigation(BaseModel):
     limitations: list[str]
     related: list[str]
     source_ids: list[str]
+    psi_accessions: list[str] = []
     record_type: str
     numeric_data_status: str
 
@@ -66,6 +67,15 @@ class Source(BaseModel):
     type: str
     url: str
     note: str = ""
+    category: str = "other"
+    evidence_class: str = "background"
+    verification: str = "unverified"
+    accessed: Optional[str] = None
+    date: Optional[str] = None
+    authors: list[str] = []
+    report_number: Optional[str] = None
+    doi: Optional[str] = None
+    challenge_resource: Optional[int] = None
 
     @computed_field  # type: ignore[prop-decorator]
     @property

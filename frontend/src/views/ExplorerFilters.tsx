@@ -1,4 +1,5 @@
-import { LayoutGrid, List, X } from "lucide-react";
+import { useState } from "react";
+import { LayoutGrid, List, SlidersHorizontal, X } from "lucide-react";
 import { SCENARIOS } from "../api";
 import type { Inv } from "../api";
 import { useI18n } from "../i18n";
@@ -35,9 +36,13 @@ export default function ExplorerFilters({ data, f, setF, sort, setSort, layout, 
     { k: "gravity", label: t("ex.f.gravity"), opts: opt(data.map((i) => i.gravity_environment)) },
   ];
   const active = defs.filter((d) => f[d.k]);
+  const [open, setOpen] = useState(false);
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 xl:grid-cols-6">
+      <button type="button" className="btn btn-sm md:hidden" aria-expanded={open} aria-controls="ex-filters" onClick={() => setOpen((o) => !o)}>
+        <SlidersHorizontal size={13} />{t("ex2.filters")}{active.length > 0 && <span className="font-mono text-accent">{active.length}</span>}
+      </button>
+      <div id="ex-filters" className={`${open ? "grid" : "hidden"} grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid xl:grid-cols-6`}>
         {defs.map((d) => <Sel key={d.k} id={`f-${d.k}`} label={d.label} value={f[d.k]} opts={d.opts} onChange={(v) => setF({ ...f, [d.k]: v })} />)}
       </div>
       <div className="flex flex-wrap items-center justify-between gap-3">

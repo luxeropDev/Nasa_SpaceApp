@@ -2,8 +2,17 @@ import { useMemo, useRef, useState } from "react";
 import { AlertTriangle, ChevronDown, Copy, FileSearch, RotateCcw } from "lucide-react";
 import { Chip, EpistemicTag } from "../components/ui";
 import { SourceLink } from "../components/research/SourceLink";
+import type { Key } from "../i18n";
 import Markdown from "../components/assistant/Markdown";
 import type { LinkKind } from "../api";
+import { CitationBlock, ClaimTag } from "../components/research/Evidence";
+import type { ClaimType } from "../components/research/Evidence";
+
+export type EvidenceItem = {
+  id: string; kind: "curated_finding" | "psi_record" | "document_passage"; investigation_id: string | null; text: string; verbatim: boolean; verification: string;
+  title: string; organization: string | null; year: string | null; url: string; doi: string | null; page: number | null; section: string | null; source_id: string | null; doc_id?: string;
+};
+export type Claim = { type: ClaimType; text: string; evidence: string[]; supported: boolean; context_id?: string };
 import { useI18n } from "../i18n";
 import { href } from "../nav";
 
@@ -13,6 +22,7 @@ export type Ans = {
   evidence: { investigation_id: string; citation: string; text: string; source_id: string; source_url: string }[];
   interpretation: string; exploration_relevance: string; knowledge_gaps: string[];
   sources: { id: string; title: string; url: string; type: string; link_kind: LinkKind; publisher: string }[]; pipeline: string[];
+  evidence_items?: EvidenceItem[]; claims?: Claim[]; safety_note?: string;
 };
 
 const Section = ({ title, tag, children }: { title: string; tag?: React.ReactNode; children: React.ReactNode }) => (
@@ -33,7 +43,6 @@ export default function AnswerView({ ans, onCopy, onRetry }: { ans: Ans; onCopy:
   const aside = useRef<HTMLDivElement>(null);
   const invIds = useMemo(() => new Set(ans.investigations.map((i) => i.id)), [ans]);
   const acr = useMemo(() => Object.fromEntries(ans.investigations.map((i) => [i.id, i.acronym])), [ans]);
-  const srcById = useMemo(() => Object.fromEntries(ans.sources.map((s) => [s.id, s])), [ans]);
 
   // citation key -> marker number, in order of first appearance across the answer text
   const order = useMemo(() => {
@@ -46,7 +55,11 @@ export default function AnswerView({ ans, onCopy, onRetry }: { ans: Ans; onCopy:
     }
     return m;
   }, [ans, invIds]);
-  const matches = (k: string, e: Ans["evidence"][number]) => e.citation === `[${k}]` || e.investigation_id === k;
+  const items = ans.evidence_items ?? [];
+  const claims = ans.claims ?? [];
+  // a focus key is either an evidence id ("E3"), an investigation id, or a legacy inline citation token
+  const matches = (k: string, e: EvidenceItem) => e.id === k || e.investigation_id === k
+    || (e.kind === "curated_finding" && ans.evidence.some((x) => x.citation === `[${k}]` && x.investigation_id === e.investigation_id && x.text === e.text));
 
   const open = (k: string) => {
     setFocus(k);
@@ -58,7 +71,7 @@ export default function AnswerView({ ans, onCopy, onRetry }: { ans: Ans; onCopy:
     const label = invIds.has(token) ? acr[token] : token;
     return (
       <button key={key} type="button" onClick={() => open(token)} aria-label={t("as.citeOpen", { n, name: label })} title={label}
-        className={`mx-0.5 inline-flex h-[18px] min-w-[18px] -translate-y-px items-center justify-center rounded-[5px] border px-1 align-middle font-mono text-[10.5px] font-semibold transition-colors ${focus === token ? "border-accent bg-accent text-white dark:text-[#04121c]" : "border-accent/35 bg-accent/10 text-accent hover:bg-accent/20"}`}>
+        className={`mx-0.5 inline-flex h-[18px] min-w-[18px] -translate-y-px items-center justify-center rounded-[5px] border px-1 align-middle font-mono text-[10.5px] font-semibold transition-colors ${focus === token ? "border-accent bg-accent text-on-accent" : "border-accent/35 bg-accent/10 text-accent hover:bg-accent/20"}`}>
         {n}
       </button>
     );
@@ -84,6 +97,28 @@ export default function AnswerView({ ans, onCopy, onRetry }: { ans: Ans; onCopy:
           {ans.insufficient_evidence && <p className="mt-3 flex items-center gap-2 rounded-ctl border border-danger/25 bg-danger/[.06] px-3 py-2 text-[12.5px] text-danger"><AlertTriangle size={14} />{t("as.insufficient")}</p>}
           {order.size > 0 && <p className="mt-2 text-[11.5px] text-subtle">{t("as.citeHint")}</p>}
         </section>
+
+        {claims.length > 0 && (
+          <Section title={t("v4.as.claims")} tag={<span className="text-[11px] text-subtle">{t("v4.as.claimsSub")}</span>}>
+            <ul className="space-y-3">
+              {claims.map((c, k) => (
+                <li key={k} className="grid gap-x-3 gap-y-1 sm:grid-cols-[150px_1fr]">
+                  <span className="flex items-start gap-1.5"><ClaimTag type={c.type} /></span>
+                  <div className="min-w-0">
+                    <p className={`text-[13.5px] leading-relaxed ${c.type === "EVIDENCE" ? "text-fg" : "text-muted"}`}>{c.type === "EVIDENCE" ? <>“{c.text}”</> : c.text}</p>
+                    <p className="mt-1 flex flex-wrap items-center gap-1.5 text-[11px] text-subtle">
+                      {c.evidence.map((id) => (
+                        <button key={id} type="button" onClick={() => open(id)} className={`rounded-[4px] border px-1 font-mono ${focus === id ? "border-accent bg-accent text-on-accent" : "border-accent/35 bg-accent/10 text-accent hover:bg-accent/20"}`}>{id}</button>
+                      ))}
+                      {c.type === "EVIDENCE" ? <span>{c.supported ? t("v4.as.supported") : t("v4.as.unsupported")}</span> : c.evidence.length === 0 && <span>{t("v4.as.noDirect")}</span>}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            {ans.safety_note && <p className="mt-3 rounded-ctl border border-dashed border-line-strong px-3 py-2 text-[11.5px] leading-relaxed text-subtle">{ans.safety_note}</p>}
+          </Section>
+        )}
 
         {ans.investigations.length > 0 && (
           <Section title={t("as.sec2")} tag={<span className="font-mono text-[10.5px] text-subtle">{t("as.retrievedBy")}</span>}>
@@ -116,20 +151,18 @@ export default function AnswerView({ ans, onCopy, onRetry }: { ans: Ans; onCopy:
         <div className="rounded-card border border-line bg-raised/60 p-4">
           <div className="flex items-center gap-2"><FileSearch size={15} className="text-accent" aria-hidden="true" /><h3 className="text-[13px] font-semibold text-fg">{t("as.sources.title")}</h3></div>
           <p className="mt-1 text-[11.5px] leading-relaxed text-subtle">{t("as.sources.sub")}</p>
-          {ans.evidence.length === 0 ? <p className="mt-4 text-[12.5px] text-muted">{t("as.noSources")}</p> : (
+          {items.length === 0 ? <p className="mt-4 text-[12.5px] text-muted">{t("as.noSources")}</p> : (
             <ol className="mt-3 space-y-2">
-              {ans.evidence.map((e, k) => {
+              {items.map((e) => {
                 const hit = focus !== null && matches(focus, e);
-                const s = srcById[e.source_id];
-                const n = Array.from(order.entries()).find(([key]) => matches(key, e))?.[1];
                 return (
-                  <li key={k} data-hit={hit ? "1" : "0"} className={`rounded-ctl border p-3 transition-colors duration-200 ${hit ? "border-accent/60 bg-accent/[.07]" : "border-line bg-surface"}`}>
-                    <div className="flex items-center justify-between gap-2">
-                      <a href={href("explorer", e.investigation_id)} className="text-[12.5px] font-semibold text-fg hover:text-accent">{acr[e.investigation_id] ?? e.investigation_id}</a>
-                      {n && <span className="grid h-[18px] min-w-[18px] place-items-center rounded-[5px] border border-accent/35 bg-accent/10 px-1 font-mono text-[10.5px] font-semibold text-accent">{n}</span>}
-                    </div>
-                    <p className="mt-1.5 text-[12.5px] leading-relaxed text-muted">“{e.text}”</p>
-                    <div className="mt-2">{s ? <SourceLink title={s.title} url={s.url} kind={s.link_kind} compact /> : <SourceLink title={e.source_id} url={e.source_url} compact />}</div>
+                  <li key={e.id} data-hit={hit ? "1" : "0"} className={`rounded-ctl border p-3 transition-colors duration-200 ${hit ? "border-accent/60 bg-accent/[.07]" : "border-line bg-surface"}`}>
+                    <p className="mb-1.5 flex items-center justify-between gap-2 text-[11px] text-subtle">
+                      <span>{t(`v4.ek.${e.kind}` as Key)}</span>
+                      {e.investigation_id && <a href={href("explorer", e.investigation_id)} className="font-mono text-[11px] text-accent hover:underline">{acr[e.investigation_id] ?? e.investigation_id}</a>}
+                    </p>
+                    <CitationBlock id={e.id} title={e.title} org={e.organization} year={e.year} url={e.url} doi={e.doi} page={e.page} section={e.section}
+                      excerpt={e.verbatim ? `“${e.text}”` : e.text} verification={e.verification} />
                   </li>
                 );
               })}

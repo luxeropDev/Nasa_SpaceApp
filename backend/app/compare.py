@@ -1,3 +1,5 @@
+from . import psi
+from .data_loader import INV
 from .i18n_data import invs
 from .texts import T, table
 
@@ -38,6 +40,7 @@ def compare(ids: list[str], lang: str = "en") -> dict:
         elif all(v == canon[0] for v in canon): status = "same"
         else: status = "different"
         rows.append({"key": key, "label": labels[key], "values": vals, "status": status})
+    rows += psi_rows(ids, labels)
     same = [r["label"] for r in rows if r["status"] == "same"]
     diff = [r["label"] for r in rows if r["status"] == "different"]
     miss = [r["label"] for r in rows if r["status"] in ("missing", "partial_missing")]
@@ -46,3 +49,40 @@ def compare(ids: list[str], lang: str = "en") -> dict:
     summary = T(lang, "cmp_summary", names=", ".join(i.acronym for i in items), ns=len(same), same=", ".join(same) or none, nd=len(diff),
                 diff=", ".join(diff) or none, nm=len(miss), miss=", ".join(miss) or none, shared=", ".join(scen[s] for s in shared) or none)
     return {"investigations": [{"id": i.id, "acronym": i.acronym, "full_name": i.full_name} for i in items], "rows": rows, "summary": summary}
+
+
+def _fmt_num(x: float) -> str:
+    return f"{x:.4g}"
+
+
+def psi_rows(ids: list[str], labels: dict) -> list[dict]:
+    """Experimental-condition rows from the linked PSI experiment tables.
+
+    Values are column ranges exactly as published, each with its own column header (unit). Ranges from different
+    columns or units are never normalised; such rows get status "not_comparable" and missing tables stay "missing"."""
+    rows = [{"key": "psi_dataset", "label": labels["psi_dataset"],
+             "values": [[f"{a} · DOI {psi.PSI[a]['doi']}" for a in INV[i].psi_accessions] or None for i in ids], "status": "reference"}]
+    for param in ("oxygen", "pressure", "flow", "fuel", "result"):
+        vals, cols = [], []
+        for i in ids:
+            cs = [c for a in INV[i].psi_accessions for c in psi.conditions(a) if c["parameter"] == param]
+            if not cs:
+                vals.append(None)
+                cols.append(None)
+                continue
+            out = []
+            for c in cs[:4]:
+                rng = f"{_fmt_num(c['min'])}–{_fmt_num(c['max'])}" if c.get("kind") == "numeric" else ", ".join(map(str, c.get("examples", [])[:4]))
+                out.append(f"{rng} [{c['column']}] · {c['accession']}, {c['filled_rows']}/{c['total_rows']}")
+            vals.append(out)
+            cols.append(tuple(sorted(c["column"].lower() for c in cs)))
+        if all(v is None for v in vals):
+            status = "missing"
+        elif any(v is None for v in vals):
+            status = "partial_missing"
+        elif len(set(cols)) == 1:
+            status = "same_basis"
+        else:
+            status = "not_comparable"
+        rows.append({"key": "psi_" + param, "label": labels["psi_" + param], "values": vals, "status": status})
+    return rows

@@ -73,7 +73,7 @@ export default function CommandSearch({ open, onClose }: { open: boolean; onClos
   let lastKind = "";
   return createPortal(
     <div className="fixed inset-0 z-[65] flex items-start justify-center px-3 pt-[10vh]" onKeyDown={onKey}>
-      <div className="absolute inset-0 bg-[#05070C]/70 backdrop-blur-sm" style={{ animation: "fadeIn .18s ease-out both" }} onClick={onClose} aria-hidden="true" />
+      <div className="absolute inset-0 bg-[#05070C]/70" style={{ animation: "fadeIn .18s ease-out both" }} onClick={onClose} aria-hidden="true" />
       <div role="dialog" aria-modal="true" aria-label={t("cmd.title")} className="relative w-full max-w-xl overflow-hidden rounded-surface border border-line-strong bg-surface shadow-pop" style={{ animation: "dialog-in .24s cubic-bezier(0.16,1,0.3,1) both" }}>
         <div className="flex items-center gap-3 border-b border-line px-4">
           <Search size={17} className="shrink-0 text-subtle" aria-hidden="true" />

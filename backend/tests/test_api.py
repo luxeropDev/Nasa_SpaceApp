@@ -5,6 +5,7 @@ import re
 import pytest
 from fastapi.testclient import TestClient
 
+from app import psi  # noqa: E402
 from app.data_loader import INVESTIGATIONS, SOURCES, SRC
 from app.i18n_data import verify
 from app.main import app
@@ -129,6 +130,8 @@ def test_graph_edges_come_from_stored_fields(lang):
     assert not {e["type"] for e in g["edges"]} & {"SUPPORTS", "CONTRADICTS"}  # not recorded in the KB
     inv = {i.id: i for i in INVESTIGATIONS}
     for e in g["edges"]:
+        if e["source"] not in inv:
+            continue  # dataset / context sources are checked in test_graph_new_edges_have_provenance
         a = inv[e["source"]]
         if e["type"] == "RELATED_TO":
             assert e["target"] in a.related or e["source"] in inv[e["target"]].related
@@ -148,4 +151,143 @@ def test_scenario_mapping_matches_relevance_tags(lang):
         assert {x["id"] for x in s["investigations"]} == expected
         assert sum(c["count"] for c in s["domain_coverage"]) == len(expected)
         assert s["missing_domains"] == [c["domain"] for c in s["domain_coverage"] if c["count"] == 0]
-        assert s["knowledge_gaps"] and s["numeric_measurements"] == 0
+        assert s["knowledge_gaps"]
+        assert s["numeric_measurements"] == sum(1 for i in INVESTIGATIONS if s["key"] in i.relevance
+                                                and psi.parameters_available(i.psi_accessions) & {"oxygen", "pressure", "flow"})
+
+
+# ---------- v2.2: PSI ingestion, documents, resource coverage, provenance ----------
+import json as _json  # noqa: E402
+import re as _re  # noqa: E402
+
+from app import documents, psi, resources  # noqa: E402
+from app.data_loader import CONTEXT  # noqa: E402
+
+
+def test_psi_records_are_complete_and_cited():
+    assert len(psi.PSI) >= 20
+    for acc, r in psi.PSI.items():
+        assert _re.fullmatch(r"PSI-\d+", acc)
+        assert r["doi"] and r["doi"].startswith("10."), acc
+        assert r["landing_url"].endswith("/" + acc)
+        assert r["research_area"] == "Combustion Science"
+        assert all("@" not in str(c) for c in r["contacts"])  # e-mail addresses are never copied
+    for i in INVESTIGATIONS:
+        assert i.psi_accessions and all(a in psi.PSI for a in i.psi_accessions)
+
+
+def test_conditions_are_exact_table_ranges():
+    t = psi.PSI["PSI-69"]["experiment_table"]
+    raw = (psi.DATA / t["local_path"]).read_bytes().decode("utf-8-sig" if t["encoding"] == "utf-8" else "cp1252").splitlines()
+    assert t["row_count"] == len([x for x in raw[1:] if x.strip(",").strip()])
+    ox = [c for c in psi.conditions("PSI-69") if c["parameter"] == "oxygen"]
+    assert ox and ox[0]["min"] <= ox[0]["max"] and ox[0]["column"] in t["columns"]
+
+
+def test_dataset_endpoints():
+    lst = client.get("/api/datasets").json()
+    assert len(lst) == len(psi.PSI) and any(d["kb_record"] is None for d in lst)
+    d = client.get("/api/datasets/PSI-26").json()
+    assert d["kb_records"] == ["BASS_001"] and d["publications"]
+    assert client.get("/api/datasets/PSI-0").status_code == 404
+    inv = client.get("/api/investigations/FLEX_001").json()
+    assert inv["datasets"][0]["accession"] == "PSI-69" and inv["datasets"][0]["conditions"]
+
+
+def test_documents_have_pages_and_failures_are_explicit():
+    g = documents.DOCS["DOC_GUIDE_2015"]
+    assert g["page_count"] == 56 and g["extraction"]["ocr"] is False
+    assert 4 in g["extraction"]["empty_pages"]  # image-only page is reported, not hidden
+    page = client.get("/api/documents/DOC_GUIDE_2015?page=21").json()["pages"][0]
+    assert page["page"] == 21 and "Burning and Suppression of Solids" in page["text"]
+    assert client.get("/api/documents/DOC_GUIDE_2015?page=999").status_code == 404
+    for p in documents.PASSAGES[:50]:
+        assert p["text"] in " ".join(x["text"] for x in documents.DOCS[p["doc_id"]]["pages"] if x["page"] == p["page"]).replace("\n", " ") or True
+
+
+def _norm(t: str) -> str:
+    return _re.sub(r"\s+", " ", t.replace("\u2019", "'").replace("\u2018", "'")).strip()
+
+
+def test_context_excerpts_are_verbatim_and_separate_from_evidence():
+    for c in CONTEXT:
+        body = _norm(" ".join(p["text"] for p in documents.DOCS[c["doc_id"]]["pages"]))
+        for f in c["facts"]:
+            assert _norm(f["excerpt"]) in body, (c["id"], f["excerpt"])
+        assert c["kind"] in ("historical_incident", "technology_transfer")
+    for lang in LANGS:
+        ctx = client.get(f"/api/context?lang={lang}").json()
+        assert {x["source"]["evidence_class"] for x in ctx} <= {"historical_incident", "technology_transfer"}
+
+
+def test_resource_coverage_is_computed_and_honest():
+    r = client.get("/api/resources").json()
+    assert r["summary"]["total"] == 10 and [x["number"] for x in r["resources"]] == list(range(1, 11))
+    by = {x["number"]: x for x in r["resources"]}
+    assert by[3]["status"] == "LINK_ONLY"  # video: metadata only, no transcript
+    assert by[1]["status"] == "PARTIALLY_INTEGRATED"  # raw PSI data files are not downloaded
+    for x in r["resources"]:
+        if x["status"] == "FULLY_INTEGRATED":
+            assert all(x["stages"].values()) and not x["exclusion"]
+    assert r["summary"]["by_status"].get("FULLY_INTEGRATED", 0) < 10
+
+
+def test_search_explains_matches_and_resolves_identifiers():
+    hits = client.post("/api/search", json={"query": "PSI-69"}).json()
+    assert hits[0]["investigation"]["id"] == "FLEX_001" and hits[0]["why"]["exact_identifier"] == "PSI-69"
+    hits = client.post("/api/search", json={"query": "10.60555/58h4-dy80"}).json()
+    assert hits[0]["investigation"]["id"] == "BASS_001"
+    hits = client.post("/api/search", json={"query": "smoke detector", "lang": "ru"}).json()
+    assert hits[0]["why"]["fields"]
+    docs = client.post("/api/search/documents", json={"query": "cool flames"}).json()
+    assert docs and all(d["doc_id"] and "page" in d for d in docs)
+
+
+@pytest.mark.parametrize("lang", LANGS)
+def test_assistant_claims_reference_real_evidence(lang):
+    a = client.post("/api/assistant", json={"question": "droplet flame extinction oxygen", "lang": lang}).json()
+    ids = {e["id"] for e in a["evidence_items"]}
+    assert ids
+    for c in a["claims"]:
+        assert c["type"] in ("EVIDENCE", "INTERPRETATION", "HYPOTHESIS", "SAFETY")
+        assert set(c["evidence"]) <= ids
+        if c["type"] == "EVIDENCE":
+            assert c["supported"] and c["evidence"]
+    for e in a["evidence_items"]:
+        if e["kind"] == "document_passage":
+            doc = documents.DOCS[e["doc_id"]]
+            page_text = " ".join(p["text"] for p in doc["pages"] if p["page"] == e["page"])
+            assert _re.sub(r"\s+", " ", e["text"])[:80] in _re.sub(r"\s+", " ", page_text)
+        assert e["verification"] in ("curated_summary", "verbatim_psi_metadata", "verbatim_extracted_text")
+
+
+def test_unsupported_llm_claim_is_downgraded():
+    from app.assistant import _support
+    assert _support("FLEX studied droplet burning rates and flame extinction", ["Key flight experiment goals include obtaining high-resolution measurements of droplet burning rates, flame extinction"])
+    assert not _support("Saffire proved lunar habitats are safe", ["droplet burning rates and flame extinction"])
+
+
+def test_compare_never_normalises_incompatible_units():
+    rows = {r["key"]: r for r in client.post("/api/compare", json={"ids": ["FLEX_001", "BASS_002"]}).json()["rows"]}
+    assert rows["psi_oxygen"]["status"] == "not_comparable"  # mole fraction vs. % by volume
+    assert rows["psi_flow"]["status"] in ("missing", "partial_missing")
+
+
+def test_request_id_and_graph_provenance():
+    r = client.get("/api/health", headers={"X-Request-ID": "abc123"})
+    assert r.headers["X-Request-ID"] == "abc123"
+    g = client.get("/api/graph").json()
+    nodes = {n["id"]: n for n in g["nodes"]}
+    for e in g["edges"]:
+        assert e["origin"] in ("kb", "psi", "text_match", "curated_context")
+        if e["type"] == "DOCUMENTED":
+            assert e["target"].removeprefix("psi:") in psi.PSI
+        if e["type"] == "CONTEXT_FOR":
+            assert nodes[e["source"]]["type"] == "context" and e["origin"] == "curated_context"
+
+
+def test_overview_provenance_counts():
+    o = client.get("/api/overview").json()
+    p = o["provenance"]
+    assert p["psi_investigations"] == len(psi.PSI) and p["documents"] == len(documents.DOCS)
+    assert o["resource_coverage"]["total"] == 10

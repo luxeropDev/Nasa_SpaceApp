@@ -14,7 +14,6 @@ for _f in sorted(DATA.glob("i18n_ru_records_*.json")):
     _REC.update(json.loads(_f.read_text(encoding="utf-8")))
 _MISC = json.loads((DATA / "i18n_ru_misc.json").read_text(encoding="utf-8"))
 
-NUMERIC_STATUS_RU = "Числовые результаты не включены; см. связанные источники NASA."
 
 
 def localize_inv(inv: Investigation, lang: str) -> Investigation:
@@ -35,15 +34,25 @@ def localize_inv(inv: Investigation, lang: str) -> Investigation:
     d["gravity_environment"] = _MISC["gravity"][inv.gravity_environment]
     d["research_domain"] = _MISC["research_domain"][inv.research_domain]
     d["measurement_types"] = [_MISC["measure"][m] for m in inv.measurement_types]
-    d["numeric_data_status"] = NUMERIC_STATUS_RU
+    d["numeric_data_status"] = numeric_status(inv, "ru")
     return Investigation(**d)
+
+
+def numeric_status(inv: Investigation, lang: str) -> str:
+    """Honest statement of what quantitative data exists for a record (PSI experiment tables, if linked)."""
+    from . import psi
+    from .texts import T
+    rows = sum((psi.PSI.get(a, {}).get("experiment_table") or {}).get("row_count", 0) for a in inv.psi_accessions)
+    if rows:
+        return T(lang, "numeric_psi", accs=", ".join(inv.psi_accessions), rows=rows)
+    return T(lang, "numeric_status")
 
 
 def localize_source(s: Source, lang: str) -> Source:
     if lang != "ru":
         return s
     t = _MISC["sources"][s.id]
-    return Source(id=s.id, title=t["title"], publisher=s.publisher, type=t["type"], url=s.url, note=t["note"])
+    return s.model_copy(update={"title": t["title"], "type": t["type"], "note": t["note"]})
 
 
 def localize_domain(name: str, lang: str) -> str:

@@ -5,6 +5,7 @@ safety domains, their stored limitations and the knowledge gaps that apply.
 """
 from collections import Counter
 
+from . import psi
 from .data_loader import INVESTIGATIONS, SCENARIOS
 from .i18n_data import invs, srcs
 from .texts import T, table
@@ -45,6 +46,9 @@ def mapping(lang: str = "en") -> list[dict]:
             "sources": [{"id": s, "title": src[s].title, "url": src[s].url, "link_kind": src[s].link_kind} for s in source_ids],
             "limitations": list(dict.fromkeys(l for i in recs for l in loc[i.id].limitations))[:8],
             "knowledge_gaps": scenario_gaps(key, lang),
-            "numeric_measurements": 0,  # the knowledge base stores no numerical results
+            # records whose linked PSI experiment table states oxygen, pressure or flow per test (counts, not values)
+            "numeric_measurements": sum(1 for i in recs if psi.parameters_available(i.psi_accessions) & {"oxygen", "pressure", "flow"}),
+            "datasets": [{"investigation": i.id, "accession": a, "doi": psi.PSI[a]["doi"], "url": psi.PSI[a]["landing_url"],
+                          "parameters": sorted(psi.parameters_available([a]))} for i in recs for a in i.psi_accessions],
         })
     return out

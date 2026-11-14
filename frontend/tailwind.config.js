@@ -20,16 +20,20 @@ export default {
         subtle: v("subtle"),
         accent: v("accent"),
         brand: v("brand"),
+        navy: v("navy"),
+        "on-accent": v("on-accent"),
         cyan: v("cyan"),
         warn: v("warn"),
         ok: v("ok"),
         danger: v("danger"),
       },
       fontFamily: {
-        sans: ["Inter", "ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "sans-serif"],
-        mono: ["IBM Plex Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        // NASA Horizon-inspired hierarchy: Inter for headings, Public Sans for reading text, DM Mono for identifiers and numbers
+        sans: ["Public Sans", "ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "sans-serif"],
+        display: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        mono: ["DM Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
-      borderRadius: { ctl: "8px", btn: "10px", card: "14px", surface: "20px" },
+      borderRadius: { ctl: "4px", btn: "4px", card: "6px", surface: "8px" },
       boxShadow: { card: "var(--shadow-card)", pop: "var(--shadow-pop)" },
       transitionTimingFunction: { out: "cubic-bezier(0.16, 1, 0.3, 1)" },
       keyframes: {

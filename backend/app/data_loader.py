@@ -3,7 +3,7 @@ from pathlib import Path
 from .models import Investigation, Source
 
 DATA = Path(__file__).resolve().parent.parent / "data"
-DATASET_VERSION = "starter-kb-0.1"
+DATASET_VERSION = "kb-2.0+psi"
 
 SCENARIOS = {
     "iss": "International Space Station",
@@ -28,6 +28,17 @@ def load():
 INVESTIGATIONS, SOURCES = load()
 INV = {i.id: i for i in INVESTIGATIONS}
 SRC = {s.id: s for s in SOURCES}
+
+CONTEXT = json.loads((DATA / "context_records.json").read_text(encoding="utf-8"))
+
+from . import psi as _psi  # noqa: E402
+from .i18n_data import numeric_status as _ns  # noqa: E402
+
+# PSI linkage: every accession must exist in the ingested PSI records; numeric status reflects PSI tables
+for _i in INVESTIGATIONS:
+    for _a in _i.psi_accessions:
+        assert _a in _psi.PSI, f"{_i.id} references PSI accession {_a} that is not in psi_records.json"
+    _i.numeric_data_status = _ns(_i, "en")
 
 # integrity check: every referenced source exists
 for _i in INVESTIGATIONS:

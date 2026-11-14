@@ -63,13 +63,13 @@ export default function Comparator({ params }: { params: URLSearchParams }) {
       actions={res && ids.length >= 2 ? (<>
         <button className="btn btn-sm" onClick={() => exportAs("csv")}><Download size={14} />CSV</button>
         <button className="btn btn-sm" onClick={() => exportAs("md")}><Download size={14} />Markdown</button>
-        <a className="btn-cut-sm btn-cut" href={href("reports", null, { ids: ids.join(",") })}><FileText size={14} />{t("cp.toReport")}</a>
+        <a className="btn btn-primary" href={href("reports", null, { ids: ids.join(",") })}><FileText size={14} />{t("cp.toReport")}</a>
       </>) : undefined}>
       <div className="panel space-y-4 p-4">
         <div className="flex flex-wrap items-center gap-2">
           {ids.map((id, n) => (
             <span key={id} className="inline-flex items-center gap-2 rounded-ctl border border-line-strong bg-raised py-1 pl-2.5 pr-1 text-[13px]">
-              <span className="font-mono text-[10.5px] text-brand">{String.fromCharCode(65 + n)}</span>
+              <span className="font-mono text-[10.5px] text-accent">{String.fromCharCode(65 + n)}</span>
               <span className="font-semibold text-fg">{byId[id]?.acronym ?? id}</span>
               <button className="rounded p-1 text-subtle hover:bg-hover hover:text-fg" onClick={() => setIds(ids.filter((x) => x !== id))} aria-label={t("cp.remove", { name: byId[id]?.acronym ?? id })}><X size={13} /></button>
             </span>

@@ -5,6 +5,7 @@ import { useGet, ErrorBox, Page, PageSkeleton, Panel, EpistemicTag, Empty } from
 import { SourceLink } from "../components/research/SourceLink";
 import { useI18n } from "../i18n";
 import { go, href } from "../nav";
+import { DarkZone } from "../zone";
 
 /** Mission scenario research mapping — evidence organisation, never a fire simulation. */
 export default function Scenarios({ params }: { params: URLSearchParams }) {
@@ -30,7 +31,7 @@ export default function Scenarios({ params }: { params: URLSearchParams }) {
               <span className="font-mono text-[10.5px] text-subtle">0{n + 1}</span>
               <span className={`mt-2 block text-[14px] font-semibold leading-tight ${on ? "text-fg" : "text-muted group-hover:text-fg"}`}>{tc("scen", x.key)}</span>
               <span className="mt-2 block text-[11.5px] text-subtle">{t("sc.tabMeta", { n: x.investigations.length, d: 4 - x.missing_domains.length })}</span>
-              {on && <span className="absolute inset-x-0 bottom-0 h-0.5 bg-brand" aria-hidden="true" />}
+              {on && <span className="absolute inset-x-0 bottom-0 h-0.5 bg-accent" aria-hidden="true" />}
             </button>
           );
         })}
@@ -41,6 +42,11 @@ export default function Scenarios({ params }: { params: URLSearchParams }) {
         <p><b className="font-semibold text-fg">{t("sc.notSim")}</b> {t("sc.notSimBody")}</p>
       </div>
 
+      <DarkZone as="section" aria-labelledby="sc-vis" className="space-y-4 rounded-card border border-line p-4 sm:p-5">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 id="sc-vis" className="font-display text-[16px] font-semibold text-fg">{t("sc2.vis", { s: tc("scen", s.key) })}</h2>
+        <span className="font-mono text-[11px] text-subtle">{t("sc2.visMeta")}</span>
+      </div>
       <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-card border border-line bg-line lg:grid-cols-4">
         {([
           [t("sc.k.records"), s.investigations.length, Layers],
@@ -50,7 +56,7 @@ export default function Scenarios({ params }: { params: URLSearchParams }) {
         ] as const).map(([l, v, I]) => (
           <div key={l} className="bg-surface p-4">
             <dt className="flex items-center gap-1.5 text-[12px] text-subtle"><I size={13} aria-hidden="true" />{l}</dt>
-            <dd className="mt-2 text-[26px] font-light leading-none tracking-tight text-fg tabular-nums">{v}</dd>
+            <dd className="mt-2 font-mono text-[24px] font-medium leading-none text-fg tabular-nums">{v}</dd>
           </div>
         ))}
       </dl>
@@ -65,7 +71,7 @@ export default function Scenarios({ params }: { params: URLSearchParams }) {
                     <span className="text-fg">{tc("sd", c.domain)}</span>
                     <span className={`font-mono text-[11.5px] ${c.count ? "text-muted" : "text-warn"}`}>{c.count ? t("sc.records", { n: c.count }) : t("sc.gap")}</span>
                   </div>
-                  <div className="h-1.5 overflow-hidden rounded-full bg-raised">{c.count > 0 ? <div className="bar-grow h-full rounded-full bg-accent" style={{ width: `${(c.count / maxCov) * 100}%` }} /> : <div className="h-full w-full border border-dashed border-warn/60" />}</div>
+                  <div className="h-1.5 overflow-hidden bg-raised">{c.count > 0 ? <div className="bar-grow h-full  bg-accent" style={{ width: `${(c.count / maxCov) * 100}%` }} /> : <div className="h-full w-full border border-dashed border-warn/60" />}</div>
                 </a>
               </li>
             ))}
@@ -86,6 +92,7 @@ export default function Scenarios({ params }: { params: URLSearchParams }) {
           </ul>
         </Panel>
       </div>
+      </DarkZone>
 
       <Panel title={t("sc.evidence")} sub={t("sc.evidenceSub")}>
         {s.investigations.length === 0 ? <Empty compact icon={Layers} text={t("sc.noEvidence")} /> : (

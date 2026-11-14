@@ -1,4 +1,4 @@
-import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Panel } from "../components/ui";
 import { useTooltipStyle } from "../components/charts";
 import { useI18n } from "../i18n";
@@ -6,39 +6,33 @@ import { useChartTheme } from "../theme";
 
 type Props = { byDomain: { name: string; count: number }[]; byFuel: { key: string; count: number }[]; total: number };
 
+/**
+ * Two record-count distributions. Both plot the number of curated records (a count of catalog entries),
+ * not any physical measurement; the x-axis is labelled accordingly.
+ */
 export default function OverviewCharts({ byDomain, byFuel, total }: Props) {
   const { t, tc } = useI18n();
   const ch = useChartTheme();
   const tip = useTooltipStyle();
   const fuel = byFuel.map((f) => ({ name: tc("fuel", f.key), count: f.count }));
-  const color = (i: number) => ch.series[i % ch.series.length];
+  const axisLabel = { value: t("ov2.axis.records"), position: "insideBottom" as const, offset: -2, fill: ch.axis, fontSize: 11 };
+  const chart = (data: { name: string; count: number }[], h: number, w: number) => (
+    <div style={{ height: h }} role="img" aria-label={data.map((d) => `${d.name}: ${d.count}`).join("; ")}>
+      <ResponsiveContainer>
+        <BarChart data={data} layout="vertical" margin={{ left: 0, right: 16, bottom: 14 }}>
+          <CartesianGrid stroke={ch.grid} horizontal={false} />
+          <XAxis type="number" allowDecimals={false} stroke={ch.axis} fontSize={11} tickLine={false} label={axisLabel} />
+          <YAxis type="category" dataKey="name" width={w} stroke={ch.axis} fontSize={11} tickLine={false} axisLine={false} />
+          <Tooltip {...tip} formatter={(v) => [v, t("ov2.axis.records")]} />
+          <Bar dataKey="count" fill={ch.series[0]} barSize={12} isAnimationActive={false} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
   return (
-    <div className="grid gap-4 lg:grid-cols-5">
-      <Panel className="lg:col-span-3" title={t("ov.dist.title")} sub={t("ov.dist.sub")}>
-        <div className="h-64" role="img" aria-label={t("ov.dist.title")}><ResponsiveContainer>
-          <BarChart data={byDomain} layout="vertical" margin={{ left: 4, right: 12 }}>
-            <CartesianGrid stroke={ch.grid} horizontal={false} />
-            <XAxis type="number" allowDecimals={false} stroke={ch.axis} fontSize={11} tickLine={false} />
-            <YAxis type="category" dataKey="name" width={150} stroke={ch.axis} fontSize={11} tickLine={false} axisLine={false} />
-            <Tooltip {...tip} />
-            <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={14}>{byDomain.map((_, i) => <Cell key={i} fill={color(i)} />)}</Bar>
-          </BarChart>
-        </ResponsiveContainer></div>
-      </Panel>
-      <Panel className="lg:col-span-2" title={t("ov.land.title")} sub={t("ov.land.sub")}>
-        <div className="relative h-64" role="img" aria-label={t("ov.land.title")}>
-          <ResponsiveContainer>
-            <PieChart>
-              <Pie data={fuel} dataKey="count" nameKey="name" innerRadius={64} outerRadius={86} stroke="none" paddingAngle={2} cornerRadius={3}>
-                {fuel.map((_, i) => <Cell key={i} fill={color(i)} />)}
-              </Pie>
-              <Tooltip {...tip} />
-            </PieChart>
-          </ResponsiveContainer>
-          <div className="pointer-events-none absolute inset-0 grid place-items-center text-center"><div><div className="text-[34px] font-light tracking-tight text-fg tabular-nums">{total}</div><div className="label">{t("ov.land.total")}</div></div></div>
-        </div>
-        <ul className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-muted">{fuel.map((f, i) => <li key={f.name} className="flex items-center gap-1.5"><i className="h-2 w-2 rounded-full" style={{ background: color(i) }} />{f.name} · {f.count}</li>)}</ul>
-      </Panel>
+    <div className="grid gap-4 xl:grid-cols-5">
+      <Panel className="xl:col-span-3" title={t("ov.dist.title")} sub={t("ov.dist.sub")}>{chart(byDomain, 260, 150)}</Panel>
+      <Panel className="xl:col-span-2" title={t("ov.land.title")} sub={`${t("ov.land.sub")} · n = ${total}`}>{chart(fuel, 260, 90)}</Panel>
     </div>
   );
 }

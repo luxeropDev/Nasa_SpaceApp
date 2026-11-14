@@ -1,4 +1,5 @@
 """Transparent research RELEVANCE score. NOT a probability of fire, ignition or failure."""
+from . import psi
 from .data_loader import INVESTIGATIONS
 from .i18n_data import invs
 from .scenarios import scenario_gaps
@@ -24,7 +25,7 @@ def score(inv, scenario: str, domain: str) -> dict:
     if scenario == "lunar_rover" and inv.fuel_type != "solid": env -= 0.1
     fuel = DOMAIN_FUEL_PREF[domain].get(inv.fuel_type, 0.2)
     ev = min(1.0, 0.25 * len(inv.findings) + 0.15 * len(inv.source_ids) + 0.1 * (1 if inv.measurement_types else 0))
-    ev *= 0.8 if inv.numeric_data_status.startswith("No numerical") else 1.0
+    ev *= 1.0 if any((psi.PSI.get(a) or {}).get("experiment_table") for a in inv.psi_accessions) else 0.8
     sc = 1.0 if scenario in inv.relevance else 0.15
     dims = {"domain": d, "environment": min(env, 1), "fuel_material": fuel, "evidence": ev, "scenario": sc}
     factors = [{"dimension": k, "weight": WEIGHTS[k], "value": round(v, 2), "points": round(v * WEIGHTS[k], 1)} for k, v in dims.items()]

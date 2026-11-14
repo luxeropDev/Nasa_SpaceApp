@@ -23,7 +23,7 @@ function StatusDot({ health, onClick, withLabel = false }: { health: HealthState
   return (
     <button type="button" onClick={onClick} aria-haspopup="dialog" title={`${t("top.system")}: ${label}`}
       className={`inline-flex h-9 items-center gap-2 rounded-ctl text-xs font-medium text-muted transition-colors duration-200 hover:bg-hover hover:text-fg ${withLabel ? "px-3" : "w-9 justify-center"}`}>
-      <span className={`status-dot h-2 w-2 shrink-0 rounded-full ${dot}`} aria-hidden="true" />
+      <span className={`h-2 w-2 shrink-0 rounded-full ${dot}`} aria-hidden="true" />
       {withLabel ? <span>{label}</span> : <span className="sr-only">{t("top.system")}: {label}</span>}
     </button>
   );
@@ -32,7 +32,7 @@ function StatusDot({ health, onClick, withLabel = false }: { health: HealthState
 /** One menu entry, rendered identically in the desktop dropdown and the mobile menu. */
 function Entry({ item, view, onPick, onAbout }: { item: NavItem; view: View; onPick: () => void; onAbout: () => void }) {
   const { t } = useI18n();
-  const base = "group/item flex w-full items-start gap-3 rounded-[10px] px-2.5 py-2.5 text-left transition-colors duration-200";
+  const base = "group/item flex w-full items-start gap-3 rounded-ctl px-2.5 py-2 text-left transition-colors duration-200";
   const body = (I: typeof Search, title: string, desc: string, active: boolean, ext = false) => (
     <>
       <span className={`mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-ctl border transition-colors duration-200 ${active ? "border-accent/40 bg-accent/10 text-accent" : "border-line bg-raised text-muted group-hover/item:border-line-strong group-hover/item:text-fg"}`}>
@@ -95,10 +95,10 @@ function Dropdown({ group, view, open, setOpen, onAbout }: { group: NavGroup; vi
         className={`relative inline-flex h-9 items-center gap-1 rounded-ctl px-3 text-[13.5px] font-medium transition-colors duration-200 ${open ? "bg-hover text-fg" : active ? "text-fg hover:bg-hover/70" : "text-muted hover:bg-hover/70 hover:text-fg"}`}>
         {t(group.key)}
         <ChevronDown size={14} className={`text-subtle transition-transform duration-200 ${open ? "rotate-180" : ""}`} aria-hidden="true" />
-        {active && <span aria-hidden="true" className="absolute inset-x-3 -bottom-[13px] h-[2px] rounded-full bg-accent" />}
+        {active && <span aria-hidden="true" className="absolute inset-x-3 -bottom-[11px] h-[2px] bg-accent" />}
       </button>
       {open && (
-        <div id={id} onKeyDown={onPanelKey} className="absolute left-1/2 top-[calc(100%+12px)] z-50 w-[340px] -translate-x-1/2 rounded-card border border-line-strong bg-surface/90 p-1.5 shadow-pop backdrop-blur-xl" style={{ animation: "pop-in .2s cubic-bezier(0.16,1,0.3,1) both" }}>
+        <div id={id} onKeyDown={onPanelKey} className="absolute left-1/2 top-[calc(100%+10px)] z-50 w-[340px] -translate-x-1/2 rounded-card border border-line-strong bg-surface p-1.5 shadow-pop" style={{ animation: "pop-in .14s ease-out both" }}>
           <p className="label px-2.5 pb-1 pt-2 !text-[9.5px]">{t(group.key)}</p>
           <ul>{group.items.map((it, n) => <li key={n}><Entry item={it} view={view} onPick={() => setOpen(null)} onAbout={onAbout} /></li>)}</ul>
         </div>
@@ -121,7 +121,7 @@ function MobileMenu({ view, onClose, onAbout, onSearch, health }: { view: View; 
     return () => { document.removeEventListener("keydown", on); document.body.style.overflow = overflow; };
   }, [onClose]);
   return (
-    <div id="mobile-menu" ref={box} role="dialog" aria-modal="true" aria-label={t("nav.main")} className="no-print fixed inset-x-0 bottom-0 top-16 z-[55] overflow-y-auto border-t border-line bg-bg/95 backdrop-blur-xl lg:hidden" style={{ animation: "fadeIn .2s ease-out both" }}>
+    <div id="mobile-menu" ref={box} role="dialog" aria-modal="true" aria-label={t("nav.main")} className="no-print fixed inset-x-0 bottom-0 top-14 z-[55] overflow-y-auto border-t border-line bg-bg lg:hidden" style={{ animation: "fadeIn .2s ease-out both" }}>
       <div className="mx-auto max-w-xl space-y-1 px-4 pb-10 pt-4">
         <button type="button" onClick={() => { onClose(); onSearch(); }} className="mb-3 flex h-11 w-full items-center gap-2.5 rounded-btn border border-line bg-surface px-3 text-[14px] text-subtle">
           <Search size={16} aria-hidden="true" />{t("cmd.open")}
@@ -176,8 +176,8 @@ export default function TopNav({ view, health, onAbout, onSearch }: Props) {
 
   return (
     <>
-      <header className={`no-print sticky top-0 z-50 border-b transition-[background-color,border-color] duration-300 ${scrolled || mobile ? "border-line bg-bg/85 backdrop-blur-xl" : "border-line/60 bg-bg/60 backdrop-blur-md"}`}>
-        <div className="mx-auto flex h-16 max-w-[1440px] items-center gap-2 px-4 sm:px-6 lg:px-8">
+      <header className={`no-print sticky top-0 z-50 border-b border-line-strong bg-surface transition-shadow duration-200 ${scrolled && !mobile ? "shadow-[0_1px_0_rgb(var(--line)/.25)]" : ""}`}>
+        <div className="mx-auto flex h-14 max-w-[1440px] items-center gap-2 px-4 sm:px-6 lg:px-8">
           <a href={href("overview")} className="flex shrink-0 items-center rounded-ctl" aria-label={t("brand.home")}>
             <Wordmark />
           </a>
@@ -186,14 +186,14 @@ export default function TopNav({ view, health, onAbout, onSearch }: Props) {
             <a href={href("overview")} aria-current={view === "overview" ? "page" : undefined}
               className={`relative inline-flex h-9 items-center rounded-ctl px-3 text-[13.5px] font-medium transition-colors duration-200 ${view === "overview" ? "text-fg" : "text-muted hover:bg-hover/70 hover:text-fg"}`}>
               {t("nav.overview")}
-              {view === "overview" && <span aria-hidden="true" className="absolute inset-x-3 -bottom-[13px] h-[2px] rounded-full bg-accent" />}
+              {view === "overview" && <span aria-hidden="true" className="absolute inset-x-3 -bottom-[11px] h-[2px] bg-accent" />}
             </a>
             {GROUPS.map((g) => <Dropdown key={g.key} group={g} view={view} open={open === g.key} setOpen={setOpen} onAbout={onAbout} />)}
           </nav>
 
           <div className="ml-auto flex items-center gap-1.5">
             <button type="button" onClick={onSearch} aria-haspopup="dialog" aria-label={t("cmd.open")}
-              className="flex h-9 items-center gap-2 rounded-btn border border-line bg-surface/60 px-2.5 text-[13px] text-subtle transition-colors duration-200 hover:border-line-strong hover:text-fg xl:w-56">
+              className="flex h-9 items-center gap-2 rounded-btn border border-line-strong bg-bg px-2.5 text-[13px] text-subtle transition-colors duration-200 hover:border-line-strong hover:text-fg xl:w-56">
               <Search size={15} className="shrink-0" aria-hidden="true" />
               <span className="hidden truncate xl:inline">{t("cmd.open")}</span>
               <span className="kbd ml-auto hidden xl:inline">{/Mac|iPhone|iPad/.test(navigator.platform) ? "⌘K" : "Ctrl K"}</span>

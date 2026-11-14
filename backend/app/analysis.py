@@ -1,6 +1,7 @@
 from collections import Counter
 
-from .data_loader import DATASET_VERSION, INVESTIGATIONS, SCENARIOS, SOURCES
+from . import documents, psi, resources
+from .data_loader import CONTEXT, DATASET_VERSION, INVESTIGATIONS, SCENARIOS, SOURCES
 from .i18n_data import invs, localize_domain, srcs
 from .texts import T, table
 
@@ -27,13 +28,37 @@ def overview(lang: str = "en") -> dict:
         "source_usage": [{"id": s.id, "title": s.title, "findings": usage.get(s.id, 0)} for s in sl],
         "knowledge_gaps": gaps(lang),
         "record_status": T(lang, "record_status"),
+        "provenance": provenance(),
+        "resource_coverage": resources.summary(),
+    }
+
+
+def provenance() -> dict:
+    """Counts that describe what the platform actually holds (all computed from loaded data)."""
+    linked = psi.linked_accessions(INVESTIGATIONS)
+    params = {p: sum(1 for i in INVESTIGATIONS if p in psi.parameters_available(i.psi_accessions)) for p in psi.PARAM_ORDER}
+    return {
+        "psi_investigations": len(psi.PSI),
+        "psi_linked": len(linked),
+        "psi_unlinked": sorted(set(psi.PSI) - linked),
+        "psi_with_table": sum(1 for r in psi.PSI.values() if r.get("experiment_table")),
+        "psi_table_rows": sum((r.get("experiment_table") or {}).get("row_count", 0) for r in psi.PSI.values()),
+        "psi_publications": sum(len(r["publications"]) for r in psi.PSI.values()),
+        "psi_publications_with_doi": sum(1 for r in psi.PSI.values() for p in r["publications"] if p["doi"]),
+        "psi_ingested_at": psi.MANIFEST.get("finished_at"),
+        "documents": len(documents.DOCS),
+        "document_pages": sum(len(d["pages"]) for d in documents.DOCS.values()),
+        "passages": len(documents.PASSAGES),
+        "context_records": len(CONTEXT),
+        "records_with_parameter": params,
+        "records_total": len(INVESTIGATIONS),
     }
 
 
 def gaps(lang: str = "en") -> list[dict]:
     n = len(INVESTIGATIONS)
-    no_o2 = sum(1 for i in INVESTIGATIONS if i.oxygen_concentration is None)
-    no_air = sum(1 for i in INVESTIGATIONS if i.airflow_speed is None)
+    no_o2 = sum(1 for i in INVESTIGATIONS if "oxygen" in psi.parameters_available(i.psi_accessions))
+    no_air = sum(1 for i in INVESTIGATIONS if "flow" in psi.parameters_available(i.psi_accessions))
     sup = sum(1 for i in INVESTIGATIONS if i.fire_safety_domain == "suppression")
     return [
         {"title": T(lang, "gap_o2_title"), "detail": T(lang, "gap_o2_detail", n=no_o2, total=n, air=no_air)},

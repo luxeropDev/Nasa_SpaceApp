@@ -63,7 +63,7 @@ export function ErrorBox({ error, retry }: { error: unknown; retry?: () => void 
   const { t } = useI18n();
   const text = useErrorText();
   return (
-    <div role="alert" className="panel flex flex-wrap items-start gap-3 border-danger/30 p-4">
+    <div role="alert" className="flex flex-wrap items-start gap-3 rounded-card border border-danger/40 bg-surface p-4">
       <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-ctl bg-danger/10 text-danger"><AlertTriangle size={16} /></span>
       <div className="min-w-0 flex-1">
         <div className="text-sm font-semibold text-fg">{t("error.title")}</div>
@@ -77,12 +77,10 @@ export function ErrorBox({ error, retry }: { error: unknown; retry?: () => void 
 /** Empty / unavailable state with an icon medallion — used instead of blank space. */
 export function Empty({ icon: I, title, text, action, compact = false }: { icon?: LucideIcon; title?: string; text: string; action?: ReactNode; compact?: boolean }) {
   return (
-    <div className={`panel relative flex flex-col items-center overflow-hidden text-center ${compact ? "gap-2 px-5 py-8" : "gap-3 px-6 py-14"}`}>
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-accent/[.05] to-transparent" />
+    <div className={`relative flex flex-col items-center overflow-hidden rounded-card border border-dashed border-line-strong text-center ${compact ? "gap-2 px-5 py-6" : "gap-3 px-6 py-12"}`}>
       {I && (
-        <span className="relative grid h-12 w-12 place-items-center rounded-full border border-line bg-raised text-subtle">
-          <span className="absolute inset-[-6px] rounded-full border border-dashed border-line" aria-hidden="true" />
-          <I size={20} strokeWidth={1.6} />
+        <span className="relative grid h-10 w-10 place-items-center rounded-ctl border border-line bg-raised text-subtle">
+          <I size={18} strokeWidth={1.6} />
         </span>
       )}
       {title && <p className="relative text-[15px] font-semibold text-fg">{title}</p>}
@@ -98,7 +96,7 @@ export const Panel = ({ title, sub, action, children, className = "", id, eyebro
       <header className="mb-4 flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
         <div className="min-w-0">
           {eyebrow && <div className="label mb-1">{eyebrow}</div>}
-          {title && <h2 className="text-[15px] font-semibold text-fg">{title}</h2>}
+          {title && <h2 className="font-display text-[15.5px] font-semibold text-fg">{title}</h2>}
           {sub && <p className="mt-0.5 text-[12.5px] leading-relaxed text-subtle">{sub}</p>}
         </div>
         {action}
@@ -119,12 +117,12 @@ export function Ext({ href, children, className = "" }: { href: string; children
 
 /** Page container + editorial header. Every workspace page uses it so spacing stays consistent. */
 export const Page = ({ title, sub, eyebrow, actions, children, wide = false }: { title: string; sub?: string; eyebrow?: string; actions?: ReactNode; children: ReactNode; wide?: boolean }) => (
-  <div className={`mx-auto w-full px-4 pb-16 pt-6 sm:px-6 md:pt-9 lg:px-8 ${wide ? "max-w-[1560px]" : "max-w-[1440px]"}`}>
-    <header className="mb-6 flex flex-wrap items-end justify-between gap-4 md:mb-8">
+  <div className={`mx-auto w-full px-4 pb-16 pt-6 sm:px-6 md:pt-8 lg:px-8 ${wide ? "max-w-[1560px]" : "max-w-[1440px]"}`}>
+    <header className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-line pb-5">
       <div className="min-w-0 max-w-3xl">
-        {eyebrow && <p className="eyebrow reveal mb-2.5 text-brand">{eyebrow}</p>}
-        <h1 className="reveal d-1 text-[28px] font-semibold leading-[1.1] tracking-[-0.03em] text-fg sm:text-[34px] lg:text-[38px]">{title}</h1>
-        {sub && <p className="reveal d-2 mt-3 text-[14px] leading-relaxed text-muted sm:text-[15px]">{sub}</p>}
+        {eyebrow && <p className="eyebrow reveal mb-2">{eyebrow}</p>}
+        <h1 className="reveal font-display text-[26px] font-semibold leading-tight text-fg sm:text-[30px]">{title}</h1>
+        {sub && <p className="reveal mt-2 text-[14px] leading-relaxed text-muted">{sub}</p>}
       </div>
       {actions && <div className="reveal d-3 flex flex-wrap items-center gap-2">{actions}</div>}
     </header>
@@ -168,13 +166,13 @@ export function Segmented<T extends string>({ value, options, onChange, label, s
   };
   return (
     <div ref={wrap} role="radiogroup" aria-label={label} onKeyDown={onKey} className="relative inline-flex max-w-full overflow-x-auto rounded-btn border border-line bg-raised p-0.5">
-      {ind && <span aria-hidden="true" className="absolute top-0.5 bottom-0.5 rounded-[8px] bg-surface shadow-card ring-1 ring-line transition-all duration-200 ease-out" style={{ left: ind.left, width: ind.width }} />}
+      {ind && <span aria-hidden="true" className="absolute top-0.5 bottom-0.5 rounded-[3px] bg-surface ring-1 ring-line-strong transition-all duration-200 ease-out" style={{ left: ind.left, width: ind.width }} />}
       {options.map((o) => {
         const I = o.icon;
         const on = o.value === value;
         return (
           <button key={o.value} type="button" role="radio" aria-checked={on} tabIndex={on ? 0 : -1} onClick={() => onChange(o.value)}
-            className={`relative z-10 inline-flex items-center gap-1.5 whitespace-nowrap rounded-[8px] font-medium transition-colors duration-200 ${size === "sm" ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-[13px]"} ${on ? "text-fg" : "text-subtle hover:text-fg"}`}>
+            className={`relative z-10 inline-flex items-center gap-1.5 whitespace-nowrap rounded-[3px] font-medium transition-colors duration-200 ${size === "sm" ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-[13px]"} ${on ? "text-fg" : "text-subtle hover:text-fg"}`}>
             {I && <I size={14} aria-hidden="true" />}{o.label}
           </button>
         );

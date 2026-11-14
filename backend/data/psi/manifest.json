@@ -1,0 +1,15 @@
+{
+ "source": "NASA Physical Sciences Informatics",
+ "search_terms": [
+  "combustion",
+  "flame",
+  "fire",
+  "smoke",
+  "soot"
+ ],
+ "started_at": "2026-11-14T08:02:07+00:00",
+ "finished_at": "2026-11-14T08:02:21+00:00",
+ "records": 24,
+ "errors": [],
+ "output_sha256": "e88f2ff8249cafed9867bfb25ca097ecebc7b1241ec73815963ef0af6cb385c8"
+}

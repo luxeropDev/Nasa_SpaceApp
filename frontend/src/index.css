@@ -6,72 +6,80 @@
    FLAMEWISE design tokens — RGB triplets so Tailwind alpha modifiers work.
    Light is defined on :root, dark (primary experience) on .dark.
    ===================================================================== */
+/* Light = primary research workspace (default). */
 :root {
-  --bg: 245 247 250;          /* #F5F7FA */
-  --bg2: 255 255 255;
+  --bg: 246 247 249;          /* #F6F7F9 */
+  --bg2: 238 241 245;         /* #EEF1F5 secondary band */
   --surface: 255 255 255;
-  --raised: 248 250 252;      /* elevated surface #F8FAFC */
-  --hover: 241 245 249;
-  --line: 203 213 225;        /* borders #E2E8F0 equivalent via alpha */
-  --line-a: 0.62;
-  --line-a-strong: 1;
-  --fg: 17 24 39;             /* #111827 */
-  --muted: 71 85 105;         /* #475569 */
-  --subtle: 100 116 139;      /* #64748B */
-  --accent: 3 105 161;        /* blue, darkened for AA text contrast on white */
-  --brand: 185 83 15;         /* combustion orange, darkened for AA on white */
+  --raised: 243 245 248;      /* #F3F5F8 table heads, insets */
+  --hover: 236 240 245;
+  --line: 160 172 191;        /* × alpha → #D9DEE7 hairline on white */
+  --line-a: 0.42;
+  --line-a-strong: 0.85;
+  --fg: 23 32 51;             /* #172033 */
+  --muted: 91 101 117;        /* #5B6575 */
+  --subtle: 104 114 130;      /* #687282 — AA on white */
+  --accent: 16 91 216;        /* #105BD8 interactive blue */
+  --navy: 11 61 145;          /* #0B3D91 institutional blue */
+  --brand: 180 80 15;         /* combustion orange — used sparingly for flame-related marks */
   --cyan: 14 116 144;
-  --warn: 161 98 7;
-  --ok: 4 120 87;
-  --danger: 185 28 28;
-  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 2px 8px -2px rgb(15 23 42 / 0.06);
-  --shadow-pop: 0 18px 48px -12px rgb(15 23 42 / 0.22), 0 2px 6px rgb(15 23 42 / 0.06);
-  --cut-ring: 17 24 39;
-  --hero-ink: 248 250 252;
+  --warn: 154 103 0;
+  --ok: 26 127 75;
+  --danger: 180 35 24;
+  --on-accent: 255 255 255;
+  --shadow-card: 0 1px 0 rgb(23 32 51 / 0.03);
+  --shadow-pop: 0 10px 28px -10px rgb(23 32 51 / 0.22), 0 1px 3px rgb(23 32 51 / 0.08);
+  --grid-ink: 23 32 51;
 }
-.dark {
-  --bg: 8 11 18;              /* #080B12 */
-  --bg2: 12 18 32;            /* #0C1220 */
-  --surface: 17 24 39;        /* #111827 */
-  --raised: 23 34 53;         /* #172235 */
-  --hover: 27 42 64;          /* #1B2A40 */
-  --line: 148 163 184;
-  --line-a: 0.13;
-  --line-a-strong: 0.27;
-  --fg: 248 250 252;          /* #F8FAFC */
-  --muted: 165 180 199;       /* #A5B4C7 */
-  --subtle: 122 138 160;      /* lifted from #64748B for AA on #080B12 */
-  --accent: 54 191 250;       /* #36BFFA */
-  --brand: 255 155 69;        /* #FF9B45 */
-  --cyan: 103 232 249;        /* #67E8F9 */
-  --warn: 251 191 36;         /* #FBBF24 */
-  --ok: 52 211 153;           /* #34D399 */
-  --danger: 248 113 113;      /* #F87171 */
-  --shadow-card: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 8px 24px -16px rgb(0 0 0 / 0.7);
-  --shadow-pop: 0 24px 64px -16px rgb(0 0 0 / 0.75), 0 0 0 1px rgb(148 163 184 / 0.1);
-  --cut-ring: 248 250 252;
+/* Dark = analysis / immersive workspace. `.zone-dark` applies it locally even in the light theme. */
+.dark, .zone-dark {
+  --bg: 17 21 28;             /* #11151C */
+  --bg2: 21 26 34;
+  --surface: 25 31 41;        /* #191F29 */
+  --raised: 32 41 54;         /* #202936 */
+  --hover: 38 49 66;
+  --line: 120 138 162;        /* × alpha → #303B4A */
+  --line-a: 0.32;
+  --line-a-strong: 0.6;
+  --fg: 237 242 247;          /* #EDF2F7 */
+  --muted: 166 177 192;       /* #A6B1C0 */
+  --subtle: 138 150 167;
+  --accent: 110 168 254;      /* #6EA8FE cool blue, not cyan */
+  --navy: 110 168 254;
+  --brand: 232 136 66;
+  --cyan: 125 211 232;
+  --warn: 224 176 74;
+  --ok: 76 195 138;
+  --danger: 240 113 103;
+  --on-accent: 10 18 32;
+  --shadow-card: none;
+  --shadow-pop: 0 16px 40px -12px rgb(0 0 0 / 0.6), 0 0 0 1px rgb(120 138 162 / 0.2);
+  --grid-ink: 166 177 192;
 }
+.zone-dark { background-color: rgb(var(--bg)); color: rgb(var(--fg)); color-scheme: dark; }
 
 /* A report "paper" always renders with the light palette, in the app preview and in print. */
 .paper {
   --bg: 255 255 255; --bg2: 255 255 255; --surface: 255 255 255; --raised: 248 250 252; --hover: 241 245 249;
-  --line: 203 213 225; --line-a: 0.75; --line-a-strong: 1;
-  --fg: 17 24 39; --muted: 55 65 81; --subtle: 100 116 139;
-  --accent: 3 105 161; --brand: 185 83 15; --warn: 161 98 7; --ok: 4 120 87; --danger: 185 28 28;
+  --line: 160 172 191; --line-a: 0.5; --line-a-strong: 0.9;
+  --fg: 23 32 51; --muted: 70 80 96; --subtle: 104 114 130;
+  --accent: 16 91 216; --navy: 11 61 145; --brand: 180 80 15; --warn: 154 103 0; --ok: 26 127 75; --danger: 180 35 24; --on-accent: 255 255 255;
   color-scheme: light;
 }
 
 html { -webkit-text-size-adjust: 100%; }
 body {
   @apply bg-bg font-sans text-[14px] text-fg antialiased;
-  font-feature-settings: "cv11", "ss01", "ss03";
   overflow-x: clip;
 }
-h1, h2, h3 { letter-spacing: -0.02em; }
+/* Headings use Inter (NASA Horizon-style hierarchy); body text stays Public Sans; technical values use DM Mono. */
+h1, h2, h3, h4, .font-display { font-family: Inter, ui-sans-serif, system-ui, sans-serif; letter-spacing: -0.012em; }
+.font-mono, code, kbd, .code { font-variant-numeric: tabular-nums; }
+.tnum { font-variant-numeric: tabular-nums; }
 ::selection { background: rgb(var(--accent) / 0.28); }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb { background: rgb(var(--line) / calc(var(--line-a-strong) * 1.4)); border-radius: 8px; border: 2px solid rgb(var(--bg)); }
-:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; border-radius: 6px; }
+:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; border-radius: 3px; }
 main:focus, main:focus-visible { outline: none; }
 
 html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *::after {
@@ -82,13 +90,15 @@ html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *
   /* ---------- surfaces ---------- */
   .panel { @apply rounded-card border border-line bg-surface shadow-card; }
   .panel-hover { @apply transition duration-200 ease-out hover:border-line-strong hover:bg-raised; }
-  .glass { @apply border border-white/10 bg-[rgb(12_18_32/0.55)] backdrop-blur-xl; }
-  .label { @apply font-mono text-[10.5px] font-medium uppercase tracking-[.14em] text-subtle; }
-  .eyebrow { @apply font-mono text-[11px] font-medium uppercase tracking-[.22em]; }
+  .label { @apply font-mono text-[10.5px] font-medium uppercase tracking-[.08em] text-subtle; }
+  .eyebrow { @apply font-mono text-[11px] font-medium uppercase tracking-[.08em] text-subtle; }
+  .code { @apply font-mono text-[11.5px] tabular-nums; }
+  /* section header with a hairline rule: the editorial divider used across workspace pages */
+  .rule-head { @apply flex items-baseline gap-3 border-b border-line pb-2; }
   .kbd { @apply rounded border border-line bg-raised px-1.5 py-px font-mono text-[10px] text-subtle; }
 
   /* ---------- chips ---------- */
-  .chip { @apply inline-flex items-center gap-1 whitespace-nowrap rounded-md border border-line bg-raised px-2 py-0.5 text-[11.5px] font-medium text-muted; }
+  .chip { @apply inline-flex items-center gap-1 whitespace-nowrap rounded-[3px] border border-line bg-raised px-1.5 py-px text-[11.5px] font-medium text-muted; }
   .chip-accent { @apply border-accent/25 bg-accent/10 text-accent; }
   .chip-brand { @apply border-brand/25 bg-brand/10 text-brand; }
   .chip-warn { @apply border-warn/25 bg-warn/10 text-warn; }
@@ -96,54 +106,25 @@ html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *
   .chip-danger { @apply border-danger/25 bg-danger/10 text-danger; }
 
   /* ---------- buttons ---------- */
-  .btn { @apply inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-btn border border-line bg-surface px-3.5 py-2 text-[13px] font-medium text-fg transition duration-200 ease-out hover:border-line-strong hover:bg-hover active:scale-[.98] disabled:pointer-events-none disabled:opacity-45; }
+  .btn { @apply inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-btn border border-line-strong bg-surface px-3 py-[7px] text-[13px] font-medium text-fg transition-colors duration-150 ease-out hover:bg-hover disabled:pointer-events-none disabled:opacity-45; }
   .btn-sm { @apply px-2.5 py-1.5 text-xs; }
-  .btn-primary { @apply border-transparent bg-fg text-bg hover:border-transparent hover:bg-fg/90; }
-  .btn-accent { @apply border-transparent bg-accent text-white hover:border-transparent hover:bg-accent/90; }
-  .dark .btn-accent { @apply text-[#04121c]; }
+  .btn-primary { @apply border-transparent bg-accent text-on-accent hover:border-transparent hover:bg-accent/90; }
+  .btn-accent { @apply border-transparent bg-accent text-on-accent hover:border-transparent hover:bg-accent/90; }
   .btn-ghost { @apply border-transparent bg-transparent hover:border-transparent hover:bg-hover; }
-  .icon-btn { @apply inline-grid h-9 w-9 shrink-0 place-items-center rounded-btn text-muted transition duration-200 hover:bg-hover hover:text-fg; }
+  .icon-btn { @apply inline-grid h-9 w-9 shrink-0 place-items-center rounded-btn text-muted transition-colors duration-150 hover:bg-hover hover:text-fg; }
 
   /* ---------- form controls ---------- */
-  .input { @apply w-full rounded-ctl border border-line bg-surface px-3 py-2 text-[13px] text-fg outline-none transition placeholder:text-subtle hover:border-line-strong focus:border-accent/60 focus:ring-[3px] focus:ring-accent/15; }
+  .input { @apply w-full rounded-ctl border border-line bg-surface px-3 py-2 text-[13px] text-fg outline-none transition placeholder:text-subtle hover:border-line-strong focus:border-accent focus:ring-2 focus:ring-accent/15; }
   .select { @apply input cursor-pointer appearance-none bg-no-repeat pr-8; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237A8AA0' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-position: right .65rem center; }
 
   .prose-sm-fg { @apply text-[13.5px] leading-relaxed text-muted; }
 }
 
 /* =====================================================================
-   Octagonal cut-corner buttons (VortxLab-inspired). Used selectively for
-   hero CTAs and primary research actions only.
+   Motion — short fades only. Only transform & opacity animate.
    ===================================================================== */
-.btn-cut, .btn-cut-border, .btn-cut-sm {
-  --cut: 12px;
-  clip-path: polygon(var(--cut) 0%, calc(100% - var(--cut)) 0%, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, var(--cut) 100%, 0% calc(100% - var(--cut)), 0% var(--cut));
-  border-radius: 0;
-  border: 0;
-}
-.btn-cut-sm { --cut: 8px; }
-.btn-cut { @apply inline-flex items-center justify-center gap-2 bg-fg px-6 py-3 text-[13.5px] font-semibold text-bg transition duration-200 ease-out hover:bg-fg/85 active:scale-[.98]; }
-.btn-cut-border { @apply relative isolate inline-flex items-center justify-center gap-2 px-6 py-3 text-[13.5px] font-semibold text-fg transition duration-200 ease-out active:scale-[.98]; background: rgb(var(--cut-ring) / 0.55); }
-.btn-cut-border::before {
-  content: ""; position: absolute; inset: 1px; z-index: -1; background: rgb(var(--bg));
-  clip-path: inherit; transition: background-color .2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.btn-cut-border:hover { background: rgb(var(--cut-ring)); }
-.btn-cut-border:hover::before { background: rgb(var(--hover)); }
-.btn-cut-border.on-hero { background: rgb(255 255 255 / 0.6); color: #F8FAFC; }
-.btn-cut-border.on-hero::before { background: rgb(8 11 18 / 0.88); }
-.btn-cut-border.on-hero:hover { background: #fff; }
-.btn-cut-border.on-hero:hover::before { background: rgb(27 42 64 / 0.95); }
-.btn-cut.on-hero { background: #F8FAFC; color: #080B12; }
-.btn-cut.on-hero:hover { background: #fff; }
-.btn-cut-sm.btn-cut, .btn-cut-sm.btn-cut-border { @apply px-4 py-2 text-[13px]; }
-
-/* =====================================================================
-   Motion — fadeUp/fadeIn with cubic-bezier(0.16, 1, 0.3, 1).
-   Only transform & opacity animate; content is never hidden for long.
-   ===================================================================== */
-@keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes fadeUpSm { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeUpSm { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes shimmer { 100% { transform: translateX(100%); } }
 @keyframes pop-in { from { opacity: 0; transform: translateY(-4px) scale(.98); } to { opacity: 1; transform: none; } }
@@ -151,39 +132,17 @@ html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *
 @keyframes drawer-in { from { transform: translateX(-100%); } to { transform: none; } }
 @keyframes toast-in { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: none; } }
 @keyframes bar-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-@keyframes pulse-dot { 0% { box-shadow: 0 0 0 0 currentColor; } 70% { box-shadow: 0 0 0 6px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
-@keyframes breathe { 0%, 100% { transform: scale(1); opacity: .9; } 50% { transform: scale(1.035); opacity: 1; } }
-@keyframes drift { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-40px, -30px, 0); } }
 
-.reveal { animation: fadeUp .8s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.reveal-in { animation: fadeIn .9s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.d-1 { animation-delay: 60ms; } .d-2 { animation-delay: 120ms; } .d-3 { animation-delay: 180ms; }
-.d-4 { animation-delay: 240ms; } .d-5 { animation-delay: 300ms; } .d-6 { animation-delay: 360ms; }
-.page-in { animation: fadeUpSm .45s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.fade { animation: fadeUpSm .45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.reveal { animation: fadeIn .3s ease-out both; }
+.reveal-in { animation: fadeIn .3s ease-out both; }
+.d-1, .d-2, .d-3, .d-4, .d-5, .d-6 { animation-delay: 0ms; }
+.page-in { animation: fadeIn .22s ease-out both; }
+.fade { animation: fadeIn .25s ease-out both; }
 .pop-in { animation: pop-in .18s cubic-bezier(0.16, 1, 0.3, 1) both; transform-origin: top; }
-.stagger > * { animation: fadeUpSm .55s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.stagger > *:nth-child(2) { animation-delay: 40ms; } .stagger > *:nth-child(3) { animation-delay: 80ms; }
-.stagger > *:nth-child(4) { animation-delay: 120ms; } .stagger > *:nth-child(5) { animation-delay: 160ms; }
-.stagger > *:nth-child(6) { animation-delay: 200ms; } .stagger > *:nth-child(n+7) { animation-delay: 240ms; }
-.skeleton { position: relative; overflow: hidden; @apply rounded-card bg-raised; }
+.stagger > * { animation: fadeIn .25s ease-out both; }
+.skeleton { position: relative; overflow: hidden; @apply rounded-card bg-hover; }
 .skeleton::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgb(var(--fg) / .05), transparent); animation: shimmer 1.4s infinite; }
-.bar-grow { transform-origin: left; animation: bar-grow .8s cubic-bezier(0.16, 1, 0.3, 1) both; }
-.status-dot { animation: pulse-dot 2.4s infinite; }
-
-/* =====================================================================
-   Hero atmosphere — original CSS/SVG, no video or WebGL required.
-   ===================================================================== */
-.hero { background: radial-gradient(120% 90% at 78% 40%, #0F1B30 0%, #080B12 55%, #05070C 100%); color: #F8FAFC; }
-.hero-grid {
-  background-image: linear-gradient(rgb(148 163 184 / .06) 1px, transparent 1px), linear-gradient(90deg, rgb(148 163 184 / .06) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: radial-gradient(80% 70% at 70% 45%, #000 20%, transparent 75%);
-}
-.hero-flame { animation: breathe 7s ease-in-out infinite; transform-origin: center; }
-.hero-dust { animation: drift 30s linear infinite alternate; }
-.hero-vignette { background: linear-gradient(90deg, rgb(8 11 18 / .92) 0%, rgb(8 11 18 / .55) 48%, rgb(8 11 18 / .1) 100%), linear-gradient(0deg, rgb(8 11 18 / .9), transparent 35%); }
-
+.bar-grow { transform-origin: left; animation: bar-grow .5s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; animation-delay: 0ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
@@ -198,7 +157,8 @@ html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *
   .no-print { display: none !important; }
   .print-only { display: block !important; }
   .report-doc { box-shadow: none !important; border: 0 !important; padding: 0 !important; max-width: none !important; }
-  .report-doc a { color: #0369a1 !important; text-decoration: underline; }
+  .report-doc a { color: #105BD8 !important; text-decoration: underline; }
+  .zone-dark { background: #fff !important; color: #172033 !important; }
   .report-doc section { break-inside: avoid-page; }
   .report-doc table { break-inside: auto; }
   .report-doc tr { break-inside: avoid; }

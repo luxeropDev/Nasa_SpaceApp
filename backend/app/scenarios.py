@@ -14,14 +14,10 @@ SAFETY = ["prevention", "material_flammability", "smoke_detection", "suppression
 
 
 def scenario_gaps(scenario: str, lang: str) -> list[str]:
-    gaps = [T(lang, "sc_gap_numbers")]
-    if scenario.startswith("lunar"):
-        gaps.append(T(lang, "sc_gap_partial"))
-    if scenario == "lunar_rover":
-        gaps.append(T(lang, "sc_gap_rover"))
-    if scenario == "mars_transit":
-        gaps.append(T(lang, "sc_gap_mars"))
-    return gaps
+    """Gap statements for a mission scenario, produced by the deterministic gap engine from the scenario preset.
+    Undefined preset parameters are reported as not assessable (never filled with defaults)."""
+    from .science.coverage import preset_gap_sentences
+    return preset_gap_sentences(scenario, lang)
 
 
 def mapping(lang: str = "en") -> list[dict]:

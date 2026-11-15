@@ -12,20 +12,21 @@ from . import analysis, assistant, compare as cmp, documents, graph, i18n_data, 
 from .data_loader import CONTEXT, DATASET_VERSION, INV, INVESTIGATIONS, SOURCES
 from .models import AssistantRequest, CompareRequest, Lang, RiskRequest, SearchRequest
 from .retrieval import INDEX
+from .science.api import router as evidence_router
 
 i18n_data.verify(INVESTIGATIONS, SOURCES)  # fail fast if any translation is missing
 
-logging.basicConfig(level=os.getenv("FLAMEWISE_LOG_LEVEL", "INFO"), format="%(asctime)s %(levelname)s %(name)s %(message)s")
+logging.basicConfig(level=os.getenv("PyroLens_LOG_LEVEL", "INFO"), format="%(asctime)s %(levelname)s %(name)s %(message)s")
 log = logging.getLogger("flamewise.api")
 
-app = FastAPI(title="FLAMEWISE API", version="2.2.0")
+app = FastAPI(title="PyroLens API", version="2.3.0")
 # Production origins come from the environment (comma-separated); the Vite dev server is allowed by default.
-_origins = [o.strip() for o in os.getenv("FLAMEWISE_CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",") if o.strip()]
+_origins = [o.strip() for o in os.getenv("PyroLens_CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",") if o.strip()]
 app.add_middleware(CORSMiddleware, allow_origins=_origins, allow_methods=["GET", "POST"], allow_headers=["Content-Type", "X-Request-ID"],
                    expose_headers=["X-Request-ID"])
 
 # Simple per-client sliding-window limit for the assistant endpoint (it may call a paid LLM).
-AI_LIMIT = int(os.getenv("FLAMEWISE_AI_RATE_PER_MIN", "20"))
+AI_LIMIT = int(os.getenv("PyroLens_AI_RATE_PER_MIN", "20"))
 _hits: dict[str, deque] = defaultdict(deque)
 
 
@@ -61,6 +62,9 @@ def enrich(inv: dict) -> dict:
     names = list(dict.fromkeys([inv["acronym"], inv["acronym"].split("-")[0]]))
     return {**inv, "datasets": [psi.summary(a) for a in inv["psi_accessions"]],
             "document_mentions": [m for m in documents.mentions(names)]}
+
+
+app.include_router(evidence_router)
 
 
 @app.get("/api/health")
@@ -163,7 +167,14 @@ def context_records(lang: Lang = Query("en")):
 
 @app.post("/api/assistant")
 def assist(req: AssistantRequest):
-    return assistant.answer(req.question, req.lang)
+    scen = None
+    if req.scenario is not None:
+        from .science.scenario import ScenarioTarget
+        try:
+            scen = ScenarioTarget(**req.scenario)
+        except Exception as e:  # pydantic validation error -> 422 with detail
+            raise HTTPException(422, {"errors": [{"field": "scenario", "code": "invalid_scenario", "detail": str(e)[:300]}]})
+    return assistant.answer(req.question, req.lang, scen)
 
 
 @app.post("/api/compare")

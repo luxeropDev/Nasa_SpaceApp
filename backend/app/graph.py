@@ -15,7 +15,7 @@ Edge types and their provenance:
 
 No SUPPORTS / CONTRADICTS edges are produced: no source in the knowledge base states such a relation explicitly.
 Every edge carries `origin`: "kb" (curated field), "psi" (stated by NASA PSI), "text_match" (computed from document
-text) or "curated_context" (FLAMEWISE editorial link) so inferred links are never shown as stated facts.
+text) or "curated_context" (PyroLens editorial link) so inferred links are never shown as stated facts.
 """
 from . import documents, psi
 from .data_loader import CONTEXT, INVESTIGATIONS

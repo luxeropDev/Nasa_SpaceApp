@@ -1,0 +1,124 @@
+{
+ "_about": "Scenario presets for Research Gap Intelligence. Every value is a TARGET with an origin. 'curated_assumption' values are PyroLens demonstration assumptions, not official specifications: no document in this collection states them. Fields left out are unknown and must not be filled with defaults.",
+ "presets": {
+  "iss": {
+   "name": {
+    "en": "ISS cabin (nominal)",
+    "ru": "Кабина МКС (номинально)"
+   },
+   "scenario": {
+    "oxygen_mole_fraction": {
+     "value": 21,
+     "unit": "%",
+     "origin": "curated_assumption",
+     "note": "Nominal air-like cabin atmosphere; demonstration assumption."
+    },
+    "total_pressure": {
+     "value": 101.3,
+     "unit": "kPa",
+     "origin": "curated_assumption",
+     "note": "Nominal sea-level-equivalent cabin pressure; demonstration assumption."
+    },
+    "gravity": {
+     "value": "microgravity",
+     "origin": "curated_assumption",
+     "note": "Orbital free fall."
+    },
+    "diluent": {
+     "value": "air",
+     "origin": "curated_assumption",
+     "note": "Air-like cabin atmosphere; demonstration assumption."
+    }
+   }
+  },
+  "lunar_habitat": {
+   "name": {
+    "en": "Lunar surface habitat (demonstration)",
+    "ru": "Лунный жилой модуль (демонстрация)"
+   },
+   "scenario": {
+    "oxygen_mole_fraction": {
+     "value": 34,
+     "unit": "%",
+     "origin": "curated_assumption",
+     "note": "Demonstration assumption (34 % O2). Exploration-atmosphere studies discuss values in this range; no document in this collection states it, so it is not presented as a mission specification."
+    },
+    "total_pressure": {
+     "value": 8.2,
+     "unit": "psi",
+     "origin": "curated_assumption",
+     "note": "Demonstration assumption (8.2 psi). Not verified against an authoritative mission document in this collection."
+    },
+    "gravity": {
+     "value": "lunar",
+     "origin": "curated_assumption",
+     "note": "Lunar surface gravity 1.62 m/s² (about 0.165 g)."
+    },
+    "diluent": {
+     "value": "N2",
+     "origin": "curated_assumption",
+     "note": "Demonstration assumption: nitrogen balance gas. Not verified against an authoritative mission document in this collection."
+    },
+    "flow_configuration": {
+     "value": "concurrent_flow_over_solid",
+     "origin": "curated_assumption",
+     "note": "Demonstration assumption: ventilation flow along a fabric surface in the direction of flame spread."
+    },
+    "flow_velocity": {
+     "value": 15,
+     "unit": "cm/s",
+     "origin": "curated_assumption",
+     "note": "Demonstration assumption for cabin ventilation order of magnitude; not a ventilation specification."
+    },
+    "material": {
+     "value": "SIBAL",
+     "origin": "curated_assumption",
+     "note": "Demonstration assumption: cotton-fiberglass fabric (SIBAL) as a representative crew-cabin textile."
+    },
+    "specimen_geometry": {
+     "value": "flat_sheet",
+     "origin": "curated_assumption",
+     "note": "Thin fabric sheet."
+    }
+   }
+  },
+  "lunar_rover": {
+   "name": {
+    "en": "Pressurized lunar rover",
+    "ru": "Герметичный луноход"
+   },
+   "scenario": {
+    "gravity": {
+     "value": "lunar",
+     "origin": "curated_assumption",
+     "note": "Lunar surface gravity 1.62 m/s²."
+    }
+   },
+   "unknown": [
+    "oxygen_mole_fraction",
+    "total_pressure",
+    "flow_velocity",
+    "material"
+   ]
+  },
+  "mars_transit": {
+   "name": {
+    "en": "Mars transit habitat",
+    "ru": "Модуль перелёта к Марсу"
+   },
+   "scenario": {
+    "gravity": {
+     "value": "microgravity",
+     "origin": "curated_assumption",
+     "note": "Free flight between planets (no rotation assumed)."
+    }
+   },
+   "unknown": [
+    "oxygen_mole_fraction",
+    "total_pressure",
+    "flow_velocity",
+    "material"
+   ]
+  }
+ }
+}

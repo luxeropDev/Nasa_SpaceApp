@@ -1,0 +1,53 @@
+{
+ "_about": "Curated, reviewable metadata about what each PSI experiment table represents. Every entry states its basis (the PSI text or table feature it was read from). Values here never change source data; they describe granularity, study type and documented table notes. Edited by hand; validated by tests.",
+ "_granularity": {
+  "per_test": "Each row is one test (ignition / burn).",
+  "per_test_setpoint": "Each row is one set point within a test; several rows can share one ignition.",
+  "per_specimen": "Each row is one specimen burned in a single test.",
+  "test_log": "Each row is one test but the table states only identifiers and material.",
+  "test_day_summary": "Each row summarizes a test day (several tests); listed values are not per test.",
+  "test_matrix": "Each row states campaign ranges / lists for a fuel; which combinations were tested is not stated.",
+  "session_log": "Each row is an instrument session; no combustion conditions.",
+  "publication_figure_index": "Each row points to a figure in a publication; not an experimental observation.",
+  "no_table": "PSI publishes no experiment table for this investigation."
+ },
+ "profiles": {
+  "PSI-10": {"granularity": "per_test", "study_type": "flight_experiment", "basis": "columns Day/Test give one test id per row (e.g. 19115A1)"},
+  "PSI-20": {"granularity": "test_day_summary", "study_type": "flight_experiment", "basis": "row = Year/Month/Date; 'Flames Ignited is the number ignited on that day'; notes: 'chamber pressures were also varied but are not identified in this summary table'",
+             "dataset_notes": ["Oxygen concentrations are approximate values for tests that ignited on that day (table note).", "Chamber pressure is explicitly not identified in this table."]},
+  "PSI-21": {"granularity": "test_day_summary", "study_type": "flight_experiment", "basis": "row = Test Day (YYDDD) with 'Flames ignited' count"},
+  "PSI-22": {"granularity": "test_day_summary", "study_type": "flight_experiment", "basis": "row = Test Day (YYDDD); continuation rows list further fuel concentrations"},
+  "PSI-23": {"granularity": "test_day_summary", "study_type": "flight_experiment", "basis": "row = Test Day (YYDDD) with 'Flames Ignited' count",
+             "dataset_notes": ["Table note: 'Atmosphere is ~1 atm but pressure increases and O2% drops with vitiation.' Pressure is not given per row."]},
+  "PSI-25": {"granularity": "per_test", "study_type": "flight_experiment", "basis": "one Test # / Sample # per row"},
+  "PSI-26": {"granularity": "test_log", "study_type": "flight_experiment", "basis": "row = test number with sample material only"},
+  "PSI-39": {"granularity": "per_test", "study_type": "flight_experiment", "basis": "one Flex Number per row"},
+  "PSI-47": {"granularity": "session_log", "study_type": "flight_instrument_feasibility", "basis": "objective: 'mitigate the risk for the Smoke Aerosol Measurement Experiment (SAME)'; rows are sessions D1, D2"},
+  "PSI-60": {"granularity": "no_table", "study_type": "computational_analysis_of_flight_data", "basis": "approach: 'combine image processing, experimental diagnostics, and detailed soot modeling' of SPICE data"},
+  "PSI-62": {"granularity": "no_table", "study_type": "computational_modeling", "basis": "approach: 'high-resolution computational modeling with experimental validation'"},
+  "PSI-68": {"granularity": "test_matrix", "study_type": "flight_experiment", "basis": "one row per fuel with lists ('0.17; 0.21;0.25; 0.3') and ranges ('0.1 - 5')",
+             "dataset_notes": ["Oxygen and pressure are lists of campaign values; the tested oxygen-pressure combinations are not stated, so no (O2, P) points are formed."]},
+  "PSI-69": {"granularity": "per_test", "study_type": "flight_experiment", "basis": "one FLEX Test # per row"},
+  "PSI-98": {"granularity": "per_specimen", "study_type": "flight_experiment", "basis": "one Sample Number per row (S1, S2)"},
+  "PSI-99": {"granularity": "per_specimen", "study_type": "flight_experiment", "basis": "one Sample Number per row (2-1 … 2-9)",
+             "column_overrides": {"Percent O2 (Note 1)": {"value_basis": "source_derived", "note": "Table Note 1: 'Derived from measured CO2 product' — oxygen is derived by the investigators, not directly measured."}},
+             "dataset_notes": ["Rows beginning 'Note' and 'F1C1/F1C2' are annotations, not specimens."]},
+  "PSI-100": {"granularity": "per_specimen", "study_type": "flight_experiment", "basis": "one Sample Number per row"},
+  "PSI-101": {"granularity": "per_test", "study_type": "flight_experiment", "basis": "one SAME Test # per row"},
+  "PSI-102": {"granularity": "per_test", "study_type": "flight_experiment", "basis": "one Sample # per row"},
+  "PSI-106": {"granularity": "test_day_summary", "study_type": "flight_experiment", "basis": "row = Test Date with fuel used that day"},
+  "PSI-107": {"granularity": "per_test_setpoint", "study_type": "flight_experiment", "basis": "rows share GMT ignition times with different fuel rates (several set points per flame)"},
+  "PSI-115": {"granularity": "no_table", "study_type": "computational_modeling", "basis": "approach: 'Direct numerical simulation via a Navier-Stokes nodal approach'"},
+  "PSI-117": {"granularity": "no_table", "study_type": "computational_modeling", "basis": "approach: 'OpenFOAM was used to develop a 3-D CFD model' validated against FLEX measurements"},
+  "PSI-142": {"granularity": "publication_figure_index", "study_type": "computational_and_ground_experiment", "basis": "columns 'Reference Publication Link', 'Figure ID in Reference'; approach: 'three different numerical modeling schemes'"},
+  "PSI-159": {"granularity": "per_test", "study_type": "flight_experiment", "basis": "one Test id per row"}
+ },
+ "related_unlinked": {
+  "PSI-47": {"psi_related": ["PSI-102"], "candidate_curated_record": "SAME_001", "relation": "PSI lists PSI-102 (SAME) as related; DAFT was a feasibility test for SAME instrumentation. Not merged: DAFT is a different investigation."},
+  "PSI-117": {"psi_related": ["PSI-69", "PSI-142"], "candidate_curated_record": "FLEX_001", "relation": "PSI lists FLEX (PSI-69) as related; PSI-117 is a ground CFD study using FLEX data. Not merged: modeling study, not the flight experiment."},
+  "PSI-60": {"psi_related": ["PSI-107"], "candidate_curated_record": "SPICE_001", "relation": "Ground analysis of SPICE data (PSI-107)."},
+  "PSI-62": {"psi_related": ["PSI-25", "PSI-26"], "candidate_curated_record": "BASS_002", "relation": "Modeling study validated against BASS data (PSI-25, PSI-26)."},
+  "PSI-115": {"psi_related": ["PSI-102"], "candidate_curated_record": "SAME_001", "relation": "Numerical simulation using SAME geometry (PSI-102)."},
+  "PSI-142": {"psi_related": ["PSI-69"], "candidate_curated_record": "FLEX_001", "relation": "Simulations and ground experiments using FLEX conditions."}
+ }
+}

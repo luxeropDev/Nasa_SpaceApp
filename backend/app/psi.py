@@ -1,7 +1,7 @@
 """NASA PSI dataset records (normalized by ingest/psi_ingest.py) and the experimental conditions they publish.
 
 Measured-condition ranges are read from the per-test experiment tables PSI publishes. They are reported exactly as
-min/max of the published cells together with the original column header (which carries the unit). FLAMEWISE does
+min/max of the published cells together with the original column header (which carries the unit). PyroLens does
 not convert units, average, or merge columns, because tables use different conventions (mole fraction vs. percent,
 atm vs. mmHg vs. bar) and some cells are placeholders (e.g. 0 for "not recorded").
 """
@@ -14,42 +14,63 @@ _path = DATA / "psi_records.json"
 PSI: dict[str, dict] = {r["accession"]: r for r in json.loads(_path.read_text(encoding="utf-8"))} if _path.exists() else {}
 MANIFEST = json.loads((DATA / "psi" / "manifest.json").read_text()) if (DATA / "psi" / "manifest.json").exists() else {}
 
-# parameter -> header pattern. Order matters: first match wins for a column.
-PARAMS = [
-    ("oxygen", re.compile(r"(\bo2\b|o2 |xo2|oxygen|percent o2|\bo initial)", re.I)),
-    ("pressure", re.compile(r"(pressure|\bp(init|final|mean)\b|\(atm\)|\(bar\)|mmhg|approx p)", re.I)),
-    ("flow", re.compile(r"(air flow|airflow|flow velocity|inlet velocity|air rate)", re.I)),
-    ("diluent", re.compile(r"(nitrogen|helium|\bn initial|\bhe initial|\bco initial|co2 % by vol|mn2)", re.I)),
-    ("fuel", re.compile(r"(^fuel$|fuel sample material|^material$|sample material|fuel type|sample \(fuel type\))", re.I)),
-    ("result", re.compile(r"(burning rate|burn time|extinction diameter|spread rate|burn length|flames ignited|weight loss rate)", re.I)),
-]
-PARAM_ORDER = [p for p, _ in PARAMS]
+# Legacy parameter groups (API contract of /api/datasets, compare psi_* rows, Completeness) mapped from the token-aware
+# classifier in app/science/headers.py. The old substring regexes classified "CO2 % by vol" as oxygen; they are gone.
+LEGACY = {
+    "oxygen_mole_fraction": "oxygen", "total_pressure": "pressure", "flow_velocity": "flow",
+    "nitrogen_mole_fraction": "diluent", "helium_mole_fraction": "diluent", "diluent_description": "diluent", "atmosphere_description": "diluent",
+    "carbon_dioxide_mole_fraction": "other_gas", "carbon_monoxide_mole_fraction": "other_gas", "unresolved_species": "other_gas",
+    "material": "fuel",
+}
+PARAM_ORDER = ["oxygen", "pressure", "flow", "diluent", "other_gas", "fuel", "result"]
 
 
 def classify(col: str) -> str | None:
-    for name, rx in PARAMS:
-        if rx.search(col):
-            return name
-    return None
+    """Legacy group of a header (kept for callers); delegates to the token-aware classifier."""
+    from .science.headers import classify as cls
+    c = cls(col)
+    p = c["parameter"] or ("unresolved_species" if c["status"] == "ambiguous" else None)
+    if p in LEGACY:
+        return LEGACY[p]
+    return "result" if c["role"] == "outcome" and p else None
 
 
 def conditions(acc: str) -> list[dict]:
-    """Columns of the published experiment table that state oxygen, pressure, flow, diluent, fuel or a measured result."""
+    """Columns of the published experiment table that state oxygen, pressure, flow, diluent, other gases, fuel or a result.
+
+    min/max are computed only from cells whose status is usable (source-reported / measured / derived single numbers),
+    in the ORIGINAL unit of the column (`unit`); placeholders, spreadsheet errors, impossible values (pressure 0,
+    fraction > 100 %) and ambiguous cells are excluded and counted in `excluded`. Normalized values live in /api/evidence."""
+    from .science import measurements as M
+    d = M.DATASETS.get(acc)
     r = PSI.get(acc)
-    t = (r or {}).get("experiment_table")
-    if not t:
+    if not d or not (r or {}).get("experiment_table"):
         return []
+    t = r["experiment_table"]
     out = []
-    for c in t["column_summary"]:
-        p = classify(c["column"])
-        if not p or not c.get("filled"):
+    for col in d["columns"]:
+        p = col["parameter"] or ("unresolved_species" if col["status"] == "ambiguous" else None)
+        group = LEGACY.get(p) if p in LEGACY else ("result" if col["role"] == "outcome" and p else None)
+        if not group:
             continue
-        e = {"parameter": p, "column": c["column"], "kind": c.get("kind"), "filled_rows": c["filled"], "total_rows": t["row_count"],
-             "accession": acc, "table_file": t["file_name"]}
-        if c.get("kind") == "numeric":
-            e.update({"min": c["min"], "max": c["max"]})
+        ms = [m for row in d["rows"] for m in row["measurements"] if m["source"]["column_index"] == col["index"] and m["extraction_method"] == "csv_cell"]
+        filled = [m for m in ms if m["value_status"] != "missing"]
+        if not filled:
+            continue
+        nums = [m for m in filled if m["value_status"] in M.USABLE and m["value_kind"] == "number"]
+        excluded = {}
+        for m in filled:
+            if m["value_status"] not in M.USABLE | {"qualitative"}:
+                excluded[m["value_status"]] = excluded.get(m["value_status"], 0) + 1
+        e = {"parameter": group, "parameter_detail": p, "column": col["header"], "filled_rows": len(filled), "total_rows": t["row_count"],
+             "accession": acc, "table_file": t["file_name"], "classification": col["status"], "excluded": excluded}
+        if nums and len(nums) >= 0.5 * len(filled):
+            units_ = sorted({m["raw_unit"] for m in nums if m["raw_unit"]})
+            e.update({"kind": "numeric", "min": min(m["value"] for m in nums), "max": max(m["value"] for m in nums), "numeric_cells": len(nums),
+                      "unit": units_[0] if len(units_) == 1 else (" | ".join(units_) or None)})
         else:
-            e["examples"] = c.get("examples", [])[:6]
+            vals = list(dict.fromkeys(m["raw_value"].strip() for m in filled))
+            e.update({"kind": "text", "examples": vals[:6]})
         out.append(e)
     return out
 

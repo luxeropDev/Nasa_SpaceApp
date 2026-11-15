@@ -1,0 +1,169 @@
+{
+ "_about": "PyroLens 3.0 dataset-specific physical semantics: what kind of observation each PSI table row is, how its gas composition and flow configuration are stated, and the specimen geometry. Every entry quotes its basis (PSI metadata text or a table header). Hand-curated, reviewable, validated by tests. Entries never change source values; when the source is silent the entry says 'not_reported'. Status of this file: PENDING INDEPENDENT DOMAIN-EXPERT REVIEW.",
+ "_observation_classes": {
+  "combustion": "Rows describe flame tests (ignition / burning / extinction). Eligible for combustion coverage when the row states at least one physical condition.",
+  "combustion_test_log": "Rows identify flame tests but state only identifiers and material; no physical condition is tabulated. Never counted as condition coverage.",
+  "smoke_aerosol": "Rows describe smoke generation from heated samples and aerosol measurement, not flame observations. Excluded from combustion coverage (provisional classification).",
+  "non_combustion": "Rows describe instrument / dust sessions. Excluded from combustion coverage.",
+  "no_observations": "No experimental observation rows (no table, computational study, or figure index)."
+ },
+ "_gas_modes": {
+  "columns": "Per-row numeric mole fractions of diluent gases are tabulated.",
+  "row_text": "Per-row text states the diluent (e.g. '~21% O2 with N2').",
+  "campaign_alternatives": "The table states alternative diluents for a campaign row (e.g. 'O2/N2 or O2/He'); which one applies to a test is not stated.",
+  "source_term": "A table header names the gas only by a source term such as 'Air'; the composition is not tabulated.",
+  "investigation_statement": "Only PSI investigation metadata names the diluent; it is not stated per row.",
+  "not_reported": "Neither the table nor the metadata states the diluent."
+ },
+ "_flow_configurations": {
+  "quiescent": {"family": "quiescent", "label": "Quiescent (no imposed flow)"},
+  "concurrent_flow_over_solid": {"family": "solid_spread", "label": "Concurrent forced flow over specimen"},
+  "opposed_flow_over_solid": {"family": "solid_spread", "label": "Opposed forced flow over specimen"},
+  "forced_flow_over_specimen": {"family": "solid_spread", "label": "Forced flow over specimen (direction not tabulated)"},
+  "coflow_jet_burner": {"family": "jet_coflow", "label": "Co-flow around a fuel jet"},
+  "inlet_flow": {"family": "inlet", "label": "Inlet flow"},
+  "spherical_burner_normal": {"family": "spherical_burner", "label": "Spherical porous burner, normal flame (fuel into oxidizer)"},
+  "other_source_defined": {"family": "other", "label": "Other source-defined flow"},
+  "unknown": {"family": "unknown", "label": "Unknown / unclassified"}
+ },
+ "profiles": {
+  "PSI-10": {
+   "observation_class": "combustion",
+   "observation_basis": "objective: 'soot-inception limits of quasi-steady normal and inverse spherical diffusion flames'",
+   "geometry": {"value": "spherical_porous_burner", "basis": "approach: 'Perform spherical diffusion flame tests'"},
+   "gas": {"mode": "not_reported", "candidates": ["N2", "CO2"], "basis": "Ambient inert is not tabulated per test. Objective: 'amount of inert (N2 or CO2)'. Column 'mN2 (mg/s)' is nitrogen in the fuel stream (fuel dilution), not the ambient diluent."},
+   "flow": {"mode": "row_column_map", "column": "Flame Type", "map": {"normal": "spherical_burner_normal"}, "source_term": "Flame Type", "direction": "fuel issued into oxidizer (normal flame)", "reference_frame": "burner surface", "measurement_method": "not_reported", "velocity_column": null, "basis": "column 'Flame Type' = 'Normal'; approach: 'normal and inverse convection directions'. Flow is stated as mass flow rates, not a velocity."}
+  },
+  "PSI-20": {
+   "observation_class": "combustion",
+   "observation_basis": "objective: 'Observe burning behavior in long-duration microgravity for CH4/N2 and C2H4/N2 mixtures on porous circular burners'",
+   "geometry": {"value": "porous_flat_burner", "basis": "objective: 'porous circular burners of 25 and 50 mm diameter'"},
+   "gas": {"mode": "investigation_statement", "gas": "N2", "basis": "objective: 'Consider O2/N2 ambients with various pressures and ambient O2 concentrations' (investigation level; not stated per row)"},
+   "flow": {"mode": "investigation", "config": "quiescent", "source_term": "quiescent microgravity ambient", "direction": null, "reference_frame": null, "measurement_method": "not_reported", "velocity_column": null, "basis": "objective: 'establish the burning conditions in a quiescent microgravity ambient'"}
+  },
+  "PSI-21": {
+   "observation_class": "combustion",
+   "observation_basis": "objective: 'Characterize the behavior of weak coflow diffusion flames of methane and ethylene'",
+   "geometry": {"value": "jet_burner", "basis": "title: 'Coflow Laminar Diffusion Flame'"},
+   "gas": {"mode": "not_reported", "basis": "Ambient composition is not tabulated; 'N2 MFC' is nitrogen added to the fuel stream."},
+   "flow": {"mode": "investigation", "config": "coflow_jet_burner", "source_term": "coflow", "direction": "parallel to the fuel jet", "reference_frame": "burner", "measurement_method": "not_reported", "velocity_column": null, "basis": "objective: 'weak coflow diffusion flames ... as a function of velocity'; velocities are not tabulated"}
+  },
+  "PSI-22": {
+   "observation_class": "combustion",
+   "observation_basis": "objective: 'relationship between electric field voltage and chemi-ion current' in laminar diffusion flames",
+   "geometry": {"value": "jet_burner", "basis": "approach: 'gas-jet burner' and 'coflow burner'"},
+   "gas": {"mode": "not_reported", "basis": "Ambient composition is not tabulated."},
+   "flow": {"mode": "investigation", "config": "unknown", "source_term": "with and without a coflow of air", "direction": null, "reference_frame": null, "measurement_method": "not_reported", "velocity_column": null, "basis": "approach: 'gas-fueled flames, both with and without a coflow of air'; which configuration applies to each test day is not tabulated"}
+  },
+  "PSI-23": {
+   "observation_class": "combustion",
+   "observation_basis": "approach: 'issued into an oxidizing environment through a spherical porous burner and ignited'",
+   "geometry": {"value": "spherical_porous_burner", "basis": "approach: 'spherical porous burner'"},
+   "gas": {"mode": "row_text", "column": "Atmosphere*", "basis": "column 'Atmosphere*' states e.g. '~21% O2 with N2' / '~21% O2 with He'. Cells such as 'with N3', 'with N4' are spreadsheet autofill artifacts and are not interpreted."},
+   "flow": {"mode": "investigation", "config": "spherical_burner_normal", "source_term": "issued into an oxidizing environment", "direction": "fuel/diluent issued into oxidizer", "reference_frame": "burner surface", "measurement_method": "not_reported", "velocity_column": null, "basis": "approach: 'mixtures of various gaseous fuels and diluents will be issued into an oxidizing environment through a spherical porous burner'"}
+  },
+  "PSI-25": {
+   "observation_class": "combustion",
+   "observation_basis": "objective: 'Study the ignition, flame growth, flame spread, and extinction limits for solid fuels'",
+   "geometry": {"value": "solid_specimen_unspecified", "basis": "approach: 'Fuel samples were mounted inside a small wind tunnel'; specimen geometry is not tabulated"},
+   "gas": {"mode": "investigation_statement", "gas": "N2", "basis": "approach: 'oxygen varied below 21% by adding nitrogen' (investigation level). The table reports CO2 and CO as measured minor species only."},
+   "flow": {"mode": "investigation", "config": "forced_flow_over_specimen", "source_term": "airflow speeds up to 40 cm/s", "direction": "opposed or concurrent; not tabulated per test", "reference_frame": "wind tunnel", "measurement_method": "not_reported", "velocity_column": null, "basis": "approach: 'small wind tunnel which could impose airflow speeds up to 40 cm/s ... both the opposed and concurrent flow'. Columns 'Fan display' / 'Air display' are instrument settings, not velocities."}
+  },
+  "PSI-26": {
+   "observation_class": "combustion_test_log",
+   "observation_basis": "table states only date, test numbers, sample number and material",
+   "geometry": {"value": "solid_specimen_unspecified", "basis": "approach: 'Custom-made fabric samples ... as well as Nomex fabric and Ultem'"},
+   "gas": {"mode": "not_reported", "basis": "Ambient composition is not tabulated."},
+   "flow": {"mode": "investigation", "config": "forced_flow_over_specimen", "source_term": "airflow along the fuel surface", "direction": "opposed or concurrent; not tabulated per test", "reference_frame": "flow duct", "measurement_method": "not_reported", "velocity_column": null, "basis": "approach: 'The airflow was directed along the fuel surface in either the opposed or concurrent direction'"}
+  },
+  "PSI-39": {
+   "observation_class": "combustion",
+   "observation_basis": "objective: 'Examine the combustion behavior of n-dodecane'; droplet combustion in MDCA",
+   "geometry": {"value": "droplet", "basis": "approach: 'Droplets of fuel are dispensed and suspended'"},
+   "gas": {"mode": "columns", "basis": "columns 'Oxygen', 'Nitrogen', 'Helium' (mole fractions; unit inferred by composition closure)"},
+   "flow": {"mode": "not_reported", "config": "unknown", "source_term": null, "direction": null, "reference_frame": null, "measurement_method": "not_reported", "velocity_column": null, "basis": "No flow condition is tabulated."}
+  },
+  "PSI-47": {
+   "observation_class": "non_combustion",
+   "observation_basis": "objective: 'mitigate the risk for the Smoke Aerosol Measurement Experiment (SAME)'; rows are dust sessions ('Arizona Road Dust ... in combination with ISS GN2 to create an aerosol')",
+   "geometry": {"value": null, "basis": "not a combustion specimen"},
+   "gas": {"mode": "not_reported", "basis": "GN2 is used to aerosolize dust; it is not a combustion atmosphere."},
+   "flow": {"mode": "not_reported", "config": "unknown", "source_term": null, "direction": null, "reference_frame": null, "measurement_method": "not_reported", "velocity_column": null, "basis": "not applicable"}
+  },
+  "PSI-60": {"observation_class": "no_observations", "observation_basis": "no experiment table (computational analysis of SPICE data)", "geometry": {"value": null, "basis": "no table"}, "gas": {"mode": "not_reported", "basis": "no table"}, "flow": {"mode": "not_reported", "config": "unknown", "basis": "no table"}},
+  "PSI-62": {"observation_class": "no_observations", "observation_basis": "no experiment table (computational modeling)", "geometry": {"value": null, "basis": "no table"}, "gas": {"mode": "not_reported", "basis": "no table"}, "flow": {"mode": "not_reported", "config": "unknown", "basis": "no table"}},
+  "PSI-68": {
+   "observation_class": "combustion",
+   "observation_basis": "objective: 'benchmark experimental data on bi-component droplet combustion'",
+   "geometry": {"value": "droplet", "basis": "column 'Initial Droplet Diameter (mm)'"},
+   "gas": {"mode": "campaign_alternatives", "column": "Ambient Gas Mixture ", "basis": "column 'Ambient Gas Mixture' = 'O2/N2 or O2/He'; the diluent of each test is not stated"},
+   "flow": {"mode": "column", "config": "other_source_defined", "source_term": "Flow Velocity", "direction": "not stated", "reference_frame": "not stated", "measurement_method": "not_reported", "velocity_column": "Flow Velocity (cm/s)", "basis": "column 'Flow Velocity (cm/s)' = '0.1 - 5' (campaign range around a droplet; direction and reference frame are not stated)"}
+  },
+  "PSI-69": {
+   "observation_class": "combustion",
+   "observation_basis": "approach: 'igniting and observing the burning behavior of relatively large droplets'",
+   "geometry": {"value": "droplet", "basis": "column 'Droplet initial diameter; mm'"},
+   "gas": {"mode": "columns", "basis": "columns 'N initial ambient composition', 'He initial ambient composition' and the ambiguous 'CO initial ambient composition' (CO vs CO2 not established)"},
+   "flow": {"mode": "not_reported", "config": "unknown", "source_term": null, "direction": null, "reference_frame": null, "measurement_method": "not_reported", "velocity_column": null, "basis": "No flow condition is tabulated."}
+  },
+  "PSI-98": {
+   "observation_class": "combustion",
+   "observation_basis": "objective: 'determine how rapidly a large scale fire grows in low-gravity'",
+   "geometry": {"value": "flat_sheet", "basis": "approach: 'composite fabric called Sibal'; columns Sample Thickness / Length / Width"},
+   "gas": {"mode": "source_term", "term": "air", "location": "column header 'Air Flow (cm/s)'", "basis": "The header names the flowing gas 'Air'; the diluent composition is not tabulated."},
+   "flow": {"mode": "row_column_map", "column": "Flow Direction ", "map": {"concurrent": "concurrent_flow_over_solid", "opposed": "opposed_flow_over_solid"}, "source_term": "Air Flow / Flow Direction", "direction": "per row (Concurrent / Opposed)", "reference_frame": "flow relative to the fixed specimen (inferred from term 'Air Flow')", "measurement_method": "not_reported", "velocity_column": "Air Flow (cm/s)", "basis": "columns 'Air Flow (cm/s)' and 'Flow Direction'"}
+  },
+  "PSI-99": {
+   "observation_class": "combustion",
+   "observation_basis": "objective: 'determine how rapidly a large scale fire grows in low-gravity'",
+   "geometry": {"value": "flat_sheet", "basis": "columns Samle Thickness / Sample Length / Sample Width; approach lists SIBAL, silicone, PMMA samples"},
+   "gas": {"mode": "source_term", "term": "air", "location": "column header 'Air Flow (cm/s)'", "basis": "The header names the flowing gas 'Air'; the diluent composition is not tabulated."},
+   "flow": {"mode": "row_column_map", "column": "Flow Direction", "map": {"concurrent": "concurrent_flow_over_solid", "opposed": "opposed_flow_over_solid"}, "source_term": "Air Flow / Flow Direction", "direction": "per row (Concurrent / Opposed)", "reference_frame": "flow relative to the fixed specimen (inferred from term 'Air Flow')", "measurement_method": "not_reported", "velocity_column": "Air Flow (cm/s)", "basis": "columns 'Air Flow (cm/s)' and 'Flow Direction'"}
+  },
+  "PSI-100": {
+   "observation_class": "combustion",
+   "observation_basis": "objective: 'determine how rapidly a large scale fire grows in low-gravity'",
+   "geometry": {"value": "flat_sheet", "basis": "approach: 'also used SIBAL as the sample material'; columns Sample Thickness / Length / Width"},
+   "gas": {"mode": "source_term", "term": "air", "location": "column header 'Air Flow '", "basis": "The header names the flowing gas 'Air'; the diluent composition is not tabulated."},
+   "flow": {"mode": "row_column_map", "column": "Direction", "map": {"concurrent": "concurrent_flow_over_solid", "opposed": "opposed_flow_over_solid"}, "source_term": "Air Flow / Direction", "direction": "per row (Concurrent / Opposed)", "reference_frame": "flow relative to the fixed specimen (inferred from term 'Air Flow')", "measurement_method": "not_reported", "velocity_column": "Air Flow ", "basis": "columns 'Air Flow' and 'Direction'"}
+  },
+  "PSI-101": {
+   "observation_class": "smoke_aerosol",
+   "observation_basis": "objective: 'quantify the sizes that the liquid smoke particulate achieves in low gravity'; PSI-115 (modeling of SAME): 'The smoke originates from pyrolysis vapor expelled from a heated sample'",
+   "geometry": {"value": "heated_sample", "basis": "SAME heated-sample geometry (PSI-115 approach)"},
+   "gas": {"mode": "not_reported", "basis": "Ambient composition is not tabulated."},
+   "flow": {"mode": "column", "config": "inlet_flow", "source_term": "Inlet velocity", "direction": "not stated", "reference_frame": "sample-chamber inlet", "measurement_method": "not_reported", "velocity_column": "Inlet velocity (cm/s)", "basis": "column 'Inlet velocity (cm/s)'"}
+  },
+  "PSI-102": {
+   "observation_class": "smoke_aerosol",
+   "observation_basis": "objective: 'quantify the sizes that the liquid smoke particulate achieves in low gravity'; the PSI approach text calls each run a 'combustion event', but the measured quantity is smoke from heated samples (see PSI-115). Provisional classification.",
+   "geometry": {"value": "heated_sample", "basis": "approach: 'turned on the igniter for a predefined period of time (15 to 60 seconds)'"},
+   "gas": {"mode": "source_term", "term": "air", "location": "column header 'Air Flow (cm/s)'", "basis": "The header names the flowing gas 'Air'; the composition is not tabulated."},
+   "flow": {"mode": "column", "config": "forced_flow_over_specimen", "source_term": "Air Flow", "direction": "not stated", "reference_frame": "not stated", "measurement_method": "not_reported", "velocity_column": "Air Flow (cm/s)", "basis": "column 'Air Flow (cm/s)'"}
+  },
+  "PSI-106": {
+   "observation_class": "combustion",
+   "observation_basis": "objective: 'investigate the structure of laminar diffusion flames in microgravity'",
+   "geometry": {"value": "jet_burner", "basis": "approach: 'fan-driven flow duct, exchangeable burner tubes'"},
+   "gas": {"mode": "not_reported", "basis": "Ambient composition is not tabulated."},
+   "flow": {"mode": "investigation", "config": "coflow_jet_burner", "source_term": "controlled coflow air", "direction": "parallel to the fuel jet", "reference_frame": "flow duct", "measurement_method": "not_reported", "velocity_column": null, "basis": "approach: 'Flames were then manually ignited and observed under controlled coflow air conditions'; velocities are not tabulated"}
+  },
+  "PSI-107": {
+   "observation_class": "combustion",
+   "observation_basis": "objective: 'Identify the laminar smoke-point properties of non-buoyant jet diffusion flames under various co-flow conditions'",
+   "geometry": {"value": "jet_burner", "basis": "approach: 'flow duct with integrated nozzles'; column 'Nozzle (mm)'"},
+   "gas": {"mode": "source_term", "term": "air", "location": "column header 'Air Rate (cm/s)'; approach: 'controlled co-flow air'", "basis": "The co-flowing gas is named 'air'; the composition is not tabulated."},
+   "flow": {"mode": "column", "config": "coflow_jet_burner", "source_term": "Air Rate (co-flow)", "direction": "parallel to the fuel jet", "reference_frame": "flow duct", "measurement_method": "not_reported", "velocity_column": "Air Rate (cm/s)", "basis": "column 'Air Rate (cm/s)'; title 'Smoke Point In Co-flow Experiment'. Negative values (-0.28, -5.92) are kept, flagged and never compared: the source does not state whether the sign means direction or an offset."}
+  },
+  "PSI-115": {"observation_class": "no_observations", "observation_basis": "no experiment table (numerical simulation)", "geometry": {"value": null, "basis": "no table"}, "gas": {"mode": "not_reported", "basis": "no table"}, "flow": {"mode": "not_reported", "config": "unknown", "basis": "no table"}},
+  "PSI-117": {"observation_class": "no_observations", "observation_basis": "no experiment table (CFD model)", "geometry": {"value": null, "basis": "no table"}, "gas": {"mode": "not_reported", "basis": "no table"}, "flow": {"mode": "not_reported", "config": "unknown", "basis": "no table"}},
+  "PSI-142": {"observation_class": "no_observations", "observation_basis": "table is a publication-figure index", "geometry": {"value": null, "basis": "figure index"}, "gas": {"mode": "not_reported", "basis": "figure index"}, "flow": {"mode": "not_reported", "config": "unknown", "basis": "figure index"}},
+  "PSI-159": {
+   "observation_class": "combustion",
+   "observation_basis": "objective: 'Determine the conditions for which cool diffusion flames occur'",
+   "geometry": {"value": "spherical_porous_burner", "basis": "approach: 'Perform spherical diffusion flame tests'"},
+   "gas": {"mode": "not_reported", "basis": "Ambient diluent is not tabulated. Approach: 'a range of reactant dilutions' (species not named)."},
+   "flow": {"mode": "row_column_map", "column": "Flame Type", "map": {"normal": "spherical_burner_normal"}, "source_term": "Flame Type", "direction": "fuel issued into oxidizer (normal flame)", "reference_frame": "burner surface", "measurement_method": "not_reported", "velocity_column": null, "basis": "column 'Flame Type' = 'Normal'"}
+  }
+ }
+}

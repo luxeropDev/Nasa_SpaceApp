@@ -16,6 +16,9 @@ class SearchRequest(BaseModel):
 class AssistantRequest(BaseModel):
     question: str = Field(..., min_length=3, max_length=800)
     lang: Lang = "en"
+    # PyroLens 3.0: a complete user-created engineering scenario (same schema as /api/match). Optional; when given, the
+    # answer is grounded in deterministic matching, gap analysis and passports for THIS scenario.
+    scenario: Optional[dict] = None
 
 
 class CompareRequest(BaseModel):

@@ -56,16 +56,9 @@ def provenance() -> dict:
 
 
 def gaps(lang: str = "en") -> list[dict]:
-    n = len(INVESTIGATIONS)
-    no_o2 = sum(1 for i in INVESTIGATIONS if "oxygen" in psi.parameters_available(i.psi_accessions))
-    no_air = sum(1 for i in INVESTIGATIONS if "flow" in psi.parameters_available(i.psi_accessions))
-    sup = sum(1 for i in INVESTIGATIONS if i.fire_safety_domain == "suppression")
-    return [
-        {"title": T(lang, "gap_o2_title"), "detail": T(lang, "gap_o2_detail", n=no_o2, total=n, air=no_air)},
-        {"title": T(lang, "gap_partial_title"), "detail": T(lang, "gap_partial_detail")},
-        {"title": T(lang, "gap_supp_title"), "detail": T(lang, "gap_supp_detail", n=sup)},
-        {"title": T(lang, "gap_rover_title"), "detail": T(lang, "gap_rover_detail")},
-    ]
+    """Collection limitations computed by the deterministic coverage engine (no fixed sentences)."""
+    from .science.coverage import collection_limitations
+    return [{"title": g["title"], "detail": g["detail"], "code": g["code"]} for g in collection_limitations(lang)]
 
 
 def insights(lang: str = "en") -> list[dict]:

@@ -1,0 +1,1312 @@
+{
+ "_about": "Reference values and expected interpretations. Cell values were read directly from the published PSI CSV text and expected normalized values were computed by hand from the stated factor. Semantic, matching, coverage and adversarial cases state the expected interpretation, the exact source location and the acceptance criterion. Verification source: PSI experiment tables and PSI investigation metadata only; the underlying publications, figures and PDFs were NOT consulted. Prepared by the PyroLens developers (AI-assisted); no external combustion specialist has reviewed it. Reviewer status for every case: PENDING INDEPENDENT DOMAIN-EXPERT REVIEW.",
+ "verified_on": "2026-11-15",
+ "candidates": [
+  "PSI-23",
+  "PSI-25",
+  "PSI-39",
+  "PSI-47/PSI-117 linkage",
+  "PSI-68",
+  "PSI-69",
+  "PSI-98",
+  "PSI-101",
+  "PSI-107",
+  "PSI-159",
+  "plus PSI-10, PSI-20, PSI-99"
+ ],
+ "references": [
+  {
+   "id": "V01",
+   "accession": "PSI-69",
+   "row": 1,
+   "column": "Ambient pressure; mmHg",
+   "raw_expected": "757.7",
+   "category": "unit",
+   "expected": {
+    "parameter": "total_pressure",
+    "value_status": "source_reported",
+    "normalized_value": 101.018,
+    "normalized_unit": "kPa"
+   },
+   "source_location": "data/psi/tables/PSI-69.csv, data row 1 (1-based after header), column 'Ambient pressure; mmHg'",
+   "explanation": "757.7 mmHg x 0.133322387 kPa/mmHg = 101.018 kPa",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V02",
+   "accession": "PSI-69",
+   "row": 1,
+   "column": "O initial ambient composition; mole fraction",
+   "raw_expected": "0.21",
+   "category": "species",
+   "expected": {
+    "parameter": "oxygen_mole_fraction",
+    "normalized_value": 0.21,
+    "classification_status": "inferred"
+   },
+   "source_location": "data/psi/tables/PSI-69.csv, data row 1 (1-based after header), column 'O initial ambient composition; mole fraction'",
+   "explanation": "Header 'O' read as O2 (inferred; subscript lost)",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V03",
+   "accession": "PSI-69",
+   "row": 1,
+   "column": "CO initial ambient composition; mole fraction",
+   "raw_expected": "0",
+   "category": "species",
+   "expected": {
+    "parameter": "unresolved_species",
+    "classification_status": "ambiguous"
+   },
+   "source_location": "data/psi/tables/PSI-69.csv, data row 1 (1-based after header), column 'CO initial ambient composition; mole fraction'",
+   "explanation": "CO vs CO2 not established -> ambiguous species, never used",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V04",
+   "accession": "PSI-69",
+   "row": 1,
+   "column": "Burning rate; mm",
+   "raw_expected": "0.52",
+   "category": "unit",
+   "expected": {
+    "parameter": "burning_rate",
+    "value_status": "unresolved"
+   },
+   "source_location": "data/psi/tables/PSI-69.csv, data row 1 (1-based after header), column 'Burning rate; mm'",
+   "explanation": "Header unit 'mm' impossible for a burning rate -> unresolved, raw kept",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V05",
+   "accession": "PSI-69",
+   "row": 1,
+   "column": "pO2",
+   "raw_expected": "(calculated)",
+   "category": "unit",
+   "expected": {
+    "parameter": "oxygen_partial_pressure",
+    "value_status": "calculated",
+    "normalized_value": 21.214,
+    "normalized_unit": "kPa"
+   },
+   "source_location": "data/psi/tables/PSI-69.csv, data row 1 (1-based after header), column 'pO2'",
+   "explanation": "0.21 x 101.018 kPa = 21.214 kPa, status calculated",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V06",
+   "accession": "PSI-69",
+   "row": 114,
+   "column": "Ambient pressure; mmHg",
+   "raw_expected": "0",
+   "category": "missing",
+   "expected": {
+    "parameter": "total_pressure",
+    "value_status": "invalid",
+    "flags_include": "non_positive_absolute_pressure"
+   },
+   "source_location": "data/psi/tables/PSI-69.csv, data row 114 (1-based after header), column 'Ambient pressure; mmHg'",
+   "explanation": "Zero absolute pressure with composition summing to 1.0 and a recorded burn -> placeholder, invalid",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V07",
+   "accession": "PSI-69",
+   "row": 114,
+   "column": "pO2",
+   "raw_expected": "(none)",
+   "category": "missing",
+   "expected": {
+    "absent_parameter": "oxygen_partial_pressure"
+   },
+   "source_location": "data/psi/tables/PSI-69.csv, data row 114 (1-based after header), column 'pO2'",
+   "explanation": "No pO2 may be calculated from an invalid pressure",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V08",
+   "accession": "PSI-25",
+   "row": 1,
+   "column": "Calibrated  initial O2 % by vol",
+   "raw_expected": "22.2",
+   "category": "species",
+   "expected": {
+    "parameter": "oxygen_mole_fraction",
+    "value_status": "measured",
+    "normalized_value": 0.222
+   },
+   "source_location": "data/psi/tables/PSI-25.csv, data row 1 (1-based after header), column 'Calibrated  initial O2 % by vol'",
+   "explanation": "O2 % by vol -> 0.222, calibrated -> measured",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V09",
+   "accession": "PSI-25",
+   "row": 1,
+   "column": "Initial CO2 % by vol",
+   "raw_expected": "0.44",
+   "category": "species",
+   "expected": {
+    "parameter": "carbon_dioxide_mole_fraction",
+    "normalized_value": 0.0044
+   },
+   "source_location": "data/psi/tables/PSI-25.csv, data row 1 (1-based after header), column 'Initial CO2 % by vol'",
+   "explanation": "CO2 is carbon dioxide, never oxygen; 0.44 % -> 0.0044",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V10",
+   "accession": "PSI-25",
+   "row": 1,
+   "column": "Initial CO (ppm)",
+   "raw_expected": "0",
+   "category": "species",
+   "expected": {
+    "parameter": "carbon_monoxide_mole_fraction",
+    "value_status": "source_reported",
+    "normalized_value": 0.0
+   },
+   "source_location": "data/psi/tables/PSI-25.csv, data row 1 (1-based after header), column 'Initial CO (ppm)'",
+   "explanation": "CO in ppm is carbon monoxide; 0 is a valid reading (not missing)",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V11",
+   "accession": "PSI-25",
+   "row": 1,
+   "column": "Fuel Sample Material",
+   "raw_expected": "100 micron PMMA film   2 cm wide",
+   "category": "extraction",
+   "expected": {
+    "parameter": "specimen_thickness",
+    "normalized_value": 0.1,
+    "extraction_method": "text_pattern"
+   },
+   "source_location": "data/psi/tables/PSI-25.csv, data row 1 (1-based after header), column 'Fuel Sample Material'",
+   "explanation": "Material PMMA; thickness 100 micron = 0.1 mm extracted from text",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V12",
+   "accession": "PSI-25",
+   "row": 2,
+   "column": "Final CO2 % by vol",
+   "raw_expected": "",
+   "category": "missing",
+   "expected": {
+    "parameter": "carbon_dioxide_mole_fraction",
+    "value_status": "missing"
+   },
+   "source_location": "data/psi/tables/PSI-25.csv, data row 2 (1-based after header), column 'Final CO2 % by vol'",
+   "explanation": "Blank cell -> missing (not zero)",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V13",
+   "accession": "PSI-25",
+   "row": 2,
+   "column": "Calibrated final O2 % by vol",
+   "raw_expected": "1.6",
+   "category": "extraction",
+   "expected": {
+    "parameter": "oxygen_mole_fraction",
+    "normalized_value": 0.016
+   },
+   "source_location": "data/psi/tables/PSI-25.csv, data row 2 (1-based after header), column 'Calibrated final O2 % by vol'",
+   "explanation": "1.6 % -> 0.016, kept as published",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V14",
+   "accession": "PSI-98",
+   "row": 1,
+   "column": "Sample Thickness (cm)",
+   "raw_expected": "0.37",
+   "category": "unit",
+   "expected": {
+    "parameter": "specimen_thickness",
+    "normalized_value": 3.7,
+    "normalized_unit": "mm"
+   },
+   "source_location": "data/psi/tables/PSI-98.csv, data row 1 (1-based after header), column 'Sample Thickness (cm)'",
+   "explanation": "0.37 cm = 3.7 mm",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V15",
+   "accession": "PSI-98",
+   "row": 1,
+   "column": "Percent O2",
+   "raw_expected": "21.5 - 21.7",
+   "category": "extraction",
+   "expected": {
+    "parameter": "oxygen_mole_fraction",
+    "value_kind": "range",
+    "normalized_low": 0.215,
+    "normalized_high": 0.217
+   },
+   "source_location": "data/psi/tables/PSI-98.csv, data row 1 (1-based after header), column 'Percent O2'",
+   "explanation": "Range kept as interval 0.215-0.217",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V16",
+   "accession": "PSI-98",
+   "row": 1,
+   "column": "Ignition Power (W)",
+   "raw_expected": "182",
+   "category": "unit",
+   "expected": {
+    "parameter": "ignition_power",
+    "normalized_value": 182.0,
+    "normalized_unit": "W"
+   },
+   "source_location": "data/psi/tables/PSI-98.csv, data row 1 (1-based after header), column 'Ignition Power (W)'",
+   "explanation": "182 W",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V17",
+   "accession": "PSI-99",
+   "row": 1,
+   "column": "Samle Thickness",
+   "raw_expected": "0.27 mm",
+   "category": "unit",
+   "expected": {
+    "parameter": "specimen_thickness",
+    "normalized_value": 0.27,
+    "normalized_unit": "mm"
+   },
+   "source_location": "data/psi/tables/PSI-99.csv, data row 1 (1-based after header), column 'Samle Thickness'",
+   "explanation": "Embedded unit: 0.27 mm; misspelled header still thickness",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V18",
+   "accession": "PSI-99",
+   "row": 1,
+   "column": "Air Flow (cm/s)",
+   "raw_expected": "20 cm/s",
+   "category": "unit",
+   "expected": {
+    "parameter": "flow_velocity",
+    "normalized_value": 20.0
+   },
+   "source_location": "data/psi/tables/PSI-99.csv, data row 1 (1-based after header), column 'Air Flow (cm/s)'",
+   "explanation": "Header and cell unit agree: 20 cm/s",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V19",
+   "accession": "PSI-99",
+   "row": 1,
+   "column": "Percent O2 (Note 1)",
+   "raw_expected": "~ 21.5",
+   "category": "extraction",
+   "expected": {
+    "parameter": "oxygen_mole_fraction",
+    "normalized_value": 0.215,
+    "value_status": "source_derived",
+    "approximate": true
+   },
+   "source_location": "data/psi/tables/PSI-99.csv, data row 1 (1-based after header), column 'Percent O2 (Note 1)'",
+   "explanation": "Approximate, derived by investigators from CO2 (table note 1)",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V20",
+   "accession": "PSI-99",
+   "row": 4,
+   "column": "Samle Thickness",
+   "raw_expected": "037 mm",
+   "category": "missing",
+   "expected": {
+    "parameter": "specimen_thickness",
+    "value_status": "ambiguous"
+   },
+   "source_location": "data/psi/tables/PSI-99.csv, data row 4 (1-based after header), column 'Samle Thickness'",
+   "explanation": "Leading-zero integer: decimal point possibly lost -> ambiguous, not reinterpreted",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V21",
+   "accession": "PSI-107",
+   "row": 295,
+   "column": "Air Rate (cm/s)",
+   "raw_expected": "-0.28",
+   "category": "extraction",
+   "expected": {
+    "parameter": "flow_velocity",
+    "value": -0.28,
+    "value_status": "source_reported",
+    "flags_include": "negative_flow_value"
+   },
+   "source_location": "data/psi/tables/PSI-107.csv, data row 295 (1-based after header), column 'Air Rate (cm/s)'",
+   "explanation": "Negative value preserved; flagged; not reinterpreted as opposed flow",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V22",
+   "accession": "PSI-159",
+   "row": 1,
+   "column": "approx p (bar)",
+   "raw_expected": "0.9443956",
+   "category": "unit",
+   "expected": {
+    "parameter": "total_pressure",
+    "normalized_value": 94.43956,
+    "qualifier": "approximate"
+   },
+   "source_location": "data/psi/tables/PSI-159.csv, data row 1 (1-based after header), column 'approx p (bar)'",
+   "explanation": "0.9443956 bar x 100 = 94.43956 kPa (approximate column)",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V23",
+   "accession": "PSI-159",
+   "row": 1,
+   "column": "pO2",
+   "raw_expected": "(calculated)",
+   "category": "unit",
+   "expected": {
+    "parameter": "oxygen_partial_pressure",
+    "value_status": "calculated",
+    "normalized_value": 37.1997
+   },
+   "source_location": "data/psi/tables/PSI-159.csv, data row 1 (1-based after header), column 'pO2'",
+   "explanation": "0.3939 x 94.43956 kPa = 37.1997 kPa",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V24",
+   "accession": "PSI-159",
+   "row": 68,
+   "column": "Tad (K)",
+   "raw_expected": "#DIV/0!",
+   "category": "missing",
+   "expected": {
+    "parameter": "adiabatic_flame_temperature",
+    "value_status": "invalid"
+   },
+   "source_location": "data/psi/tables/PSI-159.csv, data row 68 (1-based after header), column 'Tad (K)'",
+   "explanation": "Spreadsheet error -> invalid, excluded from statistics",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V25",
+   "accession": "PSI-10",
+   "row": 1,
+   "column": "pinit (atm)",
+   "raw_expected": "1.01184402",
+   "category": "unit",
+   "expected": {
+    "parameter": "total_pressure",
+    "normalized_value": 102.5251,
+    "qualifier": "initial"
+   },
+   "source_location": "data/psi/tables/PSI-10.csv, data row 1 (1-based after header), column 'pinit (atm)'",
+   "explanation": "1.01184402 atm x 101.325 = 102.5251 kPa",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V26",
+   "accession": "PSI-10",
+   "row": 1,
+   "column": "pO2",
+   "raw_expected": "(calculated)",
+   "category": "unit",
+   "expected": {
+    "parameter": "oxygen_partial_pressure",
+    "normalized_value": 21.2359
+   },
+   "source_location": "data/psi/tables/PSI-10.csv, data row 1 (1-based after header), column 'pO2'",
+   "explanation": "0.207128374 x 102.5251 kPa = 21.2359 kPa (initial O2 with initial pressure)",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V27",
+   "accession": "PSI-20",
+   "row": 1,
+   "column": "Oxygen Conc (percent)",
+   "raw_expected": "21; 26.5; 40",
+   "category": "extraction",
+   "expected": {
+    "parameter": "oxygen_mole_fraction",
+    "value_kind": "list",
+    "normalized_values": [
+     0.21,
+     0.265,
+     0.4
+    ]
+   },
+   "source_location": "data/psi/tables/PSI-20.csv, data row 1 (1-based after header), column 'Oxygen Conc (percent)'",
+   "explanation": "Per-test-day list of approximate concentrations",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V28",
+   "accession": "PSI-20",
+   "row": 5,
+   "column": "Oxygen Conc (percent)",
+   "raw_expected": "3400%",
+   "category": "missing",
+   "expected": {
+    "parameter": "oxygen_mole_fraction",
+    "value_status": "invalid",
+    "flags_include": "fraction_out_of_range"
+   },
+   "source_location": "data/psi/tables/PSI-20.csv, data row 5 (1-based after header), column 'Oxygen Conc (percent)'",
+   "explanation": "3400 % is impossible (>100 %); likely Excel percent-format artifact of 34; invalid, not corrected",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; status/classification equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V29",
+   "accession": "PSI-39",
+   "row": 1,
+   "column": "Pressure",
+   "raw_expected": "1 atm",
+   "category": "unit",
+   "expected": {
+    "parameter": "total_pressure",
+    "normalized_value": 101.325,
+    "normalized_unit": "kPa"
+   },
+   "source_location": "data/psi/tables/PSI-39.csv, data row 1, column 'Pressure'",
+   "explanation": "embedded unit: 1 atm × 101.325 kPa/atm = 101.325 kPa",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; flags/status equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V30",
+   "accession": "PSI-39",
+   "row": 1,
+   "column": "Nitrogen",
+   "raw_expected": "0.79",
+   "category": "species",
+   "expected": {
+    "parameter": "nitrogen_mole_fraction",
+    "normalized_value": 0.79,
+    "flags_include": "unit_inferred_composition_closure"
+   },
+   "source_location": "data/psi/tables/PSI-39.csv, data row 1, column 'Nitrogen'",
+   "explanation": "no unit stated; O2+N2+He = 0.21+0.79+0 = 1.00 in every row -> mole fraction by composition closure",
+   "remaining_ambiguity": "unit inferred, not stated by the source",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; flags/status equal"
+  },
+  {
+   "id": "V31",
+   "accession": "PSI-159",
+   "row": 1,
+   "column": "approx p (bar)",
+   "raw_expected": "0.9443956",
+   "category": "unit",
+   "expected": {
+    "parameter": "total_pressure",
+    "normalized_value": 94.43956,
+    "normalized_unit": "kPa",
+    "approximate": true
+   },
+   "source_location": "data/psi/tables/PSI-159.csv, data row 1, column 'approx p (bar)'",
+   "explanation": "0.9443956 bar × 100 kPa/bar = 94.43956 kPa; header says 'approx'",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; flags/status equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V32",
+   "accession": "PSI-159",
+   "row": 1,
+   "column": "pO2",
+   "raw_expected": "(calculated)",
+   "category": "calculation",
+   "expected": {
+    "parameter": "oxygen_partial_pressure",
+    "normalized_value": 37.199743,
+    "value_status": "calculated"
+   },
+   "source_location": "data/psi/tables/PSI-159.csv, data row 1: 'XO2 before test'=0.3939, 'approx p (bar)'=0.9443956",
+   "explanation": "0.3939 × 94.43956 kPa = 37.1997 kPa (hand computed)",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; flags/status equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V33",
+   "accession": "PSI-25",
+   "row": 1,
+   "column": "Initial CO2 % by vol",
+   "raw_expected": "0.44",
+   "category": "species",
+   "expected": {
+    "parameter": "carbon_dioxide_mole_fraction",
+    "normalized_value": 0.0044
+   },
+   "source_location": "data/psi/tables/PSI-25.csv, data row 1, column 'Initial CO2 % by vol'",
+   "explanation": "CO2 is never oxygen; 0.44 % = 0.0044",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; flags/status equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "V34",
+   "accession": "PSI-107",
+   "row": 295,
+   "column": "Air Rate (cm/s)",
+   "raw_expected": "-0.28",
+   "category": "extraction",
+   "expected": {
+    "parameter": "flow_velocity",
+    "normalized_value": -0.28,
+    "flags_include": "negative_flow_value"
+   },
+   "source_location": "data/psi/tables/PSI-107.csv, file line 296 (data row 295), column 'Air Rate (cm/s)'",
+   "explanation": "negative value kept with sign and flagged",
+   "remaining_ambiguity": "sign meaning (direction vs offset) not stated",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; flags/status equal"
+  },
+  {
+   "id": "V35",
+   "accession": "PSI-101",
+   "row": 1,
+   "column": "Inlet velocity (cm/s)",
+   "raw_expected": "8.1",
+   "category": "unit",
+   "expected": {
+    "parameter": "flow_velocity",
+    "normalized_value": 8.1,
+    "normalized_unit": "cm/s"
+   },
+   "source_location": "data/psi/tables/PSI-101.csv, data row 1, column 'Inlet velocity (cm/s)'",
+   "explanation": "identity conversion; configuration = inlet flow (not comparable with flow over a specimen)",
+   "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+   "acceptance": "exact raw text; normalized value within 0.02 % relative; flags/status equal",
+   "remaining_ambiguity": null
+  }
+ ],
+ "known_issues_for_expert_review": [
+  {
+   "accession": "PSI-98",
+   "detail": "Sample Length (cm)=40.6 and Sample Width (cm)=94 while PSI-100 (same SAFFIRE hardware family) lists length 94 cm and width 40.6 cm: columns may be swapped in the source. Kept as published."
+  },
+  {
+   "accession": "PSI-69",
+   "detail": "'CO initial ambient composition' — FLEX objective mentions CO2 as a tested suppressant and a FLEX publication title mentions 'carbon dioxide enriched environments'; this is circumstantial and the column is left ambiguous."
+  },
+  {
+   "accession": "PSI-107",
+   "detail": "Air Rate values -0.28 and -5.92 cm/s: physical meaning (direction, sensor offset) not stated."
+  },
+  {
+   "accession": "PSI-25",
+   "detail": "Calibrated final O2 values as low as 0.6 % and as high as 40.4 % are kept as published; their test context was not verified."
+  },
+  {
+   "accession": "PSI-101/PSI-102",
+   "detail": "Classified as smoke-generation (not flame) rows and excluded from combustion coverage; PSI-102 metadata calls runs 'combustion events'. Provisional; requires expert review."
+  },
+  {
+   "accession": "PSI-98/99/100/102/107",
+   "detail": "Diluent recorded from the source term 'Air' (column header); composition not tabulated. Matching against N2 is capped at partial."
+  },
+  {
+   "accession": "all",
+   "detail": "Comparison tolerances, diluent tolerance (0.05/0.10 mole fraction), coverage thresholds and flow-configuration compatibility rules are provisional engineering choices."
+  }
+ ],
+ "reviewer_status": "PENDING INDEPENDENT DOMAIN-EXPERT REVIEW",
+ "verified_against": {
+  "psi_csv_tables": true,
+  "psi_metadata": true,
+  "original_publications": false,
+  "figures": false
+ },
+ "semantic_cases": [
+  {
+   "id": "S01",
+   "category": "diluent",
+   "accession": "PSI-39",
+   "row": 1,
+   "source_location": "PSI-39.csv data row 1: Oxygen 0.21, Nitrogen 0.79, Helium 0",
+   "expected": {
+    "gas.status": "numeric_composition",
+    "gas.primary_diluent": "N2",
+    "gas.mixture": false
+   },
+   "interpretation": "N2-diluted atmosphere stated numerically",
+   "acceptance": "fields equal",
+   "remaining_ambiguity": "units inferred by closure"
+  },
+  {
+   "id": "S02",
+   "category": "diluent",
+   "accession": "PSI-39",
+   "row_where": {
+    "helium_min": 0.25
+   },
+   "source_location": "PSI-39.csv rows with Helium ≥ 0.25 (e.g. Oxygen 0.21, Nitrogen 0.5, Helium 0.29)",
+   "expected": {
+    "gas.mixture": true
+   },
+   "interpretation": "N2/He mixture; equal O2 to air but a different combustion environment",
+   "acceptance": "every such row is a mixture",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "S03",
+   "category": "diluent",
+   "accession": "PSI-69",
+   "row_where": {
+    "unresolved_min": 0.05
+   },
+   "source_location": "PSI-69.csv rows with 'CO initial ambient composition' > 0",
+   "expected": {
+    "gas.status": "ambiguous"
+   },
+   "interpretation": "a third species (CO or CO2, unresolved) is present; diluent not established",
+   "acceptance": "every such row ambiguous",
+   "remaining_ambiguity": "CO vs CO2"
+  },
+  {
+   "id": "S04",
+   "category": "diluent",
+   "accession": "PSI-23",
+   "row": 1,
+   "source_location": "PSI-23.csv data row 1, 'Atmosphere*' = '~21% O2 with N2'",
+   "expected": {
+    "gas.status": "qualitative",
+    "gas.primary_diluent": "N2"
+   },
+   "interpretation": "diluent stated in text",
+   "acceptance": "fields equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "S05",
+   "category": "diluent",
+   "accession": "PSI-23",
+   "row": 2,
+   "source_location": "PSI-23.csv data row 2, 'Atmosphere*' = '~21% O2 with N3'",
+   "expected": {
+    "gas.status": "ambiguous",
+    "gas.primary_diluent": null
+   },
+   "interpretation": "'N3' is a spreadsheet autofill artifact; not read as nitrogen",
+   "acceptance": "fields equal",
+   "remaining_ambiguity": "author intent presumably N2; not assumed"
+  },
+  {
+   "id": "S06",
+   "category": "diluent",
+   "accession": "PSI-68",
+   "row": 1,
+   "source_location": "PSI-68.csv row 1, 'Ambient Gas Mixture' = 'O2/N2 or O2/He'",
+   "expected": {
+    "gas.status": "campaign_alternatives",
+    "gas.alternatives": [
+     "He",
+     "N2"
+    ]
+   },
+   "interpretation": "either diluent; per-test not stated",
+   "acceptance": "fields equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "S07",
+   "category": "diluent",
+   "accession": "PSI-10",
+   "row": 1,
+   "source_location": "PSI-10.csv row 1 (no ambient diluent column; 'mN2' is fuel-stream nitrogen)",
+   "expected": {
+    "gas.status": "missing",
+    "gas.primary_diluent": null
+   },
+   "interpretation": "missing diluent is not assumed to be N2 or air",
+   "acceptance": "fields equal",
+   "remaining_ambiguity": "objective names N2 or CO2 at investigation level"
+  },
+  {
+   "id": "S08",
+   "category": "flow",
+   "accession": "PSI-98",
+   "row": 1,
+   "source_location": "PSI-98.csv row 1, 'Flow Direction' = 'Concurrent', 'Air Flow (cm/s)' = 20",
+   "expected": {
+    "flow_configuration": "concurrent_flow_over_solid",
+    "flow_cm_s": 20.0
+   },
+   "interpretation": "concurrent forced flow over the specimen",
+   "acceptance": "fields equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "S09",
+   "category": "flow",
+   "accession": "PSI-98",
+   "row": 2,
+   "source_location": "PSI-98.csv row 2, 'Flow Direction' = 'Opposed'",
+   "expected": {
+    "flow_configuration": "opposed_flow_over_solid"
+   },
+   "interpretation": "opposed flow",
+   "acceptance": "fields equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "S10",
+   "category": "flow",
+   "accession": "PSI-107",
+   "row": 1,
+   "source_location": "PSI-107.csv row 1, 'Air Rate (cm/s)' = 36.39",
+   "expected": {
+    "flow_configuration": "coflow_jet_burner",
+    "flow_cm_s": 36.39
+   },
+   "interpretation": "co-flow around a fuel jet",
+   "acceptance": "fields equal",
+   "remaining_ambiguity": "reference frame (duct mean vs centreline) not stated"
+  },
+  {
+   "id": "S11",
+   "category": "flow",
+   "accession": "PSI-107",
+   "row": 295,
+   "source_location": "PSI-107.csv data row 295, 'Air Rate (cm/s)' = -0.28",
+   "expected": {
+    "flow_cm_s": null,
+    "combustion_eligible": false,
+    "eligibility_reason": "no_condition_values"
+   },
+   "interpretation": "negative velocity kept in the measurement but never used",
+   "acceptance": "fields equal",
+   "remaining_ambiguity": "sign meaning"
+  },
+  {
+   "id": "S12",
+   "category": "eligibility",
+   "accession": "PSI-47",
+   "row": 1,
+   "source_location": "PSI-47.csv row 1 (dust session D1)",
+   "expected": {
+    "combustion_eligible": false,
+    "eligibility_reason": "non_combustion"
+   },
+   "interpretation": "dust session, not a flame",
+   "acceptance": "fields equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "S13",
+   "category": "eligibility",
+   "accession": "PSI-26",
+   "row": 1,
+   "source_location": "PSI-26.csv row 1 (test log: identifiers + material only)",
+   "expected": {
+    "combustion_eligible": false,
+    "eligibility_reason": "no_condition_values"
+   },
+   "interpretation": "material-only test log row does not evidence a condition region",
+   "acceptance": "fields equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "S14",
+   "category": "eligibility",
+   "accession": "PSI-101",
+   "row": 1,
+   "source_location": "PSI-101.csv row 1 (SAME-R smoke run)",
+   "expected": {
+    "combustion_eligible": false,
+    "eligibility_reason": "smoke_aerosol",
+    "flow_configuration": "inlet_flow"
+   },
+   "interpretation": "smoke generation, not a flame observation (provisional)",
+   "acceptance": "fields equal",
+   "remaining_ambiguity": "PSI-102 text calls runs 'combustion events'"
+  },
+  {
+   "id": "S15",
+   "category": "linkage",
+   "accession": "PSI-117",
+   "row": null,
+   "source_location": "psi_dataset_profiles.json related_unlinked: PSI-117 -> PSI-69, PSI-142",
+   "expected": {
+    "observations": 0,
+    "observation_class": "no_observations",
+    "related_unlinked": true
+   },
+   "interpretation": "CFD study using FLEX data is linked as related, never merged with the flight experiment",
+   "acceptance": "fields equal",
+   "remaining_ambiguity": null
+  },
+  {
+   "id": "S16",
+   "category": "linkage",
+   "accession": "PSI-47",
+   "row": null,
+   "source_location": "psi_dataset_profiles.json related_unlinked: PSI-47 -> PSI-102",
+   "expected": {
+    "observation_class": "non_combustion",
+    "related_unlinked": true
+   },
+   "interpretation": "DAFT is a feasibility test for SAME instrumentation; related but not merged",
+   "acceptance": "fields equal",
+   "remaining_ambiguity": null
+  }
+ ],
+ "matching_cases": [
+  {
+   "id": "MC01",
+   "category": "diluent_matching",
+   "scenario": {
+    "oxygen_mole_fraction": {
+     "value": 21,
+     "unit": "%"
+    },
+    "diluent": {
+     "value": "He"
+    }
+   },
+   "accession": "PSI-39",
+   "dimension": "diluent",
+   "expected_state_in": [
+    "MATCH",
+    "PARTIAL_MATCH"
+   ],
+   "interpretation": "PSI-39 has He-containing rows",
+   "acceptance": "best-observation state in list"
+  },
+  {
+   "id": "MC02",
+   "category": "diluent_matching",
+   "scenario": {
+    "oxygen_mole_fraction": {
+     "value": 21,
+     "unit": "%"
+    },
+    "diluent": {
+     "value": "CO2"
+    }
+   },
+   "accession": "PSI-25",
+   "dimension": "diluent",
+   "expected_state_in": [
+    "MISMATCH"
+   ],
+   "interpretation": "PSI-25's measured CO2 (≤ ~1 %) is a minor species, never the diluent; investigation statement says N2",
+   "acceptance": "state in list"
+  },
+  {
+   "id": "MC03",
+   "category": "diluent_matching",
+   "scenario": {
+    "oxygen_mole_fraction": {
+     "value": 21,
+     "unit": "%"
+    },
+    "diluent": {
+     "value": "N2"
+    }
+   },
+   "accession": "PSI-10",
+   "dimension": "diluent",
+   "expected_state_in": [
+    "MISSING_IN_EXPERIMENT"
+   ],
+   "interpretation": "missing diluent never matches",
+   "acceptance": "state in list"
+  },
+  {
+   "id": "MC04",
+   "category": "diluent_matching",
+   "scenario": {
+    "oxygen_mole_fraction": {
+     "value": 21.5,
+     "unit": "%"
+    },
+    "diluent": {
+     "value": "N2"
+    }
+   },
+   "accession": "PSI-98",
+   "dimension": "diluent",
+   "expected_state_in": [
+    "PARTIAL_MATCH"
+   ],
+   "interpretation": "'Air' source term implies N2 balance but the composition is not tabulated",
+   "acceptance": "state in list"
+  },
+  {
+   "id": "MC05",
+   "category": "flow_incompatibility",
+   "scenario": {
+    "flow_configuration": {
+     "value": "concurrent_flow_over_solid"
+    },
+    "flow_velocity": {
+     "value": 36,
+     "unit": "cm/s"
+    }
+   },
+   "accession": "PSI-107",
+   "dimension": "flow_velocity",
+   "expected_state_in": [
+    "NOT_COMPARABLE"
+   ],
+   "interpretation": "co-flow burner velocity is not comparable with flow over a solid specimen even when numerically close",
+   "acceptance": "state in list"
+  },
+  {
+   "id": "MC06",
+   "category": "flow_incompatibility",
+   "scenario": {
+    "flow_configuration": {
+     "value": "concurrent_flow_over_solid"
+    },
+    "flow_velocity": {
+     "value": 20,
+     "unit": "cm/s"
+    }
+   },
+   "accession": "PSI-99",
+   "dimension": "flow_velocity",
+   "expected_state_in": [
+    "MATCH"
+   ],
+   "interpretation": "same configuration, same velocity",
+   "acceptance": "state in list"
+  },
+  {
+   "id": "MC07",
+   "category": "flow_incompatibility",
+   "scenario": {
+    "flow_velocity": {
+     "value": 20,
+     "unit": "cm/s"
+    }
+   },
+   "accession": "PSI-99",
+   "dimension": "flow_velocity",
+   "expected_state_in": [
+    "PARTIAL_MATCH"
+   ],
+   "interpretation": "configuration undefined in the scenario caps velocity agreement at partial",
+   "acceptance": "state in list"
+  },
+  {
+   "id": "MC08",
+   "category": "flow_incompatibility",
+   "scenario": {
+    "flow_configuration": {
+     "value": "inlet_flow"
+    },
+    "flow_velocity": {
+     "value": 8.1,
+     "unit": "cm/s"
+    }
+   },
+   "accession": "PSI-101",
+   "dimension": "flow_velocity",
+   "expected_state_in": [
+    "MISSING_IN_EXPERIMENT"
+   ],
+   "interpretation": "smoke-generation rows are never matched as fire evidence",
+   "acceptance": "state in list"
+  }
+ ],
+ "coverage_cases": [
+  {
+   "id": "CC01",
+   "category": "coverage",
+   "scenario": {
+    "gravity": {
+     "value": "microgravity"
+    }
+   },
+   "key": "gravity",
+   "expected": "OBSERVED",
+   "excluded_must_include": [
+    "non_combustion",
+    "smoke_aerosol",
+    "no_condition_values"
+   ],
+   "interpretation": "gravity coverage counts eligible flame observations only",
+   "acceptance": "classification equal and exclusions listed"
+  },
+  {
+   "id": "CC02",
+   "category": "coverage",
+   "scenario": {
+    "oxygen_mole_fraction": {
+     "value": 21,
+     "unit": "%"
+    },
+    "total_pressure": {
+     "value": 1,
+     "unit": "atm"
+    }
+   },
+   "key": "o2_p",
+   "expected": "OBSERVED",
+   "interpretation": "air-like O2 at 1 atm",
+   "acceptance": "classification equal"
+  },
+  {
+   "id": "CC03",
+   "category": "coverage",
+   "scenario": {
+    "gravity": {
+     "value": "lunar"
+    }
+   },
+   "key": "gravity",
+   "expected": "NO_MATCHING_RECORDS",
+   "interpretation": "no lunar-gravity record",
+   "acceptance": "classification equal"
+  },
+  {
+   "id": "CC04",
+   "category": "coverage",
+   "scenario": {
+    "flow_velocity": {
+     "value": 20,
+     "unit": "cm/s"
+    }
+   },
+   "key": "o2_p",
+   "expected": "NOT_ASSESSABLE",
+   "interpretation": "O2 × P undefined",
+   "acceptance": "classification equal"
+  },
+  {
+   "id": "CC05",
+   "category": "coverage",
+   "scenario": {
+    "oxygen_mole_fraction": {
+     "value": 21,
+     "unit": "%"
+    },
+    "diluent": {
+     "value": "He"
+    }
+   },
+   "key": "diluent_o2",
+   "expected_in": [
+    "SPARSE_COVERAGE",
+    "LIMITED_COVERAGE",
+    "OBSERVED",
+    "NO_MATCHING_RECORDS"
+   ],
+   "must_not_count_accessions": [
+    "PSI-25",
+    "PSI-98",
+    "PSI-10"
+   ],
+   "interpretation": "He-diluted 21 % O2: N2/air/unknown-diluent rows must not count",
+   "acceptance": "no forbidden accession among supporting accessions"
+  },
+  {
+   "id": "CC06",
+   "category": "coverage",
+   "scenario": {
+    "flow_configuration": {
+     "value": "concurrent_flow_over_solid"
+    },
+    "flow_velocity": {
+     "value": 36,
+     "unit": "cm/s"
+    },
+    "gravity": {
+     "value": "microgravity"
+    }
+   },
+   "key": "flow_gravity",
+   "must_not_count_accessions": [
+    "PSI-107",
+    "PSI-101",
+    "PSI-102"
+   ],
+   "incompatible_must_include": "incompatible_flow_configuration",
+   "interpretation": "co-flow and inlet rows excluded as incompatible",
+   "acceptance": "forbidden accessions absent; incompatibility counted"
+  }
+ ],
+ "adversarial_cases": [
+  {
+   "id": "A01",
+   "scenario": {
+    "oxygen_mole_fraction": {
+     "value": 21,
+     "unit": "%"
+    },
+    "gas_composition": {
+     "N2": 0.9
+    }
+   },
+   "expect_error": "composition_exceeds_unity"
+  },
+  {
+   "id": "A02",
+   "scenario": {
+    "flow_configuration": {
+     "value": "quiescent"
+    },
+    "flow_velocity": {
+     "value": 5,
+     "unit": "cm/s"
+    }
+   },
+   "expect_error": "quiescent_with_flow_velocity"
+  },
+  {
+   "id": "A03",
+   "scenario": {
+    "diluent": {
+     "value": "xenon-ish"
+    }
+   },
+   "expect_error": "unknown_diluent"
+  },
+  {
+   "id": "A04",
+   "scenario": {
+    "flow_configuration": {
+     "value": "opposed_flow_over_solid"
+    },
+    "flow_direction": {
+     "value": "concurrent"
+    }
+   },
+   "expect_error": "conflicting_flow_direction"
+  },
+  {
+   "id": "A05",
+   "scenario": {
+    "oxygen_mole_fraction": {
+     "value": 140,
+     "unit": "%"
+    }
+   },
+   "expect_error": "fraction_out_of_range"
+  },
+  {
+   "id": "A06",
+   "scenario": {
+    "flow_velocity": {
+     "value": -3,
+     "unit": "cm/s"
+    }
+   },
+   "expect_error": "negative_velocity"
+  },
+  {
+   "id": "A07",
+   "scenario": {
+    "oxygen_mole_fraction": {
+     "value": 21,
+     "unit": "%"
+    },
+    "total_pressure": {
+     "value": 101.3,
+     "unit": "kPa"
+    }
+   },
+   "expect_warning": "diluent_not_specified"
+  },
+  {
+   "id": "A08",
+   "scenario": {
+    "oxygen_mole_fraction": {
+     "value": 21,
+     "unit": "%",
+     "uncertainty": 0.5
+    },
+    "total_pressure": {
+     "value": 101.3,
+     "unit": "kPa"
+    }
+   },
+   "expect_po2_uncertainty_status": "uncertainty_not_reported",
+   "interpretation": "only one input uncertainty stated -> never propagated with an assumed zero"
+  },
+  {
+   "id": "A09",
+   "scenario": {
+    "oxygen_mole_fraction": {
+     "value": 21,
+     "unit": "%",
+     "uncertainty": 0.5
+    },
+    "total_pressure": {
+     "value": 101.3,
+     "unit": "kPa",
+     "uncertainty": 1.0
+    }
+   },
+   "expect_po2_uncertainty_status": "propagated",
+   "expect_po2_uncertainty": 0.5483,
+   "interpretation": "pO2 = 0.21 × 101.3 = 21.2730 kPa; u = pO2·sqrt((0.005/0.21)^2 + (1.0/101.3)^2) = 0.5483 kPa"
+  }
+ ]
+}

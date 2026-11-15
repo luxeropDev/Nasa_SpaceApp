@@ -249,7 +249,7 @@ def test_assistant_claims_reference_real_evidence(lang):
     ids = {e["id"] for e in a["evidence_items"]}
     assert ids
     for c in a["claims"]:
-        assert c["type"] in ("EVIDENCE", "INTERPRETATION", "HYPOTHESIS", "SAFETY")
+        assert c["type"] in ("EVIDENCE", "CALCULATED", "INTERPRETATION", "HYPOTHESIS", "SAFETY")  # CALCULATED added in 2.3 (pO2)
         assert set(c["evidence"]) <= ids
         if c["type"] == "EVIDENCE":
             assert c["supported"] and c["evidence"]
@@ -258,7 +258,8 @@ def test_assistant_claims_reference_real_evidence(lang):
             doc = documents.DOCS[e["doc_id"]]
             page_text = " ".join(p["text"] for p in doc["pages"] if p["page"] == e["page"])
             assert _re.sub(r"\s+", " ", e["text"])[:80] in _re.sub(r"\s+", " ", page_text)
-        assert e["verification"] in ("curated_summary", "verbatim_psi_metadata", "verbatim_extracted_text")
+        assert e["verification"] in ("curated_summary", "verbatim_psi_metadata", "verbatim_extracted_text", "computed_from_psi_table",
+                                     "calculated_by_pyrolens", "deterministic_gap_analysis", "user_scenario", "scenario_validation", "deterministic_condition_matching")
 
 
 def test_unsupported_llm_claim_is_downgraded():

@@ -27,7 +27,7 @@ export function toMarkdown(res: Cmp, t: T): string {
   const head = `| ${t("cp.param")} | ${res.investigations.map((i) => `${i.acronym} (${i.id})`).join(" | ")} | ${t("cp.status")} |`;
   const sep = `|${" --- |".repeat(res.investigations.length + 2)}`;
   const rows = res.rows.map((r) => `| ${esc(r.label)} | ${r.values.map((v) => esc(flat(v, `_${t("cp.notInKb")}_`))).join(" | ")} | ${t(statusKey(r.status))} |`);
-  return `# FLAMEWISE — ${t("cp.title")}\n\n${res.summary}\n\n${[head, sep, ...rows].join("\n")}\n\n_${t("cp.exportNote")}_\n`;
+  return `# PyroLens — ${t("cp.title")}\n\n${res.summary}\n\n${[head, sep, ...rows].join("\n")}\n\n_${t("cp.exportNote")}_\n`;
 }
 
 function Value({ v }: { v: Val }) {

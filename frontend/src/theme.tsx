@@ -1,35 +1,22 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useEffect } from "react";
 import type { ReactNode } from "react";
 import { DarkZoneCtx } from "./zone";
 
-export type Theme = "light" | "dark";
-const STORE = "flamewise.theme";
+export type Theme = "light";
+const Ctx = createContext<{ theme: Theme } | null>(null);
 
-function initial(): Theme {
-  // the inline pre-paint script in index.html applies the saved theme (light by default)
-  return document.documentElement.classList.contains("dark") ? "dark" : "light";
-}
-
-const Ctx = createContext<{ theme: Theme; toggle: () => void; set: (t: Theme) => void } | null>(null);
-
+/**
+ * PyroLens now has one editorial theme: black navigation, white reading surfaces and deliberate dark data zones.
+ * Remove the former class/preference so saved settings and OS dark mode can never alter the design.
+ */
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(initial);
-
-  const apply = useCallback((t: Theme, animate: boolean) => {
+  useEffect(() => {
     const root = document.documentElement;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (animate && !reduce) {
-      root.classList.add("theme-fade");
-      window.setTimeout(() => root.classList.remove("theme-fade"), 420);
-    }
-    root.classList.toggle("dark", t === "dark");
-    root.style.colorScheme = t;
-    setTheme(t);
-    try { localStorage.setItem(STORE, t); } catch { /* ignore */ }
+    root.classList.remove("dark", "theme-fade");
+    root.style.colorScheme = "light";
+    try { localStorage.removeItem("flamewise.theme"); } catch { /* storage may be unavailable */ }
   }, []);
-
-  const value = useMemo(() => ({ theme, set: (t: Theme) => apply(t, true), toggle: () => apply(theme === "dark" ? "light" : "dark", true) }), [theme, apply]);
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+  return <Ctx.Provider value={{ theme: "light" }}>{children}</Ctx.Provider>;
 }
 
 export function useTheme() {
@@ -39,19 +26,18 @@ export function useTheme() {
 }
 
 export type ChartTheme = { series: string[]; grid: string; axis: string; tipBg: string; tipBorder: string; text: string; cursor: string; node: Record<string, string>; edge: string; track: string };
-// Ordered categorical series: blue, teal, slate-violet, amber, green. Muted, distinguishable in both themes;
-// the combustion orange is reserved for safety-domain marks so it keeps meaning.
 const LIGHT: ChartTheme = {
-  series: ["#105BD8", "#0F7C8C", "#5B4BB7", "#B4500F", "#2F7D4F"], grid: "#E3E7EE", axis: "#687282", tipBg: "#FFFFFF", tipBorder: "#D9DEE7", text: "#172033", cursor: "#F1F3F7",
-  node: { investigation: "#0B3D91", source: "#0F7C8C", research_domain: "#5B4BB7", safety_domain: "#B4500F", fuel: "#2F7D4F", scenario: "#8A6A00", dataset: "#105BD8", document: "#6B4E16", context: "#8C2F39" }, edge: "#A8B2C2", track: "#E3E7EE",
+  series: ["#0050d8", "#007a86", "#5b4bb7", "#c43d2f", "#2f7d4f"], grid: "#d5d8dc", axis: "#565c65", tipBg: "#ffffff", tipBorder: "#c9c9c9", text: "#1b1b1b", cursor: "#f1f1f1",
+  node: { investigation: "#0b3d91", source: "#007a86", research_domain: "#5b4bb7", safety_domain: "#c43d2f", fuel: "#2f7d4f", scenario: "#8a6a00", dataset: "#0050d8", document: "#6b4e16", context: "#8c2f39" }, edge: "#8d9297", track: "#e6e6e6",
 };
 const DARK: ChartTheme = {
-  series: ["#6EA8FE", "#5CC4CF", "#A99BF0", "#E88842", "#6CCB91"], grid: "rgba(166,177,192,.12)", axis: "#8A96A7", tipBg: "#191F29", tipBorder: "#303B4A", text: "#EDF2F7", cursor: "rgba(166,177,192,.08)",
-  node: { investigation: "#6EA8FE", source: "#5CC4CF", research_domain: "#A99BF0", safety_domain: "#E88842", fuel: "#6CCB91", scenario: "#E0B04A", dataset: "#9EC5FF", document: "#D9B77A", context: "#E58A93" }, edge: "#5A6678", track: "#202936",
+  series: ["#75a7ff", "#5cc4cf", "#b5a8ff", "#ff8477", "#71d398"], grid: "rgba(255,255,255,.14)", axis: "#b8bec7", tipBg: "#171717", tipBorder: "#454545", text: "#ffffff", cursor: "rgba(255,255,255,.08)",
+  node: { investigation: "#75a7ff", source: "#5cc4cf", research_domain: "#b5a8ff", safety_domain: "#ff8477", fuel: "#71d398", scenario: "#f5c451", dataset: "#a9c8ff", document: "#e0bd80", context: "#ee9ba3" }, edge: "#727983", track: "#292929",
 };
-/** Chart colors follow the surface they are drawn on: a dark zone forces the dark palette in either theme. */
+
+/** Charts use the light palette except inside intentional dark editorial/plotting sections. */
 export const useChartTheme = (forceDark = false): ChartTheme => {
   const zone = useContext(DarkZoneCtx);
-  const { theme } = useTheme();
-  return forceDark || zone || theme === "dark" ? DARK : LIGHT;
+  useTheme();
+  return forceDark || zone ? DARK : LIGHT;
 };

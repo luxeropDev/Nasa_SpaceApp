@@ -3,19 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="FLAMEWISE — research intelligence for microgravity combustion and spacecraft fire safety. Independent project; not affiliated with NASA." />
-    <meta name="theme-color" content="#F6F7F9" />
-    <title>FLAMEWISE</title>
+    <meta name="description" content="PyroLens — Scientific Evidence Intelligence for Spacecraft Fire Safety. Independent project; not affiliated with NASA." />
+    <meta name="theme-color" content="#000000" />
+    <title>PyroLens</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preload" as="image" type="image/webp" href="/media/hero-1600.webp" imagesrcset="/media/hero-960.webp 960w, /media/hero-1600.webp 1600w, /media/hero-2400.webp 2400w" imagesizes="(min-width: 1024px) 58vw, 100vw" />
     <script>
-      // Apply persisted theme/lang before first paint. Light (research workspace) is the default when nothing is saved.
+      // PyroLens uses one fixed editorial theme. Apply only the saved interface language before first paint.
       (function () {
         try {
-          var t = localStorage.getItem("flamewise.theme");
-          if (t !== "light" && t !== "dark") t = "light";
-          document.documentElement.classList.toggle("dark", t === "dark");
-          document.documentElement.style.colorScheme = t;
+          document.documentElement.classList.remove("dark");
+          document.documentElement.style.colorScheme = "light";
+          localStorage.removeItem("flamewise.theme");
           var l = localStorage.getItem("flamewise.lang");
           if (l === "en" || l === "ru") document.documentElement.lang = l;
         } catch (e) {}

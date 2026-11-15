@@ -91,13 +91,13 @@ export function Empty({ icon: I, title, text, action, compact = false }: { icon?
 }
 
 export const Panel = ({ title, sub, action, children, className = "", id, eyebrow }: { title?: ReactNode; sub?: ReactNode; action?: ReactNode; children: ReactNode; className?: string; id?: string; eyebrow?: ReactNode }) => (
-  <section id={id} className={`panel fade p-5 ${className}`}>
+  <section id={id} className={`panel fade p-5 md:p-6 ${className}`}>
     {(title || action || eyebrow) && (
       <header className="mb-4 flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
         <div className="min-w-0">
           {eyebrow && <div className="label mb-1">{eyebrow}</div>}
-          {title && <h2 className="font-display text-[15.5px] font-semibold text-fg">{title}</h2>}
-          {sub && <p className="mt-0.5 text-[12.5px] leading-relaxed text-subtle">{sub}</p>}
+          {title && <h2 className="font-display text-[19px] font-bold leading-tight text-fg">{title}</h2>}
+          {sub && <p className="mt-1 text-[13px] leading-relaxed text-subtle">{sub}</p>}
         </div>
         {action}
       </header>
@@ -116,17 +116,17 @@ export function Ext({ href, children, className = "" }: { href: string; children
 }
 
 /** Page container + editorial header. Every workspace page uses it so spacing stays consistent. */
-export const Page = ({ title, sub, eyebrow, actions, children, wide = false }: { title: string; sub?: string; eyebrow?: string; actions?: ReactNode; children: ReactNode; wide?: boolean }) => (
-  <div className={`mx-auto w-full px-4 pb-16 pt-6 sm:px-6 md:pt-8 lg:px-8 ${wide ? "max-w-[1560px]" : "max-w-[1440px]"}`}>
-    <header className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-line pb-5">
-      <div className="min-w-0 max-w-3xl">
-        {eyebrow && <p className="eyebrow reveal mb-2">{eyebrow}</p>}
-        <h1 className="reveal font-display text-[26px] font-semibold leading-tight text-fg sm:text-[30px]">{title}</h1>
-        {sub && <p className="reveal mt-2 text-[14px] leading-relaxed text-muted">{sub}</p>}
+export const Page = ({ title, sub, eyebrow, actions, children, wide = false, compact = false }: { title: string; sub?: string; eyebrow?: string; actions?: ReactNode; children: ReactNode; wide?: boolean; compact?: boolean }) => (
+  <div className={`mx-auto w-full px-4 pb-20 sm:px-6 lg:px-10 ${compact ? "pt-6 md:pt-7" : "pt-8 md:pt-12"} ${wide ? "max-w-[1600px]" : "max-w-[1480px]"}`}>
+    <header className={`flex flex-wrap items-end justify-between gap-5 border-b border-line ${compact ? "mb-5 pb-5" : "mb-8 pb-7 md:mb-10 md:pb-9"}`}>
+      <div className="min-w-0 max-w-4xl">
+        {eyebrow && <p className="eyebrow reveal mb-3 text-accent">{eyebrow}</p>}
+        <h1 className={`reveal font-display font-bold leading-[1.05] tracking-[-.035em] text-fg ${compact ? "text-[30px] sm:text-[36px]" : "text-[34px] sm:text-[42px] lg:text-[48px]"}`}>{title}</h1>
+        {sub && <p className={`reveal max-w-3xl leading-relaxed text-muted ${compact ? "mt-2 text-[13.5px]" : "mt-4 text-[15px] sm:text-[16px]"}`}>{sub}</p>}
       </div>
       {actions && <div className="reveal d-3 flex flex-wrap items-center gap-2">{actions}</div>}
     </header>
-    <div className="space-y-5">{children}</div>
+    <div className={compact ? "space-y-4" : "space-y-6 md:space-y-8"}>{children}</div>
   </div>
 );
 

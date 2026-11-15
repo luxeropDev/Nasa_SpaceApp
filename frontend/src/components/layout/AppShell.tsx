@@ -5,6 +5,7 @@ import { useI18n } from "../../i18n";
 import type { View } from "../../nav";
 import CommandSearch from "./CommandSearch";
 import TopNav from "./TopNav";
+import { Wordmark } from "../Logo";
 
 type Props = { view: View; health: { data: Health | null; error: unknown }; onAbout: () => void; children: ReactNode };
 
@@ -30,9 +31,13 @@ export default function AppShell({ view, health, onAbout, children }: Props) {
       <a href="#main" onClick={(e) => { e.preventDefault(); document.getElementById("main")?.focus(); }} className="sr-only left-4 top-3 z-[80] rounded-ctl bg-accent px-3 py-2 text-sm text-white focus:not-sr-only focus:fixed">{t("nav.skip")}</a>
       <TopNav view={view} health={health} onAbout={onAbout} onSearch={() => setSearch(true)} />
       <main id="main" tabIndex={-1} className="flex-1 outline-none">{children}</main>
-      <footer className="no-print border-t border-line">
-        <div className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8">
-          <p className="max-w-4xl text-[11.5px] leading-relaxed text-subtle">{t("footer.text")}</p>
+      <footer className="zone-dark no-print bg-black">
+        <div className="mx-auto grid max-w-[1600px] gap-8 px-4 py-10 sm:px-6 md:grid-cols-[240px_1fr] md:py-14 lg:px-10">
+          <Wordmark variant="white" className="w-[190px]" />
+          <div className="border-t border-line pt-5 md:border-l md:border-t-0 md:pl-8 md:pt-0">
+            <p className="max-w-4xl text-[12px] leading-relaxed text-muted">{t("footer.text")}</p>
+            <p className="mt-4 font-mono text-[10px] uppercase tracking-[.12em] text-subtle">Independent scientific research interface</p>
+          </div>
         </div>
       </footer>
       <CommandSearch open={search} onClose={() => setSearch(false)} />

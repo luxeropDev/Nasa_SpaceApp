@@ -11,7 +11,7 @@ const base = {
   "top.theme": "Theme", "top.theme.toLight": "Switch to light theme", "top.theme.toDark": "Switch to dark theme", "top.lang": "Language", "top.lang.label": "Interface language",
   "mode.demo": "Demo \u00b7 local knowledge", "mode.live": "Live LLM",
   // status dialog
-  "status.title": "System status", "status.desc": "Live information reported by the FLAMEWISE backend.", "status.api": "Backend API", "status.dataset": "Dataset version",
+  "status.title": "System status", "status.desc": "Live information reported by the PyroLens backend.", "status.api": "Backend API", "status.dataset": "Dataset version",
   "status.mode": "Assistant mode", "status.llm": "LLM provider", "status.llmNone": "None configured (no API key)", "status.close": "Close",
   "status.demoNote": "Without an API key the assistant answers from retrieval and pre-authored evidence summaries. It never pretends a live LLM was used.",
   "status.liveNote": "A live LLM synthesizes answers from retrieved evidence; citations are validated against retrieved records.",
@@ -22,7 +22,7 @@ const base = {
   "common.none": "None", "common.open": "Open", "common.external": "opens in a new tab", "common.reset": "Reset",
   "error.title": "Something went wrong", "error.network": "Cannot reach the backend. Make sure it is running on port 8000.", "error.notfound": "The requested item was not found.",
   "error.validation": "The request was rejected as invalid.", "error.server": "The server reported an internal error.", "error.http": "Unexpected response (HTTP {status}).",
-  "footer.text": "FLAMEWISE is an independent research tool and is not affiliated with or endorsed by NASA. Starter knowledge base \u00b7 qualitative summaries only \u00b7 not an operational or firefighting tool.",
+  "footer.text": "PyroLens is an independent research tool and is not affiliated with or endorsed by NASA. Evidence intelligence only \u00b7 not an operational or firefighting tool.",
   // codes
   "fuel.solid": "Solid", "fuel.liquid": "Liquid", "fuel.gas": "Gas", "fuel.aerosol": "Aerosol",
   "scen.iss": "International Space Station", "scen.lunar_habitat": "Lunar surface habitat", "scen.lunar_rover": "Pressurized lunar rover", "scen.mars_transit": "Mars transit habitat",
@@ -90,23 +90,23 @@ const base = {
 
   // ---------- v2: shell ----------
   "nav.graph": "Evidence Graph", "nav.scenarios": "Mission Scenario Analysis", "nav.reports": "Research Reports",
-  "nav.g.research": "Research", "nav.g.intelligence": "Intelligence", "nav.g.resources": "Resources", "brand.home": "FLAMEWISE home",
-  "nav.docs": "API documentation", "nav.docs.desc": "Interactive OpenAPI reference served by the backend", "nav.about": "About FLAMEWISE", "nav.about.desc": "Purpose, data provenance and live system status",
+  "nav.g.research": "Research", "nav.g.intelligence": "Intelligence", "nav.g.resources": "Resources", "brand.home": "PyroLens home",
+  "nav.docs": "API documentation", "nav.docs.desc": "Interactive OpenAPI reference served by the backend", "nav.about": "About PyroLens", "nav.about.desc": "Purpose, data provenance and live system status",
   "nav.explorer.desc": "Search and filter NASA microgravity combustion investigations", "nav.compare.desc": "Compare conditions and findings of 2–4 experiments",
   "nav.assistant.desc": "Questions answered with traceable citations", "nav.intel.desc": "Transparent research-relevance scoring by scenario", "nav.graph.desc": "Relationships between experiments, sources and domains",
   "nav.scenarios.desc": "Evidence mapped to ISS, lunar and Mars contexts", "nav.reports.desc": "Printable, citation-complete research reports", "nav.sources.desc": "Provenance and link type of every source",
-  "cmd.open": "Search research…", "cmd.title": "Search FLAMEWISE", "cmd.ph": "Search investigations, pages, or ask a question…", "cmd.results": "Results",
+  "cmd.open": "Search research…", "cmd.title": "Search PyroLens", "cmd.ph": "Search investigations, pages, or ask a question…", "cmd.results": "Results",
   "cmd.empty": "No matches.", "cmd.hint": "↑↓ to move · Enter to open · Esc to close", "cmd.ask": "Ask the assistant: “{q}”",
   "cmd.g.record": "Investigations", "cmd.g.page": "Pages", "cmd.g.ask": "Assistant",
-  "about.open": "About & system status", "about.title": "About FLAMEWISE", "about.desc": "System status as reported by the backend, and what this tool is.",
-  "about.whatTitle": "What FLAMEWISE is", "about.what": "A research intelligence workspace that organises NASA microgravity combustion investigations into searchable, comparable, source-linked evidence for spacecraft fire safety research.",
-  "about.independent": "FLAMEWISE is an independent project. It is not affiliated with, endorsed by or operated by NASA; NASA material is referenced through public links.",
+  "about.open": "About & system status", "about.title": "About PyroLens", "about.desc": "System status as reported by the backend, and what this tool is.",
+  "about.whatTitle": "What PyroLens is", "about.what": "A scientific evidence intelligence workspace that organises NASA microgravity combustion investigations into searchable, comparable, source-linked evidence for spacecraft fire safety research.",
+  "about.independent": "PyroLens is an independent project. It is not affiliated with, endorsed by or operated by NASA; NASA material is referenced through public links.",
   "about.sources": "Data provenance", "about.apiDocs": "API documentation", "about.shortcuts": "Ctrl/⌘ + K or / — search · Esc — close dialogs",
   "status.offline": "Offline / unavailable",
   "common.clear": "Clear", "common.close": "Close", "common.na": "n/a", "common.naLong": "Not available in source data",
   // epistemic labels
   "epi.record": "Source record", "epi.record.hint": "Curated, paraphrased statement stored in the knowledge base with a linked source.",
-  "epi.derived": "Derived metric", "epi.derived.hint": "Computed by FLAMEWISE from stored records using a documented formula.",
+  "epi.derived": "Derived metric", "epi.derived.hint": "Computed by PyroLens from stored records using a documented formula.",
   "epi.ai": "AI-generated", "epi.ai.hint": "Synthesised by a live language model from retrieved records; verify against the sources.",
   "epi.rule": "Template summary", "epi.rule.hint": "Assembled by rules from retrieved records (no language model was used).",
   "epi.assumption": "Contextual assumption", "epi.assumption.hint": "A curator's judgement (e.g. relevance by analogy), not a measured result.",
@@ -116,7 +116,7 @@ const base = {
   "src.kind.direct": "Direct document", "src.kind.direct.hint": "The link points to a specific document or dataset.",
   "sel.title": "Selected investigations", "sel.selected": "selected", "sel.compare": "Compare", "sel.report": "Report", "sel.clear": "Clear selection",
   // overview v2
-  "ov.hero.eyebrow": "Flamewise / Scientific Intelligence", "ov.hero.title1": "Understanding Fire.", "ov.hero.title2": "Protecting the Future.",
+  "ov.hero.eyebrow": "PyroLens / Scientific Evidence Intelligence", "ov.hero.title1": "From experimental data.", "ov.hero.title2": "To engineering evidence.",
   "ov.hero.lead": "Explore microgravity combustion research and transform NASA experiments into evidence-backed spacecraft fire safety insights.",
   "ov.hero.m1": "Microgravity research", "ov.hero.m2": "NASA experiments", "ov.hero.m3": "Evidence-based analysis",
   "ov.hero.caption": "Illustration · spherical flame in microgravity · not data",
@@ -148,7 +148,7 @@ const base = {
   "as.retrievedBy": "retrieved by BM25", "as.sources.title": "Sources supporting this answer", "as.sources.sub": "Excerpts are the stored findings the answer was built from. Links show whether they open a document or a catalog search.",
   // compare v2
   "cp.eyebrow": "Experiments", "cp.p4": "Saffire series + BASS-II", "cp.minTitle": "Nothing to compare yet", "cp.browse": "Browse research", "cp.toReport": "Build report",
-  "cp.exported": "Export downloaded", "cp.exportNote": "Generated by FLAMEWISE from stored records. Missing values are marked, never estimated.",
+  "cp.exported": "Export downloaded", "cp.exportNote": "Generated by PyroLens from stored records. Missing values are marked, never estimated.",
   "cp.unitsNote": "Values are compared as stored text. The knowledge base holds no numerical measurements, so no unit conversion is performed and nothing is highlighted as numerically larger or smaller.",
   // intelligence v2
   "in.eyebrow": "Analysis", "in.selected": "Selected record", "in.scoreLabel": "Research relevance score", "in.scoreCaption": "relevance, not probability",

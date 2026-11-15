@@ -16,17 +16,22 @@ from .science.api import router as evidence_router
 
 i18n_data.verify(INVESTIGATIONS, SOURCES)  # fail fast if any translation is missing
 
-logging.basicConfig(level=os.getenv("PyroLens_LOG_LEVEL", "INFO"), format="%(asctime)s %(levelname)s %(name)s %(message)s")
+def _setting(name: str, legacy: str, default: str) -> str:
+    """Read the PyroLens 3.0 variable while retaining FLAMEWISE 2.x compatibility."""
+    return os.getenv(name, os.getenv(legacy, default))
+
+
+logging.basicConfig(level=_setting("PYROLENS_LOG_LEVEL", "FLAMEWISE_LOG_LEVEL", "INFO"), format="%(asctime)s %(levelname)s %(name)s %(message)s")
 log = logging.getLogger("flamewise.api")
 
-app = FastAPI(title="PyroLens API", version="2.3.0")
+app = FastAPI(title="PyroLens API", version="3.0.0")
 # Production origins come from the environment (comma-separated); the Vite dev server is allowed by default.
-_origins = [o.strip() for o in os.getenv("PyroLens_CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",") if o.strip()]
+_origins = [o.strip() for o in _setting("PYROLENS_CORS_ORIGINS", "FLAMEWISE_CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",") if o.strip()]
 app.add_middleware(CORSMiddleware, allow_origins=_origins, allow_methods=["GET", "POST"], allow_headers=["Content-Type", "X-Request-ID"],
                    expose_headers=["X-Request-ID"])
 
 # Simple per-client sliding-window limit for the assistant endpoint (it may call a paid LLM).
-AI_LIMIT = int(os.getenv("PyroLens_AI_RATE_PER_MIN", "20"))
+AI_LIMIT = int(_setting("PYROLENS_AI_RATE_PER_MIN", "FLAMEWISE_AI_RATE_PER_MIN", "20"))
 _hits: dict[str, deque] = defaultdict(deque)
 
 

@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { LayoutGrid, List, SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal, X } from "lucide-react";
 import { SCENARIOS } from "../api";
 import type { Inv } from "../api";
 import { useI18n } from "../i18n";
-import { Segmented } from "../components/ui";
 
 export type F = { fuel: string; domain: string; safety: string; scenario: string; hardware: string; gravity: string };
 export const NO_FILTER: F = { fuel: "", domain: "", safety: "", scenario: "", hardware: "", gravity: "" };
@@ -21,10 +20,10 @@ function Sel({ id, value, label, opts, onChange }: { id: string; value: string; 
   );
 }
 
-type Props = { data: Inv[]; f: F; setF: (f: F) => void; sort: string; setSort: (s: string) => void; layout: "list" | "grid"; setLayout: (l: "list" | "grid") => void };
+type Props = { data: Inv[]; f: F; setF: (f: F) => void; onClear: () => void };
 
 /** Filter toolbar. Every option is derived from values present in the data — no unsupported filters. */
-export default function ExplorerFilters({ data, f, setF, sort, setSort, layout, setLayout }: Props) {
+export default function ExplorerFilters({ data, f, setF, onClear }: Props) {
   const { t, tc } = useI18n();
   const opt = (a: string[]) => uniq(a).map((v) => ({ v, l: v }));
   const defs: { k: keyof F; label: string; opts: { v: string; l: string }[] }[] = [
@@ -38,27 +37,24 @@ export default function ExplorerFilters({ data, f, setF, sort, setSort, layout, 
   const active = defs.filter((d) => f[d.k]);
   const [open, setOpen] = useState(false);
   return (
-    <div className="space-y-3">
-      <button type="button" className="btn btn-sm md:hidden" aria-expanded={open} aria-controls="ex-filters" onClick={() => setOpen((o) => !o)}>
+    <div>
+      <button type="button" className="btn w-full justify-between lg:hidden" aria-expanded={open} aria-controls="ex-filters" onClick={() => setOpen((o) => !o)}>
         <SlidersHorizontal size={13} />{t("ex2.filters")}{active.length > 0 && <span className="font-mono text-accent">{active.length}</span>}
       </button>
-      <div id="ex-filters" className={`${open ? "grid" : "hidden"} grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid xl:grid-cols-6`}>
+      <div id="ex-filters" className={`${open ? "block" : "hidden"} mt-3 border border-line bg-surface p-4 lg:mt-0 lg:block lg:border-0 lg:bg-transparent lg:p-0`}>
+        <div className="mb-5 hidden items-center justify-between border-b border-line pb-3 lg:flex">
+          <h2 className="font-display text-[18px] font-bold text-fg">{t("ex2.filters")}</h2>
+          {active.length > 0 && <button className="text-xs font-semibold text-accent hover:underline" onClick={onClear}>{t("common.reset")}</button>}
+        </div>
+        <div className="space-y-4">
         {defs.map((d) => <Sel key={d.k} id={`f-${d.k}`} label={d.label} value={f[d.k]} opts={d.opts} onChange={(v) => setF({ ...f, [d.k]: v })} />)}
-      </div>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex min-h-[28px] flex-wrap items-center gap-1.5">
+        </div>
+        <div className="mt-5 flex flex-wrap gap-1.5 border-t border-line pt-4">
           {active.map((d) => (
             <button key={d.k} type="button" onClick={() => setF({ ...f, [d.k]: "" })} className="chip chip-accent transition-colors hover:bg-accent/20" aria-label={t("ex.removeFilter", { name: `${d.label}: ${d.opts.find((o) => o.v === f[d.k])?.l ?? f[d.k]}` })}>
               <span className="text-accent/70">{d.label}:</span> {d.opts.find((o) => o.v === f[d.k])?.l ?? f[d.k]}<X size={11} aria-hidden="true" />
             </button>
           ))}
-        </div>
-        <div className="flex items-center gap-2">
-          <label htmlFor="f-sort" className="sr-only">{t("ex.sort")}</label>
-          <select id="f-sort" className="select !w-auto !py-1.5 text-[12.5px]" value={sort} onChange={(e) => setSort(e.target.value)}>
-            <option value="relevance">{t("ex.sort.relevance")}</option><option value="mission">{t("ex.sort.mission")}</option><option value="name">{t("ex.sort.name")}</option>
-          </select>
-          <Segmented size="sm" label={t("ex.layout")} value={layout} onChange={setLayout} options={[{ value: "list", label: <span className="sr-only">{t("ex.layout.list")}</span>, icon: List }, { value: "grid", label: <span className="sr-only">{t("ex.layout.grid")}</span>, icon: LayoutGrid }]} />
         </div>
       </div>
     </div>

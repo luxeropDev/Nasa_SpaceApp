@@ -36,7 +36,7 @@ export default function App() {
     if (first.current) { first.current = false; return; }
     document.getElementById("main")?.focus({ preventScroll: true });
   }, [route.view, route.id]);
-  useEffect(() => { document.title = `${t(`nav.${route.view}` as Key)} · FLAMEWISE`; }, [route.view, t]);
+  useEffect(() => { document.title = `${t(`nav.${route.view}` as Key)} · PyroLens`; }, [route.view, t]);
 
   const online = !!health.data;
   const live = health.data?.llm_live;

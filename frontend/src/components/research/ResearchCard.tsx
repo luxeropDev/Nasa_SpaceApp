@@ -1,4 +1,4 @@
-import { Check, FileText, Link2, Plus } from "lucide-react";
+import { ArrowRight, Check, FileText, Link2, Plus } from "lucide-react";
 import { SCENARIOS, family } from "../../api";
 import type { Inv, SearchWhy } from "../../api";
 import type { Completeness } from "../../lib/completeness";
@@ -6,6 +6,7 @@ import { useI18n } from "../../i18n";
 import type { Key } from "../../i18n";
 import { href } from "../../nav";
 import { CoverageBar, StatusFlags } from "./Completeness";
+import ResearchCardMedia from "./ResearchCardMedia";
 
 type Props = { inv: Inv; layout: "list" | "grid"; selected: boolean; onToggle: () => void; score?: number; c: Completeness; why?: SearchWhy };
 
@@ -52,19 +53,26 @@ export default function ResearchCard({ inv: i, layout, selected, onToggle, score
 
   if (layout === "grid") {
     return (
-      <article className={`group relative flex h-full flex-col gap-2.5 border bg-surface p-4 transition-colors hover:bg-raised ${selected ? "border-accent" : "border-line"}`}>
+      <article className={`group relative flex h-full flex-col border bg-surface transition-colors hover:border-line-strong ${selected ? "border-accent" : "border-line"}`}>
+        <ResearchCardMedia inv={i} />
+        <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="font-mono text-[11.5px] text-accent">{i.id}</p>
-            <p className="mt-0.5">{title}</p>
-            <p className="text-[12.5px] text-muted">{i.full_name}</p>
+            <p className="font-mono text-[10.5px] uppercase tracking-[.08em] text-accent">{t("ex.program", { p: family(i.id) })} · {i.id}</p>
+            <h3 className="mt-1 font-display text-[21px] font-bold leading-tight">{title}</h3>
+            <p className="mt-1 text-[13px] leading-snug text-muted">{i.full_name}</p>
           </div>
           {select}
         </div>
-        <p className="line-clamp-3 flex-1 text-[13px] leading-relaxed text-muted">{i.objective}</p>
+        <p className="line-clamp-3 flex-1 text-[13.5px] leading-relaxed text-muted">{i.objective}</p>
         {why && <MatchWhy why={why} />}
-        <p className="text-[12px] text-subtle">{i.research_domain} · {tc("fuel", i.fuel_type)} · {tc("sd", i.fire_safety_domain)}</p>
-        <div className="space-y-1.5 border-t border-line pt-2.5"><CoverageBar c={c} />{counts}</div>
+        <dl className="grid grid-cols-2 gap-3 border-t border-line pt-3 text-[11.5px]">
+          <div><dt className="label !text-[9px]">{t("ex.f.gravity")}</dt><dd className="mt-1 line-clamp-2 text-muted">{i.gravity_environment}</dd></div>
+          <div><dt className="label !text-[9px]">{t("ex.f.fuel")}</dt><dd className="mt-1 text-muted">{tc("fuel", i.fuel_type)}</dd></div>
+        </dl>
+        <div className="space-y-2 border-t border-line pt-3"><CoverageBar c={c} />{counts}</div>
+        <span className="inline-flex items-center gap-2 text-sm font-bold text-accent">{t("common.open")}<ArrowRight size={14} /></span>
+        </div>
       </article>
     );
   }

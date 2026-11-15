@@ -5,7 +5,6 @@ import type { Health } from "../api";
 import { useI18n } from "../i18n";
 import type { Key } from "../i18n";
 import { Chip, EpistemicTag, ErrorBox, Skeleton, Spinner } from "../components/ui";
-import { DarkZone } from "../zone";
 import { useToast } from "../components/Toast";
 import AnswerView from "./AnswerView";
 import type { Ans } from "./AnswerView";
@@ -82,13 +81,12 @@ export default function Assistant({ params, health }: { params: URLSearchParams;
     : health.data!.llm_live ? { tone: "ok" as const, text: t("mode.live") } : { tone: "warn" as const, text: t("mode.demo") };
 
   return (
-    <DarkZone className="min-h-[calc(100vh-56px)]">
-    <div className="mx-auto flex min-h-[calc(100vh-56px)] w-full max-w-[1320px] flex-col px-4 pt-6 sm:px-6 lg:px-8">
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
+    <div className="mx-auto flex min-h-[calc(100vh-64px)] w-full max-w-[1400px] flex-col bg-white px-4 pb-10 pt-8 sm:px-6 lg:min-h-[calc(100vh-80px)] lg:px-10 lg:pt-10">
+      <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-6">
         <div className="min-w-0">
           <p className="eyebrow mb-1.5">{t("as2.kicker")}</p>
-          <h1 className="font-display text-[24px] font-semibold text-fg sm:text-[28px]">{t("as.title")}</h1>
-          <p className="mt-1 max-w-2xl text-[13px] text-muted">{t("as.sub")}</p>
+          <h1 className="font-display text-[34px] font-bold tracking-[-.035em] text-fg sm:text-[42px]">{t("as.title")}</h1>
+          <p className="mt-2 max-w-2xl text-[14px] text-muted">{t("as.sub")}</p>
         </div>
         <div className="flex items-center gap-2">
           <Chip tone={status.tone} title={t("as.statusHint")}><span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />{status.text}</Chip>
@@ -96,12 +94,23 @@ export default function Assistant({ params, health }: { params: URLSearchParams;
         </div>
       </header>
 
-      <div className="flex-1 py-6" aria-live="polite" aria-busy={busy}>
+      <div className="no-print sticky top-16 z-20 -mx-4 border-b border-line bg-white/95 px-4 py-4 backdrop-blur-sm sm:-mx-6 sm:px-6 lg:top-20 lg:-mx-10 lg:px-10">
+        <form className="mx-auto flex max-w-4xl items-end gap-2 border border-line-strong bg-surface p-2 transition focus-within:border-accent"
+          onSubmit={(e) => { e.preventDefault(); if (!busy) ask(q); }}>
+          <label htmlFor="as-q" className="sr-only">{t("as.label")}</label>
+          <textarea id="as-q" ref={box} rows={1} className="max-h-[200px] min-h-[44px] flex-1 resize-none bg-transparent px-3 py-2.5 text-[15px] leading-relaxed text-fg outline-none placeholder:text-subtle"
+            placeholder={t("as.ph")} value={q} maxLength={800} onChange={(e) => setQ(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); if (!busy) ask(q); } }} />
+          <button className="grid h-11 w-11 shrink-0 place-items-center bg-accent text-on-accent transition hover:bg-accent/90 disabled:opacity-30" disabled={busy || q.trim().length < 3} aria-label={t("as.ask")}><ArrowUp size={18} /></button>
+        </form>
+        <p className="mx-auto mt-1.5 max-w-4xl px-1 text-[11px] text-subtle">{t("as.composerHint")}</p>
+      </div>
+
+      <div className="mx-auto w-full max-w-5xl flex-1 py-7" aria-live="polite" aria-busy={busy}>
         {turns.length === 0 ? (
-          <div className="grid gap-8 py-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+          <div className="py-2">
             <div className="min-w-0">
-              <h2 className="font-display text-[20px] font-semibold text-fg">{t("as.emptyTitle")}</h2>
-              <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-muted">{t("as.empty")}</p>
+              <h2 className="font-display text-[24px] font-bold text-fg">{t("as.emptyTitle")}</h2>
               <p className="label mb-2 mt-6">{t("as2.examples")}</p>
               <ul className="divide-y divide-line border-y border-line">
                 {SUGGEST.map((k, n) => (
@@ -116,14 +125,14 @@ export default function Assistant({ params, health }: { params: URLSearchParams;
                 </div>
               )}
             </div>
-            <aside className="rounded-card border border-line bg-surface p-4 text-[12.5px] leading-relaxed text-muted">
-              <p className="label mb-2">{t("as2.method")}</p>
+            <details className="mt-8 border-t border-line pt-4 text-[12.5px] leading-relaxed text-muted">
+              <summary className="cursor-pointer font-semibold text-fg">{t("as2.method")}</summary>
               <ol className="space-y-2">
                 {(["as2.m1", "as2.m2", "as2.m3", "as2.m4"] as Key[]).map((k, n) => <li key={k} className="grid grid-cols-[18px_1fr] gap-2"><span className="font-mono text-[11px] text-subtle">{n + 1}.</span><span>{t(k)}</span></li>)}
               </ol>
               <p className="mt-3 border-t border-line pt-3 text-[11.5px] text-subtle">{t("as2.legend")}</p>
               <p className="mt-2 flex flex-wrap gap-1.5"><EpistemicTag kind="record" /><EpistemicTag kind="ai" /><EpistemicTag kind="rule" /><EpistemicTag kind="assumption" /><EpistemicTag kind="missing" /></p>
-            </aside>
+            </details>
           </div>
         ) : (
           <ol className="space-y-10">
@@ -146,23 +155,6 @@ export default function Assistant({ params, health }: { params: URLSearchParams;
         )}
       </div>
 
-      <div className="no-print sticky bottom-0 -mx-4 border-t border-line bg-bg px-4 pb-4 pt-3 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-        {turns.length > 0 && (
-          <div className="mb-2 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {SUGGEST.map((k) => <button key={k} className="chip shrink-0 transition-colors hover:border-line-strong hover:text-fg" onClick={() => ask(t(k))} disabled={busy}>{t(k)}</button>)}
-          </div>
-        )}
-        <form className="flex items-end gap-2 rounded-card border border-line-strong bg-surface p-1.5 transition focus-within:border-accent"
-          onSubmit={(e) => { e.preventDefault(); if (!busy) ask(q); }}>
-          <label htmlFor="as-q" className="sr-only">{t("as.label")}</label>
-          <textarea id="as-q" ref={box} rows={1} className="max-h-[200px] min-h-[40px] flex-1 resize-none bg-transparent px-2.5 py-2 text-[14px] leading-relaxed text-fg outline-none placeholder:text-subtle"
-            placeholder={t("as.ph")} value={q} maxLength={800} onChange={(e) => setQ(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); if (!busy) ask(q); } }} />
-          <button className="grid h-10 w-10 shrink-0 place-items-center rounded-btn bg-accent text-on-accent transition hover:bg-accent/90 disabled:opacity-30" disabled={busy || q.trim().length < 3} aria-label={t("as.ask")}><ArrowUp size={18} /></button>
-        </form>
-        <p className="mt-1.5 px-1 text-[11px] text-subtle">{t("as.composerHint")}</p>
-      </div>
     </div>
-    </DarkZone>
   );
 }

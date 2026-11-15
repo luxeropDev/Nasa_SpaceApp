@@ -75,7 +75,7 @@ export default function Detail({ inv, all, srcs }: P) {
         </dl>
       </header>
 
-      <nav aria-label={t("det2.contents")} className="no-print sticky top-14 z-30 -mx-4 mb-6 overflow-x-auto border-b border-line bg-bg px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+      <nav aria-label={t("det2.contents")} className="no-print sticky top-16 z-30 -mx-4 mb-6 overflow-x-auto border-b border-line bg-bg px-4 sm:-mx-6 sm:px-6 lg:top-20 lg:-mx-8 lg:px-8">
         <ul className="flex gap-1 whitespace-nowrap py-1.5 text-[12.5px]">
           {toc.map(([id, k]) => <li key={id}><a href={`#${id}`} onClick={(e) => { e.preventDefault(); document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }); }} className="inline-flex rounded-ctl px-2.5 py-1.5 text-muted transition-colors hover:bg-hover hover:text-fg">{t(k)}</a></li>)}
         </ul>

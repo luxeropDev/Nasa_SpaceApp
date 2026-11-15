@@ -53,8 +53,8 @@ export default function Comparator({ params }: { params: URLSearchParams }) {
   const stamp = new Date().toISOString().slice(0, 10);
   const exportAs = (kind: "csv" | "md") => {
     if (!res) return;
-    if (kind === "csv") download(`flamewise-comparison-${stamp}.csv`, toCSV(res, t), "text/csv;charset=utf-8");
-    else download(`flamewise-comparison-${stamp}.md`, toMarkdown(res, t), "text/markdown;charset=utf-8");
+    if (kind === "csv") download(`pyrolens-comparison-${stamp}.csv`, toCSV(res, t), "text/csv;charset=utf-8");
+    else download(`pyrolens-comparison-${stamp}.md`, toMarkdown(res, t), "text/markdown;charset=utf-8");
     toast.push(t("cp.exported"), "success");
   };
 

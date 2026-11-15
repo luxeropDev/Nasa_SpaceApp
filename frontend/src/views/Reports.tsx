@@ -4,7 +4,7 @@ import { api, MAX_COMPARE } from "../api";
 import type { Inv, Source } from "../api";
 import type { Key } from "../i18n";
 import { useGet, ErrorBox, PageSkeleton, Empty, Spinner } from "../components/ui";
-import { LogoMark } from "../components/Logo";
+import { Wordmark } from "../components/Logo";
 import { useToast } from "../components/Toast";
 import { useI18n } from "../i18n";
 import { go, href } from "../nav";
@@ -67,7 +67,7 @@ export default function Reports({ params }: { params: URLSearchParams }) {
   const na = t("common.naLong");
 
   const toMd = () => {
-    const L: string[] = [`# ${docTitle}`, "", `FLAMEWISE · ${t("rp.generated")}: ${generated.toISOString()}`, "", `> ${t("rp.disclaimer")}`, "", `## ${t("rp.s.records")}`];
+    const L: string[] = [`# ${docTitle}`, "", `PyroLens · ${t("rp.generated")}: ${generated.toISOString()}`, "", `> ${t("rp.disclaimer")}`, "", `## ${t("rp.s.records")}`];
     records.forEach((r) => {
       L.push("", `### ${r.acronym} — ${r.full_name} (${r.id})`, "", r.objective, "",
         `- ${t("det.fuel")}: ${tc("fuel", r.fuel_type)}`, `- ${t("det.material")}: ${r.fuel_material}`, `- ${t("det.hardware")}: ${r.hardware}`, `- ${t("det.gravity")}: ${r.gravity_environment}`,
@@ -94,7 +94,7 @@ export default function Reports({ params }: { params: URLSearchParams }) {
         </div>
         {records.length > 0 && (
           <div className="flex flex-wrap gap-2">
-            <button className="btn" onClick={() => { download(`flamewise-report-${generated.toISOString().slice(0, 10)}.md`, toMd()); toast.push(t("cp.exported"), "success"); }}><Download size={14} />Markdown</button>
+            <button className="btn" onClick={() => { download(`pyrolens-report-${generated.toISOString().slice(0, 10)}.md`, toMd()); toast.push(t("cp.exported"), "success"); }}><Download size={14} />Markdown</button>
             <button className="btn btn-primary" onClick={() => window.print()} disabled={aiBusy}><Printer size={14} />{t("rp.print")}</button>
           </div>
         )}
@@ -138,7 +138,7 @@ export default function Reports({ params }: { params: URLSearchParams }) {
           <article className="report-doc paper mx-auto w-full max-w-[860px] border border-line bg-surface px-6 py-8 text-fg shadow-card sm:px-12 sm:py-12">
             <header className="mb-8 border-b-2 border-fg pb-5">
               <div className="flex items-center justify-between gap-3">
-                <span className="flex items-center gap-2"><LogoMark size={22} className="text-accent" /><span className="text-[12px] font-bold tracking-[.2em]">FLAMEWISE</span></span>
+                <Wordmark variant="navy" className="w-[130px]" />
                 <span className="font-mono text-[10.5px] uppercase tracking-[.14em] text-subtle">{t("rp.kind")}</span>
               </div>
               <h1 className="mt-6 text-[26px] font-semibold leading-tight tracking-tight sm:text-[30px]">{docTitle}</h1>

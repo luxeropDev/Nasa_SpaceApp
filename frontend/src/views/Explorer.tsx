@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { FileText, GitCompareArrows, SearchX, X } from "lucide-react";
-import { useGet, PageSkeleton, ErrorBox, Empty, Page, SearchInput } from "../components/ui";
+import { FileText, GitCompareArrows, HelpCircle, LayoutGrid, List, SearchX, X } from "lucide-react";
+import { useGet, PageSkeleton, ErrorBox, Empty, Page, SearchInput, Segmented } from "../components/ui";
 import { useToast } from "../components/Toast";
 import ResearchCard from "../components/research/ResearchCard";
 import { useI18n } from "../i18n";
@@ -67,7 +67,7 @@ export default function Explorer({ id, params }: { id: string | null; params: UR
   const [q, setQ] = useState(params.get("q") ?? "");
   const [f, setF] = useState<F>(NO_FILTER);
   const [sort, setSort] = useState("relevance");
-  const [layout, setLayoutState] = useState<"list" | "grid">(() => { try { return localStorage.getItem(LAYOUT) === "grid" ? "grid" : "list"; } catch { return "list"; } });
+  const [layout, setLayoutState] = useState<"list" | "grid">(() => { try { return localStorage.getItem(LAYOUT) === "list" ? "list" : "grid"; } catch { return "grid"; } });
   const [ranked, setRanked] = useState<{ id: string; score: number; why: SearchWhy }[] | null>(null);
   const [searching, setSearching] = useState(false);
   const [searchFailed, setSearchFailed] = useState(false);
@@ -119,20 +119,33 @@ export default function Explorer({ id, params }: { id: string | null; params: UR
   return (
     <Page eyebrow={t("ex.eyebrow")} title={t("ex.title")} sub={t("ex.sub")}
       actions={<button className="btn btn-sm" onClick={() => go(href("compare", null, { ids: selected.join(",") }))} disabled={selected.length < 2}><GitCompareArrows size={14} />{t("ex.compareSel", { n: selected.length })}</button>}>
-      <div className="space-y-3 border border-line bg-surface p-4">
-        <SearchInput id="ex-q" value={q} onChange={setQ} placeholder={t("ex.search.ph")} label={t("ex.search.label")} busy={searching} />
-        <ExplorerFilters data={d} f={f} setF={setF} sort={sort} setSort={setSort} layout={layout} setLayout={setLayout} />
-      </div>
-      <div className="flex flex-wrap items-center justify-between gap-2" aria-live="polite">
+      <div className="grid gap-8 lg:grid-cols-[250px_minmax(0,1fr)] xl:gap-12">
+        <aside className="lg:border-r lg:border-line lg:pr-7">
+          <ExplorerFilters data={d} f={f} setF={setF} onClear={clear} />
+          <details className="mt-5 border-t border-line pt-4 text-[12px] text-muted">
+            <summary className="flex cursor-pointer items-center gap-2 font-semibold text-fg"><HelpCircle size={14} />{t("ex.searchHelp")}</summary>
+            <p className="mt-2 leading-relaxed">{t("ex.searchHelpText")}</p>
+          </details>
+        </aside>
+        <div className="min-w-0 space-y-5">
+          <SearchInput id="ex-q" value={q} onChange={setQ} placeholder={t("ex.search.ph")} label={t("ex.search.label")} busy={searching} />
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4" aria-live="polite">
         <p className="text-[12.5px] text-muted">
           {searching ? `${t("ex.searching")}…` : t("ex.count", { n: list.length, total: d.length })}
           {ranked && !searching && <span className="ml-2 font-mono text-[11px] text-subtle">· {t("ex.rankedBy")}</span>}
           {searchFailed && <span className="ml-2 text-danger">{t("ex.searchError")}</span>}
         </p>
-        {dirty && <button className="btn btn-ghost btn-sm" onClick={clear}><X size={13} />{t("ex.clear")}</button>}
-      </div>
+            {dirty && <button className="ml-2 text-xs font-semibold text-accent hover:underline" onClick={clear}>{t("ex.clear")}</button>}
+        <div className="flex items-center gap-2">
+          <label htmlFor="f-sort" className="sr-only">{t("ex.sort")}</label>
+          <select id="f-sort" className="select !w-auto !py-1.5 text-[12.5px]" value={sort} onChange={(e) => setSort(e.target.value)}>
+            <option value="relevance">{t("ex.sort.relevance")}</option><option value="mission">{t("ex.sort.mission")}</option><option value="name">{t("ex.sort.name")}</option>
+          </select>
+          <Segmented size="sm" label={t("ex.layout")} value={layout} onChange={setLayout} options={[{ value: "grid", label: <span className="sr-only">{t("ex.layout.grid")}</span>, icon: LayoutGrid }, { value: "list", label: <span className="sr-only">{t("ex.layout.list")}</span>, icon: List }]} />
+        </div>
+          </div>
       {list.length === 0 ? <Empty icon={SearchX} title={t("ex.emptyTitle")} text={t("ex.empty")} action={dirty ? <button className="btn" onClick={clear}>{t("ex.clear")}</button> : undefined} /> : layout === "grid" ? (
-        <ul className="stagger grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        <ul className="stagger grid gap-5 sm:grid-cols-2 2xl:grid-cols-3">
           {list.map((i) => <li key={i.id}><ResearchCard inv={i} layout="grid" selected={selected.includes(i.id)} onToggle={() => toggle(i.id)} score={scoreOf[i.id]} c={completeness(i, srcMap)} why={whyOf[i.id]} /></li>)}
         </ul>
       ) : (
@@ -146,6 +159,8 @@ export default function Explorer({ id, params }: { id: string | null; params: UR
         </div>
       )}
       {q.trim() && <DocHits q={q} />}
+        </div>
+      </div>
       <SelectionTray />
     </Page>
   );

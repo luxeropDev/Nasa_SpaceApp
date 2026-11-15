@@ -16,6 +16,7 @@ import { completeness } from "../lib/completeness";
 import Matrix from "./OverviewMatrix";
 import type { Cell as MatrixCell } from "./OverviewMatrix";
 import OverviewCharts from "./OverviewCharts";
+import ResearchCardMedia from "../components/research/ResearchCardMedia";
 
 type Ov = {
   dataset_version: string; record_status: string;
@@ -43,56 +44,78 @@ function Intro({ health, p }: { health: Health | null; p: Provenance | null }) {
   const { t } = useI18n();
   const [q, setQ] = useState("");
   return (
-    <DarkZone as="section" aria-labelledby="ov-title" className="border-b border-line">
-      <div className="mx-auto grid max-w-[1440px] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-        <div className="order-2 flex min-w-0 flex-col justify-center px-4 py-8 sm:px-6 lg:order-1 lg:py-12 lg:pl-8 lg:pr-10">
-          <p className="eyebrow flex flex-wrap items-center gap-x-3 gap-y-1">
+    <DarkZone as="section" aria-labelledby="ov-title" className="relative isolate min-h-[620px] overflow-hidden bg-black">
+      <figure className="absolute inset-0 -z-20 bg-black">
+        <picture>
+          <source type="image/webp" srcSet="/media/hero-960.webp 960w, /media/hero-1600.webp 1600w, /media/hero-2400.webp 2400w" sizes="100vw" />
+          <img src="/media/hero-1600.jpg" srcSet="/media/hero-960.jpg 960w, /media/hero-1600.jpg 1600w, /media/hero-2400.jpg 2400w" sizes="100vw"
+            width={2400} height={1106} alt={t("v4.hero.alt")} loading="eager" decoding="async" className="h-full w-full object-cover object-[65%_42%]" />
+        </picture>
+        <figcaption className="absolute bottom-3 right-4 z-10 max-w-[60%] bg-black/70 px-2 py-1 text-right text-[10px] leading-snug text-muted">{t("v4.hero.caption")}</figcaption>
+      </figure>
+      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(0,0,0,.96)_0%,rgba(0,0,0,.85)_35%,rgba(0,0,0,.25)_75%,rgba(0,0,0,.15)_100%)]" />
+      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[linear-gradient(0deg,rgba(0,0,0,.9)_0%,transparent_42%)]" />
+      <div className="mx-auto flex min-h-[620px] max-w-[1600px] items-end px-4 pb-10 pt-20 sm:px-6 md:pb-14 lg:px-10 lg:pb-16">
+        <div className="w-full max-w-[790px]">
+          <p className="eyebrow flex flex-wrap items-center gap-x-3 gap-y-1 text-white/75">
             <span>{t("ov2.kicker")}</span>
             {health && <span className="text-muted">{t("ov2.dataset", { v: health.dataset_version })}</span>}
           </p>
-          <h1 id="ov-title" className="mt-3 text-[32px] font-semibold leading-[1.1] tracking-tight text-fg sm:text-[40px]">{t("ov2.title")}</h1>
-          <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-muted">{t("ov2.lead")}</p>
+          <h1 id="ov-title" className="mt-4 text-[42px] font-bold leading-[.98] tracking-[-.045em] text-white sm:text-[58px] lg:text-[72px]">{t("ov2.title")}</h1>
+          <p className="mt-5 max-w-2xl text-[16px] leading-relaxed text-white/80 sm:text-[18px]">{t("ov2.lead")}</p>
+          <div className="mt-7 flex flex-wrap items-center gap-5">
+            <a className="inline-flex h-12 items-center gap-2 bg-brand px-6 text-[15px] font-bold text-white hover:bg-brand/90" href={href("explorer")}>{t("v4.ov.toExplorer")}<ArrowRight size={16} /></a>
+            <a className="border-b border-white/70 pb-1 text-sm font-semibold text-white hover:border-brand hover:text-brand" href={href("scenarios", null, { s: "lunar_habitat" })}>{t("ov3.lunar.action")}</a>
+          </div>
           <form role="search" className="mt-6 flex max-w-xl gap-2" onSubmit={(e) => { e.preventDefault(); go(href("explorer", null, q.trim() ? { q: q.trim() } : undefined)); }}>
             <label htmlFor="ov-q" className="sr-only">{t("ex.search.label")}</label>
             <div className="relative flex-1">
               <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-subtle" aria-hidden="true" />
               <input id="ov-q" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("ov2.search.ph")} className="input !h-11 !pl-9" autoComplete="off" />
             </div>
-            <button className="btn btn-primary !h-11 !px-4">{t("ov2.search.go")}</button>
+            <button className="btn !h-11 !border-white/40 !bg-transparent !px-5 !text-white hover:!bg-white/10">{t("ov2.search.go")}</button>
           </form>
-          <p className="mt-2 text-[12px] text-subtle">{t("ov2.search.hint")}</p>
-          <p className="mt-5 flex flex-wrap gap-2">
-            <a className="btn btn-sm" href={href("explorer")}>{t("v4.ov.toExplorer")}<ArrowRight size={13} /></a>
-            <a className="btn btn-sm btn-ghost" href={href("datasets")}>{t("v4.ov.toDatasets")}</a>
-            <a className="btn btn-sm btn-ghost" href={href("sources")}>{t("v4.ov.toCoverage")}</a>
-          </p>
-          {p && (
-            <dl className="mt-7 grid grid-cols-2 border-t border-line sm:grid-cols-4">
-              {([
-                ["v4.kpi.psi", p.psi_investigations],
-                ["v4.kpi.rows", p.psi_table_rows.toLocaleString()],
-                ["v4.kpi.doi", p.psi_publications_with_doi],
-                ["v4.kpi.pages", p.document_pages],
-              ] as [Key, number | string][]).map(([k, v], n) => (
-                <div key={k} className={`py-3 pr-3 ${n > 0 ? "sm:border-l sm:border-line sm:pl-4" : ""} ${n % 2 ? "border-l border-line pl-4" : ""}`}>
-                  <dt className="text-[11.5px] leading-snug text-subtle">{t(k)}</dt>
-                  <dd className="mt-1 font-mono text-[22px] font-medium leading-none text-fg tabular-nums">{v}</dd>
-                </div>
-              ))}
-            </dl>
-          )}
+          <p className="mt-2 text-[11px] text-white/55">{t("ov3.search.note")}</p>
         </div>
-        <figure className="relative order-1 min-h-[240px] overflow-hidden bg-bg2 sm:min-h-[320px] lg:order-2 lg:min-h-[520px]">
-          <picture>
-            <source type="image/webp" srcSet="/media/hero-960.webp 960w, /media/hero-1600.webp 1600w, /media/hero-2400.webp 2400w" sizes="(min-width: 1024px) 58vw, 100vw" />
-            <img src="/media/hero-1600.jpg" srcSet="/media/hero-960.jpg 960w, /media/hero-1600.jpg 1600w, /media/hero-2400.jpg 2400w" sizes="(min-width: 1024px) 58vw, 100vw"
-              width={2400} height={1106} alt={t("v4.hero.alt")} fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover object-[62%_40%]" />
-          </picture>
-          <figcaption className="absolute bottom-0 right-0 max-w-full bg-bg/80 px-3 py-1.5 text-[11px] leading-snug text-muted">{t("v4.hero.caption")}</figcaption>
-        </figure>
       </div>
     </DarkZone>
   );
+}
+
+function StatsStrip({ p }: { p: Provenance | null }) {
+  const { t } = useI18n();
+  if (!p) return <Skeleton className="h-24" />;
+  const rows: [Key, number | string][] = [["v4.kpi.psi", p.psi_investigations], ["v4.kpi.rows", p.psi_table_rows.toLocaleString()], ["v4.kpi.doi", p.psi_publications_with_doi], ["v4.kpi.pages", p.document_pages]];
+  return <section className="border-b border-line bg-white"><dl className="mx-auto grid max-w-[1600px] grid-cols-2 px-4 sm:px-6 lg:grid-cols-4 lg:px-10">{rows.map(([k, v], n) => <div key={k} className={`py-5 ${n % 2 ? "border-l border-line pl-5" : "pr-5"} lg:border-l lg:border-line lg:px-7 ${n === 0 ? "lg:border-l-0 lg:pl-0" : ""}`}><dd className="font-display text-[28px] font-bold tracking-tight text-fg">{v}</dd><dt className="mt-1 text-[11px] leading-snug text-muted">{t(k)}</dt></div>)}</dl></section>;
+}
+
+function Featured({ invs }: { invs: Inv[] }) {
+  const { t } = useI18n();
+  const wanted = ["SAFFIRE_001", "BASS_001", "FLEX_001", "SAME_001"];
+  const records = wanted.map((id) => invs.find((x) => x.id === id)).filter(Boolean) as Inv[];
+  return <section className="mx-auto max-w-[1600px] px-4 py-14 sm:px-6 md:py-20 lg:px-10">
+    <div className="mb-8 flex flex-wrap items-end justify-between gap-4"><div><p className="eyebrow text-accent">{t("ov3.featured.kicker")}</p><h2 className="mt-3 font-display text-[34px] font-bold tracking-[-.035em] text-fg sm:text-[44px]">{t("ov3.featured.title")}</h2></div><a className="inline-flex items-center gap-2 font-bold text-accent hover:underline" href={href("explorer")}>{t("ov3.featured.all")}<ArrowRight size={16} /></a></div>
+    <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">{records.map((i) => <article key={i.id} className="group border border-line bg-white">
+      <ResearchCardMedia inv={i} aspect="aspect-[16/10]" />
+      <div className="p-5"><p className="font-mono text-[10px] uppercase tracking-[.1em] text-accent">{i.id}</p><h3 className="mt-2 font-display text-[21px] font-bold leading-tight"><a className="hover:text-accent" href={href("explorer", i.id)}>{i.full_name}</a></h3><p className="mt-3 line-clamp-3 text-[13.5px] leading-relaxed text-muted">{i.objective}</p><a className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-accent hover:underline" href={href("explorer", i.id)}>{t("common.open")}<ArrowRight size={14} /></a></div>
+    </article>)}</div>
+  </section>;
+}
+
+function ResearchTools() {
+  const { t } = useI18n();
+  const items = [{ k: "ov3.tool.compare", d: "ov3.tool.compare.d", to: href("compare"), I: GitCompareArrows }, { k: "ov3.tool.scenario", d: "ov3.tool.scenario.d", to: href("scenarios"), I: Orbit }, { k: "ov3.tool.coverage", d: "ov3.tool.coverage.d", to: href("sources"), I: FileSearch }] as const;
+  return <section className="bg-bg2"><div className="mx-auto max-w-[1600px] px-4 py-14 sm:px-6 md:py-20 lg:px-10"><p className="eyebrow text-accent">{t("ov3.tools.kicker")}</p><h2 className="mt-3 font-display text-[34px] font-bold tracking-[-.035em] sm:text-[44px]">{t("ov3.tools.title")}</h2><div className="mt-8 grid border-y border-line md:grid-cols-3">{items.map(({ k, d, to, I }, n) => <a key={k} href={to} className={`group p-6 hover:bg-white md:p-8 ${n ? "border-t border-line md:border-l md:border-t-0" : ""}`}><I size={23} className="text-brand" /><h3 className="mt-5 text-[22px] font-bold group-hover:text-accent">{t(k)}</h3><p className="mt-2 text-[14px] leading-relaxed text-muted">{t(d)}</p><span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-accent">{t("common.open")}<ArrowRight size={14} /></span></a>)}</div></div></section>;
+}
+
+function LunarFeature() {
+  const { t } = useI18n();
+  return <DarkZone as="section" className="bg-black"><div className="mx-auto grid max-w-[1600px] gap-10 px-4 py-16 sm:px-6 md:py-24 lg:grid-cols-[1.1fr_.9fr] lg:px-10"><div><p className="eyebrow text-brand">{t("ov3.lunar.kicker")}</p><h2 className="mt-4 max-w-3xl font-display text-[40px] font-bold leading-[1.02] tracking-[-.04em] text-white sm:text-[56px]">{t("ov3.lunar.title")}</h2></div><div className="self-end"><p className="text-[16px] leading-relaxed text-muted">{t("ov3.lunar.body")}</p><p className="mt-4 border-l-2 border-brand pl-4 text-[12.5px] leading-relaxed text-subtle">{t("ov3.lunar.limit")}</p><a className="mt-7 inline-flex h-11 items-center gap-2 bg-brand px-5 font-bold text-white" href={href("scenarios", null, { s: "lunar_habitat" })}>{t("ov3.lunar.action")}<ArrowRight size={15} /></a></div></div></DarkZone>;
+}
+
+function DataSummary({ p }: { p: Provenance }) {
+  const { t } = useI18n();
+  return <section className="mx-auto max-w-[1600px] px-4 py-14 sm:px-6 md:py-20 lg:px-10"><div className="grid gap-10 lg:grid-cols-[.8fr_1.2fr]"><div><p className="eyebrow text-accent">{t("ov3.data.kicker")}</p><h2 className="mt-3 font-display text-[34px] font-bold tracking-[-.035em] sm:text-[44px]">{t("ov3.data.title")}</h2><p className="mt-4 max-w-xl text-[15px] leading-relaxed text-muted">{t("ov3.data.body", { n: p.records_total })}</p></div><div className="border-t border-line"><div className="grid gap-5 border-b border-line py-5 sm:grid-cols-2"><div><h3 className="font-bold">{t("ov3.data.strength")}</h3><p className="mt-2 text-sm leading-relaxed text-muted">{t("ov3.data.strength.d")}</p></div><div><h3 className="font-bold text-warn">{t("ov3.data.limit")}</h3><p className="mt-2 text-sm leading-relaxed text-muted">{t("ov3.data.limit.d")}</p></div></div><div className="flex flex-wrap gap-x-6 gap-y-3 pt-5"><a className="font-bold text-accent hover:underline" href={href("datasets")}>{t("nav.datasets")}</a><a className="font-bold text-accent hover:underline" href={href("sources")}>{t("nav.sources")}</a><a className="font-bold text-accent hover:underline" href={href("graph")}>{t("nav.graph")}</a></div></div></div></section>;
 }
 
 /** Investigation catalog extract: one row per program, with completeness shown, not hidden. */
@@ -257,7 +280,7 @@ function Tools() {
 }
 
 export default function Overview({ health }: { health: Health | null }) {
-  const { t, tc } = useI18n();
+  const { t } = useI18n();
   const ov = useGet<Ov>("/overview");
   const inv = useGet<Inv[]>("/investigations");
   const src = useGet<Source[]>("/sources");
@@ -267,65 +290,11 @@ export default function Overview({ health }: { health: Health | null }) {
   return (
     <>
       <Intro health={health} p={d?.provenance ?? null} />
-      <div className="mx-auto grid w-full max-w-[1440px] gap-x-10 gap-y-10 px-4 pb-16 pt-8 sm:px-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:px-8">
-        {/* research feed */}
-        <div className="min-w-0 space-y-10">
-          {inv.error ? <ErrorBox error={inv.error} retry={inv.retry} /> : !inv.data || !src.data ? <Skeleton className="h-96" /> : <Programs invs={inv.data} srcs={srcs} />}
-          <Findings srcs={srcs} />
-          {ov.error ? <ErrorBox error={ov.error} retry={ov.retry} /> : !d ? <Skeleton className="h-64" /> : (
-            <section aria-labelledby="ov-cov" className="space-y-4">
-              <Head id="ov-cov" title={t("ov.cov.title")} meta={t("ov2.cov.meta")} />
-              <Panel title={t("ov.matrix.title")} sub={t("ov.matrix.sub")}>
-                <Matrix cells={d.coverage_matrix} scenarios={SCENARIOS} domains={SAFETY_DOMAINS} />
-              </Panel>
-              <OverviewCharts byDomain={d.by_domain} byFuel={d.by_fuel} total={d.kpis.investigations} />
-              <Panel title={t("ov.gaps.title")} sub={t("ov.gaps.sub")}>
-                <ul className="divide-y divide-line">{d.knowledge_gaps.map((g) => (
-                  <li key={g.title} className="flex gap-3 py-2.5 first:pt-0 last:pb-0"><AlertTriangle size={14} className="mt-0.5 shrink-0 text-warn" aria-hidden="true" /><div><div className="text-[13.5px] font-medium text-fg">{g.title}</div><div className="mt-0.5 text-[12.5px] leading-relaxed text-muted">{g.detail}</div></div></li>
-                ))}</ul>
-              </Panel>
-            </section>
-          )}
-        </div>
-
-        {/* narrow column: dataset status, tools, distributions */}
-        <aside className="min-w-0 space-y-8" aria-label={t("ov2.aside")}>
-          {d ? <DataStatus p={d.provenance} health={health} /> : <Skeleton className="h-64" />}
-          <ResourceCoverage />
-          <Tools />
-          {d && (
-            <>
-              <section aria-labelledby="ov-rel">
-                <Head id="ov-rel" title={t("ov.rel.title")} />
-                <p className="mb-3 text-[12px] text-subtle">{t("ov.rel.sub")}</p>
-                <div className="space-y-3">{d.mission_relevance.map((m) => <Meter key={m.key} value={m.count} max={d.kpis.investigations} label={m.name} count={`${m.count}/${d.kpis.investigations}`} />)}</div>
-              </section>
-              <section aria-labelledby="ov-sd">
-                <Head id="ov-sd" title={t("ov.sd.title")} />
-                <p className="mb-3 text-[12px] text-subtle">{t("ov.sd.sub")}</p>
-                <div className="space-y-3">{d.by_safety_domain.map((m) => <Meter key={m.key} value={m.count} max={d.kpis.investigations} label={tc("sd", m.key)} count={m.count} tone={m.count < 3 ? "warn" : "accent"} />)}</div>
-              </section>
-              <section aria-labelledby="ov-use">
-                <Head id="ov-use" title={t("ov.use.title")} />
-                <p className="mb-3 text-[12px] text-subtle">{t("ov.use.sub")}</p>
-                <div className="space-y-3">{d.source_usage.map((s) => <Meter key={s.id} value={s.findings} max={Math.max(1, ...d.source_usage.map((x) => x.findings))} label={s.title} count={s.findings} tone={s.findings === 0 ? "warn" : "accent"} />)}</div>
-              </section>
-            </>
-          )}
-          <section aria-labelledby="ov-act">
-            <Head id="ov-act" title={t("ov.act.title")} />
-            {d?.record_status && <p className="mb-3 text-[12.5px] leading-relaxed text-muted">{d.record_status}</p>}
-            {d?.provenance.psi_ingested_at ? (
-              <dl className="space-y-1.5 text-[12px]">
-                <div className="flex justify-between gap-3"><dt className="text-muted">{t("v4.ov.lastPsi")}</dt><dd className="font-mono text-fg">{d.provenance.psi_ingested_at.replace("T", " ").replace("+00:00", " UTC")}</dd></div>
-                <div className="flex justify-between gap-3"><dt className="text-muted">{t("v4.ov.docsIndexed")}</dt><dd className="font-mono text-fg">{d.provenance.documents}</dd></div>
-                <div className="flex justify-between gap-3"><dt className="text-muted">{t("v4.ov.unlinked")}</dt><dd className="font-mono text-fg">{d.provenance.psi_unlinked.join(", ") || "—"}</dd></div>
-              </dl>
-            ) : <Empty compact icon={Clock} title={t("ov.act.emptyTitle")} text={t("ov.act.empty")} action={<a className="btn btn-sm" href={href("sources")}>{t("ov.act.provenance")}</a>} />}
-          </section>
-          <p className="font-mono text-[10.5px] leading-relaxed text-subtle">{t("ov.sys")}</p>
-        </aside>
-      </div>
+      <StatsStrip p={d?.provenance ?? null} />
+      {inv.error ? <div className="mx-auto max-w-[1600px] px-4 py-12"><ErrorBox error={inv.error} retry={inv.retry} /></div> : !inv.data ? <div className="mx-auto max-w-[1600px] px-4 py-12"><Skeleton className="h-80" /></div> : <Featured invs={inv.data} />}
+      <ResearchTools />
+      <LunarFeature />
+      {ov.error ? <div className="mx-auto max-w-[1600px] px-4 py-12"><ErrorBox error={ov.error} retry={ov.retry} /></div> : d && <DataSummary p={d.provenance} />}
     </>
   );
 }

@@ -33,7 +33,7 @@ export default {
         display: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["DM Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
-      borderRadius: { ctl: "4px", btn: "4px", card: "6px", surface: "8px" },
+      borderRadius: { ctl: "2px", btn: "2px", card: "0px", surface: "2px" },
       boxShadow: { card: "var(--shadow-card)", pop: "var(--shadow-pop)" },
       transitionTimingFunction: { out: "cubic-bezier(0.16, 1, 0.3, 1)" },
       keyframes: {

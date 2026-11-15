@@ -115,7 +115,7 @@ export default function EvidenceGraph({ params }: { params: URLSearchParams }) {
   const conns = (id: string) => (g.data?.edges ?? []).filter((e) => e.source === id || e.target === id).map((e) => ({ e, other: byId[e.source === id ? e.target : e.source] }));
   const radius = (n: GraphNode) => (n.type === "investigation" ? 9 : 5) + Math.sqrt(n.degree) * 1.4;
 
-  const wrap = (c: React.ReactNode) => <Page wide eyebrow={t("gr.eyebrow")} title={t("gr.title")} sub={t("gr.sub")}>{c}</Page>;
+  const wrap = (c: React.ReactNode) => <Page compact wide eyebrow={t("gr.eyebrow")} title={t("gr.title")} sub={t("gr.sub")}>{c}</Page>;
   if (g.error) return wrap(<ErrorBox error={g.error} retry={g.retry} />);
   if (!g.data) return wrap(<PageSkeleton />);
   const counts = Object.fromEntries(TYPES.map((ty) => [ty, g.data!.nodes.filter((n) => n.type === ty).length]));
@@ -151,25 +151,25 @@ export default function EvidenceGraph({ params }: { params: URLSearchParams }) {
   );
 
   return (
-    <Page wide eyebrow={t("gr.eyebrow")} title={t("gr.title")} sub={t("gr.sub")}
-      actions={<Segmented label={t("gr.view")} value={view} onChange={setView} options={[{ value: "graph", label: t("gr.view.graph"), icon: Network }, { value: "list", label: t("gr.view.list"), icon: List }]} />}>
-      <div className="panel flex flex-wrap items-center gap-3 p-3">
-        <SearchInput id="gr-q" className="w-full sm:w-64" value={q} onChange={setQ} placeholder={t("gr.search")} label={t("gr.search")}
+    <Page compact wide eyebrow={t("gr.eyebrow")} title={t("gr.title")} sub={t("gr.sub")}>
+      <div className="panel grid items-center gap-2 p-2.5 lg:grid-cols-[240px_minmax(0,1fr)_auto]">
+        <SearchInput id="gr-q" className="w-full" value={q} onChange={setQ} placeholder={t("gr.search")} label={t("gr.search")}
           onKeyDown={(e) => { if (e.key === "Enter" && matches && matches.size) setSel(Array.from(matches)[0]); }} />
-        <div className="flex flex-wrap gap-1.5" role="group" aria-label={t("gr.filter")}>
+        <div className="flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:thin]" role="group" aria-label={t("gr.filter")}>
           {TYPES.map((ty) => (
             <button key={ty} type="button" aria-pressed={types.has(ty)} onClick={() => toggleType(ty)}
-              className={`chip transition-colors ${types.has(ty) ? "!border-line-strong !text-fg" : "opacity-50 hover:opacity-80"}`}>
+              className={`chip shrink-0 transition-colors ${types.has(ty) ? "!border-line-strong !text-fg" : "opacity-50 hover:opacity-80"}`}>
               <i className="h-2 w-2 rounded-full" style={{ background: ch.node[ty] }} aria-hidden="true" />{t(`gr.type.${ty}`)}<span className="font-mono text-subtle">{counts[ty]}</span>
             </button>
           ))}
         </div>
+        <div className="lg:ml-auto"><Segmented size="sm" label={t("gr.view")} value={view} onChange={setView} options={[{ value: "graph", label: t("gr.view.graph"), icon: Network }, { value: "list", label: t("gr.view.list"), icon: List }]} /></div>
       </div>
 
       {view === "graph" ? (
         <div className="grid gap-4 xl:grid-cols-[1fr_320px]">
-          <DarkZone className="relative overflow-hidden rounded-card border border-line bg-bg2">
-            <svg ref={svg} viewBox={`0 0 ${W} ${H}`} className="block h-[56vh] min-h-[380px] w-full cursor-grab touch-none select-none active:cursor-grabbing" role="group" aria-label={t("gr.canvas")}
+          <DarkZone className="relative overflow-hidden border border-line bg-bg2">
+            <svg ref={svg} viewBox={`0 0 ${W} ${H}`} className="block h-[68vh] min-h-[480px] w-full cursor-grab touch-none select-none active:cursor-grabbing" role="group" aria-label={t("gr.canvas")}
               onPointerDown={(e) => { if ((e.target as Element).closest("[data-node]")) return; drag.current = { x: e.clientX, y: e.clientY, tx: tf.x, ty: tf.y, moved: false }; (e.currentTarget as Element).setPointerCapture(e.pointerId); }}
               onPointerMove={(e) => {
                 const d = drag.current; if (!d || !svg.current) return;
@@ -178,14 +178,14 @@ export default function EvidenceGraph({ params }: { params: URLSearchParams }) {
                 setTf((s) => ({ ...s, x: d.tx + (e.clientX - d.x) * sx, y: d.ty + (e.clientY - d.y) * sy }));
               }}
               onPointerUp={() => { if (drag.current && !drag.current.moved) setSel(null); drag.current = null; }}>
-              <defs><pattern id="gr-dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill={ch.grid} /></pattern></defs>
+              <defs><pattern id="gr-dots" width="34" height="34" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".7" fill={ch.grid} opacity=".42" /></pattern></defs>
               <rect width={W} height={H} fill="url(#gr-dots)" />
               <g transform={`translate(${tf.x} ${tf.y}) scale(${tf.k})`}>
                 {edges.map((e, k) => {
                   const a = pos[e.source], b = pos[e.target];
                   const on = neigh ? neigh.has(e.source) && neigh.has(e.target) && (e.source === focusId || e.target === focusId) : false;
                   return <line key={k} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={on ? ch.node[byId[e.source === focusId ? e.target : e.source]?.type ?? "investigation"] : ch.edge}
-                    strokeOpacity={neigh ? (on ? 0.9 : 0.06) : e.type === "RELATED_TO" ? 0.55 : 0.22} strokeWidth={(on ? 1.6 : e.type === "RELATED_TO" ? 1.3 : 0.8) / tf.k} strokeDasharray={e.type === "RELEVANT_TO" || e.origin === "curated_context" || e.origin === "text_match" ? `${4 / tf.k} ${3 / tf.k}` : undefined} />;
+                    strokeOpacity={neigh ? (on ? 1 : 0.045) : e.type === "RELATED_TO" ? 0.7 : 0.34} strokeWidth={(on ? 2.1 : e.type === "RELATED_TO" ? 1.4 : 1) / tf.k} strokeDasharray={e.type === "RELEVANT_TO" || e.origin === "curated_context" || e.origin === "text_match" ? `${4 / tf.k} ${3 / tf.k}` : undefined} />;
                 })}
                 {nodes.map((n) => {
                   const p = pos[n.id];
@@ -199,7 +199,7 @@ export default function EvidenceGraph({ params }: { params: URLSearchParams }) {
                       onClick={() => setSel(n.id)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSel(n.id); } }}>
                       {sel === n.id && <circle r={(r + 6) / Math.sqrt(tf.k)} fill="none" stroke={ch.node[n.type]} strokeOpacity={0.6} strokeWidth={1.5 / tf.k} />}
                       <circle r={r / Math.sqrt(tf.k)} fill={n.type === "investigation" ? ch.node[n.type] : ch.tipBg} stroke={ch.node[n.type]} strokeWidth={(n.type === "investigation" ? 0 : 2) / tf.k} />
-                      {showLabel && <text y={-(r / Math.sqrt(tf.k)) - 5 / tf.k} textAnchor="middle" fontSize={(n.type === "investigation" ? 12 : 11) / tf.k} fontWeight={n.type === "investigation" ? 600 : 400} fill={ch.text} style={{ paintOrder: "stroke", stroke: ch.tipBg, strokeWidth: 3 / tf.k }}>{label(n).length > 34 ? label(n).slice(0, 32) + "…" : label(n)}</text>}
+                      {showLabel && <text y={-(r / Math.sqrt(tf.k)) - 6 / tf.k} textAnchor="middle" fontSize={(n.type === "investigation" ? 13.5 : 12) / tf.k} fontWeight={n.type === "investigation" ? 700 : 500} fill={ch.text} style={{ paintOrder: "stroke", stroke: ch.tipBg, strokeWidth: 4 / tf.k }}>{label(n).length > 34 ? label(n).slice(0, 32) + "…" : label(n)}</text>}
                     </g>
                   );
                 })}
@@ -230,13 +230,14 @@ export default function EvidenceGraph({ params }: { params: URLSearchParams }) {
           <table className="w-full min-w-[640px] text-[13px]">
             <caption className="sr-only">{t("gr.view.list")}</caption>
             <thead><tr className="border-b border-line text-left"><th className="p-3 font-medium text-subtle">{t("gr.node")}</th><th className="p-3 font-medium text-subtle">{t("gr.typeCol")}</th><th className="p-3 font-medium text-subtle">{t("gr.connectionsCol")}</th></tr></thead>
-            <tbody>{nodes.filter((n) => !matches || matches.has(n.id)).sort((a, b) => TYPES.indexOf(a.type) - TYPES.indexOf(b.type) || b.degree - a.degree).map((n) => (
-              <tr key={n.id} className="border-b border-line align-top last:border-0">
+            <tbody>{nodes.filter((n) => !matches || matches.has(n.id)).sort((a, b) => TYPES.indexOf(a.type) - TYPES.indexOf(b.type) || b.degree - a.degree).map((n) => {
+              const links = conns(n.id).filter(({ other }) => other && visible.has(other.id));
+              const linkButton = ({ e, other }: (typeof links)[number], k: number) => <button key={k} className="border-b border-line text-left text-[12px] text-muted hover:border-accent hover:text-accent" onClick={() => { setSel(other!.id); setView("graph"); }} title={e.type}>{label(other!)}</button>;
+              return <tr key={n.id} className="border-b border-line align-top last:border-0">
                 <td className="p-3"><span className="font-medium text-fg">{label(n)}</span><span className="block font-mono text-[10.5px] text-subtle">{n.id}</span></td>
                 <td className="p-3"><span className="inline-flex items-center gap-1.5 text-muted"><i className="h-2 w-2 rounded-full" style={{ background: ch.node[n.type] }} />{t(`gr.type.${n.type}`)}</span></td>
-                <td className="p-3"><ul className="flex flex-wrap gap-1">{conns(n.id).filter(({ other }) => other && visible.has(other.id)).map(({ e, other }, k) => (
-                  <li key={k}><button className="chip hover:border-line-strong hover:text-fg" onClick={() => { setSel(other!.id); setView("graph"); }} title={e.type}>{label(other!)}</button></li>))}</ul></td>
-              </tr>))}</tbody>
+                <td className="p-3"><div className="flex flex-wrap gap-x-3 gap-y-1">{links.slice(0, 4).map(linkButton)}</div>{links.length > 4 && <details className="mt-2"><summary className="cursor-pointer text-[11px] font-semibold text-accent">{t("v4.showAll", { n: links.length })}</summary><div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">{links.slice(4).map(linkButton)}</div></details>}</td>
+              </tr>})}</tbody>
           </table>
         </div>
       )}

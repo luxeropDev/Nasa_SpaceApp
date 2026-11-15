@@ -2,51 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
-/* =====================================================================
-   FLAMEWISE design tokens — RGB triplets so Tailwind alpha modifiers work.
-   Light is defined on :root, dark (primary experience) on .dark.
-   ===================================================================== */
-/* Light = primary research workspace (default). */
+/* PyroLens editorial tokens — a fixed, high-contrast research theme. */
 :root {
-  --bg: 246 247 249;          /* #F6F7F9 */
-  --bg2: 238 241 245;         /* #EEF1F5 secondary band */
+  --bg: 255 255 255;
+  --bg2: 244 244 244;
   --surface: 255 255 255;
-  --raised: 243 245 248;      /* #F3F5F8 table heads, insets */
-  --hover: 236 240 245;
-  --line: 160 172 191;        /* × alpha → #D9DEE7 hairline on white */
-  --line-a: 0.42;
-  --line-a-strong: 0.85;
-  --fg: 23 32 51;             /* #172033 */
-  --muted: 91 101 117;        /* #5B6575 */
-  --subtle: 104 114 130;      /* #687282 — AA on white */
-  --accent: 16 91 216;        /* #105BD8 interactive blue */
-  --navy: 11 61 145;          /* #0B3D91 institutional blue */
-  --brand: 180 80 15;         /* combustion orange — used sparingly for flame-related marks */
+  --raised: 245 245 245;
+  --hover: 237 237 237;
+  --line: 90 90 90;
+  --line-a: 0.26;
+  --line-a-strong: 0.58;
+  --fg: 27 27 27;
+  --muted: 86 92 101;
+  --subtle: 113 118 125;
+  --accent: 0 80 216;
+  --navy: 11 61 145;
+  --brand: 246 65 55;
   --cyan: 14 116 144;
   --warn: 154 103 0;
   --ok: 26 127 75;
   --danger: 180 35 24;
   --on-accent: 255 255 255;
-  --shadow-card: 0 1px 0 rgb(23 32 51 / 0.03);
-  --shadow-pop: 0 10px 28px -10px rgb(23 32 51 / 0.22), 0 1px 3px rgb(23 32 51 / 0.08);
+  --shadow-card: none;
+  --shadow-pop: 0 14px 36px -12px rgb(0 0 0 / 0.32), 0 1px 3px rgb(0 0 0 / 0.12);
   --grid-ink: 23 32 51;
 }
-/* Dark = analysis / immersive workspace. `.zone-dark` applies it locally even in the light theme. */
-.dark, .zone-dark {
-  --bg: 17 21 28;             /* #11151C */
-  --bg2: 21 26 34;
-  --surface: 25 31 41;        /* #191F29 */
-  --raised: 32 41 54;         /* #202936 */
-  --hover: 38 49 66;
-  --line: 120 138 162;        /* × alpha → #303B4A */
+/* Intentional dark editorial sections; never activated by OS or saved theme. */
+.zone-dark {
+  --bg: 0 0 0;
+  --bg2: 13 13 13;
+  --surface: 18 18 18;
+  --raised: 28 28 28;
+  --hover: 38 38 38;
+  --line: 210 210 210;
   --line-a: 0.32;
   --line-a-strong: 0.6;
-  --fg: 237 242 247;          /* #EDF2F7 */
-  --muted: 166 177 192;       /* #A6B1C0 */
-  --subtle: 138 150 167;
-  --accent: 110 168 254;      /* #6EA8FE cool blue, not cyan */
-  --navy: 110 168 254;
-  --brand: 232 136 66;
+  --fg: 255 255 255;
+  --muted: 223 225 226;
+  --subtle: 184 190 199;
+  --accent: 117 167 255;
+  --navy: 117 167 255;
+  --brand: 255 85 77;
   --cyan: 125 211 232;
   --warn: 224 176 74;
   --ok: 76 195 138;
@@ -69,7 +65,7 @@
 
 html { -webkit-text-size-adjust: 100%; }
 body {
-  @apply bg-bg font-sans text-[14px] text-fg antialiased;
+  @apply bg-white font-sans text-[15px] text-fg antialiased;
   overflow-x: clip;
 }
 /* Headings use Inter (NASA Horizon-style hierarchy); body text stays Public Sans; technical values use DM Mono. */
@@ -82,16 +78,12 @@ h1, h2, h3, h4, .font-display { font-family: Inter, ui-sans-serif, system-ui, sa
 :focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; border-radius: 3px; }
 main:focus, main:focus-visible { outline: none; }
 
-html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *::after {
-  transition: background-color .3s ease, border-color .3s ease, color .3s ease, fill .3s ease, stroke .3s ease !important;
-}
-
 @layer components {
   /* ---------- surfaces ---------- */
-  .panel { @apply rounded-card border border-line bg-surface shadow-card; }
+  .panel { @apply border border-line bg-surface shadow-card; }
   .panel-hover { @apply transition duration-200 ease-out hover:border-line-strong hover:bg-raised; }
-  .label { @apply font-mono text-[10.5px] font-medium uppercase tracking-[.08em] text-subtle; }
-  .eyebrow { @apply font-mono text-[11px] font-medium uppercase tracking-[.08em] text-subtle; }
+  .label { @apply font-mono text-[10.5px] font-medium uppercase tracking-[.1em] text-subtle; }
+  .eyebrow { @apply font-mono text-[11px] font-medium uppercase tracking-[.12em] text-subtle; }
   .code { @apply font-mono text-[11.5px] tabular-nums; }
   /* section header with a hairline rule: the editorial divider used across workspace pages */
   .rule-head { @apply flex items-baseline gap-3 border-b border-line pb-2; }

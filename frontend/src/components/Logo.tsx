@@ -1,28 +1,27 @@
-/**
- * FLAMEWISE mark: a flat instrument frame with a measurement reticle around a spherical flame front — the
- * shape a diffusion flame takes in microgravity, where buoyant convection is absent. No gradients, no glow.
- */
-export function LogoMark({ size = 28, className = "" }: { size?: number; className?: string }) {
+type Variant = "white" | "navy";
+
+const source = (variant: Variant) => `/brand/pyrolens-logo-${variant}.png`;
+
+/** The supplied PyroLens emblem, cropped non-destructively from the transparent horizontal artwork. */
+export function LogoMark({ size = 32, className = "", variant = "navy" }: { size?: number; className?: string; variant?: Variant }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" className={className} aria-hidden="true" fill="none">
-      <rect x="1.5" y="1.5" width="29" height="29" rx="2" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M16 1.5v4M16 26.5v4M1.5 16h4M26.5 16h4" stroke="currentColor" strokeWidth="1.5" />
-      <circle cx="16" cy="16" r="7.25" stroke="rgb(var(--brand))" strokeWidth="1.5" />
-      <circle cx="16" cy="16" r="3" fill="rgb(var(--brand))" />
-    </svg>
+    <span className={`relative block shrink-0 overflow-hidden ${className}`} style={{ width: size, height: size }} aria-hidden="true">
+      <img src={source(variant)} alt="" className="absolute inset-y-0 left-0 h-full w-auto max-w-none" draggable={false} />
+    </span>
   );
 }
 
-export function Wordmark({ collapsed = false, sub }: { collapsed?: boolean; sub?: string }) {
+/** Full supplied transparent wordmark. White is for the black site header; navy is for paper/light surfaces. */
+export function Wordmark({ collapsed = false, variant = "white", className = "" }: { collapsed?: boolean; sub?: string; variant?: Variant; className?: string }) {
+  if (collapsed) return <LogoMark size={38} variant={variant} className={className} />;
   return (
-    <span className="flex min-w-0 items-center gap-2.5">
-      <LogoMark size={26} className="shrink-0 text-navy" />
-      {!collapsed && (
-        <span className="min-w-0 leading-tight">
-          <span className="block font-display text-[15px] font-semibold tracking-[.06em] text-fg">FLAMEWISE</span>
-          {sub && <span className="block truncate font-mono text-[9.5px] uppercase tracking-[.08em] text-subtle">{sub}</span>}
-        </span>
-      )}
-    </span>
+    <img
+      src={source(variant)}
+      alt="PyroLens"
+      width={2172}
+      height={724}
+      className={`h-10 w-auto max-w-[178px] object-contain object-left sm:h-11 sm:max-w-[198px] ${className}`}
+      draggable={false}
+    />
   );
 }

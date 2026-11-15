@@ -1,120 +1,146 @@
-# PyroLens — Scientific Evidence Intelligence for Spacecraft Fire Safety
+# PyroLens
 
-> From experimental data to engineering evidence.
+PyroLens is a research tool for exploring microgravity combustion experiments and their relevance to spacecraft fire safety.
 
-PyroLens 3.0 is an independent research workspace for exploring NASA Physical Sciences Informatics (PSI) combustion records. It preserves source values and provenance, normalizes units, distinguishes measured/derived/assumed/missing information, and uses deterministic rules for scenario matching, evidence coverage, and gap classification.
+It brings together records from NASA combustion research programs, publications and supporting documents in one searchable interface. Researchers can find related experiments, compare their conditions and findings, trace claims back to their sources, and identify gaps in the available evidence.
 
-PyroLens is **not affiliated with or endorsed by NASA**, is not a fire simulator or certification tool, and must not be used as operational safety guidance. Matching bands and coverage labels are evidence-navigation aids, not probabilities of safety or proof of physical equivalence.
+Built for the NASA Space Apps Challenge 2026.
 
-## What is in this repository
+> PyroLens is an independent research project. It is not affiliated with or endorsed by NASA, and it is not an operational fire-safety system.
 
-- React, Vite, TypeScript, Tailwind, and Recharts frontend with English/Russian localization and light/dark themes.
-- FastAPI/Pydantic backend with the legacy research API plus PyroLens evidence endpoints.
-- Deterministic observation eligibility, gas/diluent semantics, flow-configuration compatibility, scenario matching, multidimensional coverage, experiment passports, and evidence reports.
-- A reviewable validation set whose status is **PENDING INDEPENDENT DOMAIN-EXPERT REVIEW**.
+## What PyroLens does
 
-The checkout at commit `9c50b9b` contains the PyroLens 3.0 scientific backend, while the available frontend is the earlier screen set rather than the reported unpushed Coverage Intelligence redesign. Core visible branding has been updated without rewriting those working screens. See [the final report](docs/PYROLENS_3_0_FINAL_REPORT.md) for the verified scope and handoff discrepancy.
+- Searches curated microgravity combustion investigations using BM25 retrieval
+- Filters research by fuel, hardware, gravity, mission context and safety domain
+- Compares two to four investigations side by side
+- Connects findings to their publications and source records
+- Maps relationships between experiments, topics and sources
+- Shows how existing evidence relates to ISS, lunar and Mars mission scenarios
+- Generates source-linked research summaries and reports
+- Supports English and Russian interfaces
 
-## Requirements
+PyroLens separates source data, curated interpretation and missing information. Its relevance scores are transparent research heuristics, not fire-risk probabilities or physical simulations.
+
+## Data
+
+The current dataset includes:
+
+- 15 curated investigation records
+- 24 NASA PSI Combustion Science investigations
+- 352 listed publications, including 284 with DOI identifiers
+- 20 experiment tables containing 1,735 rows
+- NASA documents and web resources indexed for search
+
+Published values are preserved with their original units and column names. PyroLens does not silently convert incompatible measurements or fill missing values.
+
+For details about source handling and dataset coverage, see:
+
+- [`docs/SCIENTIFIC_DATA_PROVENANCE.md`](docs/SCIENTIFIC_DATA_PROVENANCE.md)
+- [`docs/RESOURCE_COVERAGE_AUDIT.md`](docs/RESOURCE_COVERAGE_AUDIT.md)
+
+## Technology
+
+| Layer | Stack |
+| --- | --- |
+| Frontend | React, TypeScript, Vite, Tailwind CSS, Recharts |
+| Backend | Python, FastAPI, Pydantic |
+| Search | In-process BM25 retrieval |
+| Optional AI | OpenAI or Anthropic API |
+| Tests | pytest and TypeScript type checking |
+
+The application works without an AI provider. If no API key is configured, research search, comparison, evidence mapping and local source-based answers remain available.
+
+## Running locally
+
+Requirements:
 
 - Python 3.10 or newer
-- Node.js 18 or newer and npm
-- Two free local ports (defaults: backend `8000`, frontend `5173`)
+- Node.js 18 or newer
 
-No LLM key is required. Without one, the assistant returns a deterministic local response and labels `llm_used` as false.
+Start the backend:
 
-## Windows PowerShell quick start
-
-Backend, terminal 1:
-
-```powershell
-cd D:\QASH\Works\Nasa_SpaceApp\backend
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-python -m uvicorn app.main:app --reload --port 8000
+```bash
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
 ```
 
-If `python` is unavailable but `uv` is installed:
+In a second terminal, start the frontend:
 
-```powershell
-cd D:\QASH\Works\Nasa_SpaceApp\backend
-$env:UV_CACHE_DIR = "D:\QASH\Works\Nasa_SpaceApp\.uv-cache"
-uv run --with-requirements requirements.txt uvicorn app.main:app --reload --port 8000
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
-Frontend, terminal 2:
+Open <http://localhost:5173>. API documentation is available at <http://localhost:8000/docs>.
 
-```powershell
-cd D:\QASH\Works\Nasa_SpaceApp\frontend
-npm ci
-npm run dev -- --host 127.0.0.1 --port 5173
+## Optional AI configuration
+
+PyroLens can use OpenAI or Anthropic to synthesize answers from retrieved evidence. Set the variables before starting the backend:
+
+```bash
+export OPENAI_API_KEY="your-key"
+export OPENAI_MODEL="gpt-4o-mini"
 ```
 
-Open <http://127.0.0.1:5173>. Interactive backend documentation is at <http://127.0.0.1:8000/docs>. The Vite development server proxies `/api`, `/docs`, and `/openapi.json` to port 8000.
+or:
 
-If either default port is occupied, preserve the existing process and choose unused ports. When changing the backend origin or frontend port, update the Vite proxy or `PYROLENS_CORS_ORIGINS` accordingly.
+```bash
+export ANTHROPIC_API_KEY="your-key"
+export ANTHROPIC_MODEL="claude-3-5-haiku-latest"
+```
 
-## Configuration
+See [`.env.example`](.env.example) for the available settings. Do not commit API keys to the repository.
 
-The backend does not load `.env` automatically. Set variables in the launching shell or through the deployment environment; never commit API keys.
+## Project structure
 
-| Variable | Purpose | Default |
-|---|---|---|
-| `OPENAI_API_KEY` | Enable OpenAI synthesis | unset |
-| `OPENAI_MODEL` | OpenAI model | `gpt-4o-mini` |
-| `ANTHROPIC_API_KEY` | Enable Anthropic synthesis when OpenAI is unset | unset |
-| `ANTHROPIC_MODEL` | Anthropic model | `claude-3-5-haiku-latest` |
-| `PYROLENS_CORS_ORIGINS` | Comma-separated browser origins | Vite localhost origins |
-| `PYROLENS_AI_RATE_PER_MIN` | Assistant requests per client per minute | `20` |
-| `PYROLENS_LOG_LEVEL` | Backend log level | `INFO` |
+```text
+frontend/   React application and interface translations
+backend/    FastAPI application, retrieval and analysis logic
+data/       Curated investigations, sources and translations
+docs/       Methodology, provenance and coverage documentation
+```
 
-Legacy `FLAMEWISE_CORS_ORIGINS`, `FLAMEWISE_AI_RATE_PER_MIN`, and `FLAMEWISE_LOG_LEVEL` names remain accepted, but the `PYROLENS_*` names take precedence.
+## Updating the dataset
 
-## API
+From the `backend` directory:
 
-The original endpoints remain available, including `/api/health`, `/api/investigations`, `/api/search`, `/api/assistant`, `/api/compare`, `/api/graph`, and `/api/scenarios`.
+```bash
+python -m ingest.psi_ingest
+python -m ingest.documents
+```
 
-PyroLens evidence endpoints include:
+Document extraction requires `poppler-utils`.
 
-- `GET /api/evidence/summary`, `/api/evidence/quality`
-- `GET /api/evidence/datasets/{accession}/measurements`, `/issues`, `/rows/{row}`
-- `GET /api/passports`, `/api/passports/{accession}`
-- `GET /api/coverage/map`, `/matrix`, `/pairs`, `/explore`, `/observations`
-- `GET /api/atlas`, `/api/scenario-presets`
-- `POST /api/scenario/validate`, `/api/match`, `/api/gaps`, `/api/evidence/report`
-- `GET|POST /api/evidence/export`
-
-`POST /api/assistant` optionally accepts a complete `scenario` object. Deterministic matching and gap results are calculated before any optional LLM synthesis. A fallback or mocked response is not evidence of live-LLM operation.
-
-## Verification
+## Testing
 
 Backend:
 
-```powershell
-cd D:\QASH\Works\Nasa_SpaceApp\backend
-python -m pip install -r requirements.txt -r requirements-dev.txt
+```bash
+cd backend
+pip install -r requirements-dev.txt
 python -m pytest -q
-python -m validation.run_validation
 ```
 
 Frontend:
 
-```powershell
-cd D:\QASH\Works\Nasa_SpaceApp\frontend
-npm ci
+```bash
+cd frontend
 npm run typecheck
 npm run build
 ```
 
-This checkout has no configured frontend component-test or Playwright scripts, so those suites cannot be run from the available files. See the final report for the dated verification record.
+## Current limitations
 
-## Scientific documentation
+- The curated dataset is still small and does not contain complete numerical measurements for every investigation.
+- Some records link to NASA portals or catalogue searches rather than directly to a document.
+- Mission scenarios are evidence mappings, not simulations.
+- PDF reports are produced through the browser print dialog.
+- The application currently has no authentication and is intended as a read-only research tool.
 
-- [Scientific methods](docs/SCIENTIFIC_METHODS.md)
-- [External expert review package](docs/EXTERNAL_EXPERT_REVIEW_PACKAGE.md)
-- [PyroLens 3.0 final report](docs/PYROLENS_3_0_FINAL_REPORT.md)
-- [Scientific data provenance](docs/SCIENTIFIC_DATA_PROVENANCE.md)
-- Machine-readable cases: `backend/validation/reference_set.json`
+## License
 
-Raw PSI values, headers, units, cell locations, ambiguity flags, and provenance are retained. Absence of a match in the selected PyroLens collection does not mean that a phenomenon has never been studied.
+No open-source license has been added yet. Until a `LICENSE` file is included, the repository should not be treated as open-source software.
